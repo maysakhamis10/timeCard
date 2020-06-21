@@ -19,7 +19,7 @@ class SplashScreen extends StatelessWidget {
       body: BlocBuilder<InternetConnectionBloc , BaseResultState>(
         bloc: _bloc,
         builder: (context , state){
-          if(state.result==dataResult.Loaded){
+          if(state.result == dataResult.Loaded){
             Timer(Duration(seconds: 3), () {
               Navigator.pushReplacement(
                 context,

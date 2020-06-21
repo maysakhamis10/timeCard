@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
 import 'package:timecarditg/Screens/MainScreen.dart';
 import 'package:timecarditg/Screens/SplashScreen.dart';
+import 'package:timecarditg/Screens/transactions_screens.dart';
 
 void main() => runApp(MyApp());
 
@@ -20,11 +21,10 @@ class MyApp extends StatelessWidget {
           primaryColor: Color(0xff0099FF),
 
         ),
-        home:
-       BlocProvider<InternetConnectionBloc>(
+        home: BlocProvider<InternetConnectionBloc>(
           child : SplashScreen(),
           create: (_)=> InternetConnectionBloc(),
-        )
+        ),
     );
   }
 }

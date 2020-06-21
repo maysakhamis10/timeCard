@@ -1,16 +1,19 @@
-class Employee{
+import 'package:timecarditg/models/BaseModel.dart';
+
+class Employee extends BaseModel{
   String  username;
   int employeeId ;
-  String API_KEY;
+  String apiKey;
 
-  Employee({this.employeeId, this.username, this.API_KEY});
+  Employee({this.employeeId, this.username, this.apiKey});
   factory Employee.fromJson(Map<String, dynamic> json) {
 
+    var jsonDecoded =json['Employee_Information'];
 
     return Employee(
-      API_KEY:json['API_KEY'],
-      employeeId : json['EmployeeId'],
-      username: json['UserName'],
+      apiKey:json['API_KEY'],
+      employeeId : jsonDecoded['EmployeeId'],
+      username: jsonDecoded['UserName'],
     );
 }
 }

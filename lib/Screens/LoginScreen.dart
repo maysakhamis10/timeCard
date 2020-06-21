@@ -7,9 +7,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:timecarditg/Blocs/CheckInBloc.dart';
 import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
 import 'package:timecarditg/Blocs/LoginBloc.dart';
+import 'package:timecarditg/Constants.dart';
 import 'package:timecarditg/customWidgets/customWidgets.dart';
 import 'package:flutter/services.dart';
 import 'package:get_mac/get_mac.dart';
+import 'package:timecarditg/models/Employee.dart';
 import 'package:timecarditg/models/user.dart';
 import 'package:timecarditg/utils/utils.dart';
 
@@ -105,6 +107,10 @@ class _SignInState extends State<SignIn> {
                                 bloc: _bloc,
                                 listener: (context , state) {
                                   if (state.result == dataResult.Loaded) {
+                                    Employee empModel = state.model ;
+                                    Constants.apiKey = empModel.apiKey;
+                                    Constants.employeeId = empModel.employeeId.toString();
+
                                     Timer(Duration(seconds: 3), () {
                                       Navigator.pushReplacement(
                                         context,
@@ -211,29 +217,27 @@ class _SignInState extends State<SignIn> {
   }
 
 
-  Future<String> MacAddressCheck ()async{
-    try{
-    await requestPermission();
-    String macAddress = await Utils.loadMacAddress();
-    if( macAddress  =='') {
-   /* Utils.saveMacAddress(_platformVersion)
+  Future<String> MacAddressCheck ()async {
+    try {
+      await requestPermission();
+      String macAddress = await Utils.loadMacAddress();
+      if (macAddress == '') {
+        /* Utils.saveMacAddress(_platformVersion)
         .then((onValue) {
     print('saved');
     
     });*/
-    return _platformVersion;
+        return _platformVersion;
+      }
+      else {
+        print('loaded : $macAddress');
+        return macAddress;
+      }
     }
-    else{
-    print('loaded : $macAddress');
-    return macAddress;
-      }
-      }
-    catch (e){
-    print(e);
+    catch (e) {
+      print(e);
     }
   }
-
-
 
 }
 

@@ -8,20 +8,19 @@ import '../Constants.dart';
 
 class ApiCalls {
  static Future<Employee> Login (Logginer user) async{
+   Employee emp ;
    http.Response response =await   http.post(Constants.getLoginUrl(user.username, user.password, '00:00:00:00:00:00'));
    print(response.body.toString() + '${response.statusCode}');
    var jsonDecsode = await jsonDecode(response.body);
    var flag = jsonDecsode['Flag'];
    if(flag==1){
-     Employee emp = Employee.fromJson(jsonDecsode['Employee_Information']);
-     print(emp.username);
+      emp = Employee.fromJson(jsonDecsode);
+     print(emp.apiKey);
      return emp;
    }
    else return null;
 
 
-
-  
 
   }
   void checkIn(  String apiKey, String employeeId,String checkInTime, String logginMachine
@@ -40,9 +39,15 @@ class ApiCalls {
 
 
    if ( (await Utils.checkConnectivity())==connectStatus.connected) {// check connection
-     http.Response response =await   http.post(url,body: mParams);
-     print(response.body);
-   } else {
+     try {
+       http.Response response = await http.post(url, headers: mParams);
+       print(response.body);
+     }
+     catch (ex)
+    {
+      print(ex.toString());
+    }
+     } else {
    }
  }
 
