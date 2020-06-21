@@ -19,12 +19,8 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           accentColor: Colors.white,
           primaryColor: Color(0xff0099FF),
-
         ),
-        home: BlocProvider<InternetConnectionBloc>(
-          child : SplashScreen(),
-          create: (_)=> InternetConnectionBloc(),
-        ),
+        home:  SplashScreen()
     );
   }
 }

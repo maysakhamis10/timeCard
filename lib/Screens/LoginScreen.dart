@@ -4,15 +4,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:timecarditg/ApiCalls/apiCalls.dart';
 import 'package:timecarditg/Blocs/CheckInBloc.dart';
 import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
 import 'package:timecarditg/Blocs/LoginBloc.dart';
-import 'package:timecarditg/Constants.dart';
 import 'package:timecarditg/customWidgets/customWidgets.dart';
 import 'package:flutter/services.dart';
 import 'package:get_mac/get_mac.dart';
 import 'package:timecarditg/models/Employee.dart';
 import 'package:timecarditg/models/user.dart';
+import 'package:timecarditg/utils/sharedPreference.dart';
 import 'package:timecarditg/utils/utils.dart';
 
 import 'MainScreen.dart';
@@ -25,7 +27,7 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
 
   String _platformVersion = 'Unknown';
-
+  ProgressDialog pr;
   @override
   void initState() {
     super.initState();
@@ -104,29 +106,36 @@ class _SignInState extends State<SignIn> {
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
                                 BlocListener<LoginBloc , BaseResultState>(
-                                bloc: _bloc,
-                                listener: (context , state) {
-                                  if (state.result == dataResult.Loaded) {
-                                    Employee empModel = state.model ;
-                                    Constants.apiKey = empModel.apiKey;
-                                    Constants.employeeId = empModel.employeeId.toString();
-
-                                    Timer(Duration(seconds: 3), () {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(builder: (context) {
-                                          return  BlocProvider(
-                                            child: MainScreen(),
-                                            create:(_)=> CheckInBloc(),
-                                          );
-                                        }),
+                                  bloc: _bloc,
+                                  listener: (context , state) async{
+                                     if (state.result == dataResult.Loading) {
+                                    showProgressDialog();
+                                    }
+                                     else if (state.result == dataResult.Loaded) {
+                                      saveKeepMeLoggedIn();
+                                      var employee = (state.model as Employee);
+                                      saveApiKey(employee);
+                                      Timer(Duration(seconds: 3), () {
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(builder: (context) {
+                                            return   BlocProvider(
+                                              child: MainScreen(),
+                                              create: (_)=>CheckInBloc(),
+                                            );
+                                          }),
+                                        );
+                                      });
+                                    }
+                                    else if (state.result == dataResult.Error) {
+                                      if(pr !=null){
+                                      pr.hide();}
+                                      Utils.showMyDialog(content: "Invalid username or password or may be your mac Address is not Registered",
+                                        context: context,
+                                        type: DialogType.warning,
                                       );
-                                    });
-                                  }
-                                  else if (state.result == dataResult.Error) {
-
-                                  }
-                                },
+                                    }
+                                  },
                                   child: Container(),
 
                                 ),
@@ -175,25 +184,28 @@ class _SignInState extends State<SignIn> {
                                 ),
                                 SizedBox(height: 8,),
                                 GestureDetector(
-                                  onTap: ()async{
-                                    connectStatus checkConnectivity = await Utils.  checkConnectivity();
+                                  onTap: ()async
+                                  {
+                                    connectStatus checkConnectivity = await Utils.checkConnectivity();
                                     if(checkConnectivity==connectStatus.connected){
                                       String  macAddress = await MacAddressCheck();
                                       if(formKey.currentState.validate()){
-                                      _bloc.add(LoginEvent(user: Logginer(username:emailTextEditingController.text
-                                      ,password: passwordTextEditingController.text,macAddress: macAddress)));
-                                    }
+                                            _bloc.add(LoginEvent(user: Logginer(username:emailTextEditingController.text
+                                                ,password: passwordTextEditingController.text,macAddress: macAddress)));
+                                          }
+                                        }else{
+                                  Utils.showMyDialog(context: context , content: 'There is no internet connection' , type: DialogType.warning);
+                                  }
                                       return ;
                                     }
-                                  }
-                                   ,
+                                    ,
                                   child: Container(
                                     alignment: Alignment.center,
                                     width: MediaQuery.of(context).size.width,
                                     padding: EdgeInsets.symmetric(vertical: 16),
                                     child: Text('Sign in' , style:  simpleTextStyle(),),
                                     decoration: BoxDecoration(
-                                        color: mainColor,
+                                      color: mainColor,
                                     ),
                                   ),
                                 ),
@@ -215,29 +227,57 @@ class _SignInState extends State<SignIn> {
         )
     );
   }
-
-
-  Future<String> MacAddressCheck ()async {
-    try {
+  saveApiKey(Employee employee)async{
+    await SharedPreferencesOperations.saveApiKeyAndId(employee.apiKey , employee.employeeId).then((onValue){
+      print('api key and saved ');
+    });
+  }
+  saveKeepMeLoggedIn()async{
+    await SharedPreferencesOperations.saveKeepMeLoggedIn(switchState);
+  }
+  showProgressDialog()async{
+    pr =await ProgressDialog(context,type: ProgressDialogType.Normal,
+      isDismissible: false,
+      showLogs: false,);
+    pr..style(
+        message: 'Loading ...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(backgroundColor: Colors.grey,),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        progress: 0.0,
+        maxProgress: 100.0,
+        progressTextStyle: TextStyle(
+            color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
+    );
+    pr.show();
+  }
+  Future<String> MacAddressCheck ()async{
+    try{
       await requestPermission();
       String macAddress = await Utils.loadMacAddress();
-      if (macAddress == '') {
+      if( macAddress  =='') {
         /* Utils.saveMacAddress(_platformVersion)
         .then((onValue) {
     print('saved');
-    
+
     });*/
         return _platformVersion;
       }
-      else {
+      else{
         print('loaded : $macAddress');
         return macAddress;
       }
     }
-    catch (e) {
+    catch (e){
       print(e);
     }
   }
+
+
 
 }
 

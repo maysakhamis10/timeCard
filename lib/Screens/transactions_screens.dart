@@ -14,8 +14,7 @@ class TransactionsScreen extends StatefulWidget {
 class _TransactionsScreenState extends State<TransactionsScreen> {
 
   final textController = new TextEditingController();
-
-  DateTime _selectedDate;
+  String _selectedDate;
 
   @override
   void initState() {
@@ -87,8 +86,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
         return;
       }
       setState(() {
-        _selectedDate = pickedDate;
-        textController.text = _selectedDate.toString();
+        _selectedDate = '${pickedDate.year.toString()} /${pickedDate.month.toString()} /${pickedDate.day.toString()} ' ;
+        textController.text = _selectedDate;
       });
     });
   }

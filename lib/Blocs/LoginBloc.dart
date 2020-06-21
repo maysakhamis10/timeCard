@@ -18,6 +18,8 @@ class LoginBloc extends Bloc<BaseEvent , BaseResultState> {
   Stream<BaseResultState> mapEventToState(BaseEvent event) async*{
     // TODO: implement mapEventToState
     if(event is LoginEvent){
+      yield BaseResultState(result: dataResult.Loading);
+
       var status = await ApiCalls.Login(event.user);
       if(status!=null){
         yield BaseResultState(result: dataResult.Loaded,model: status);

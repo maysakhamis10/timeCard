@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:timecarditg/Blocs/CheckInBloc.dart';
 import 'package:timecarditg/Screens/transactions_screens.dart';
+import 'package:timecarditg/utils/sharedPreference.dart';
+import 'package:timecarditg/utils/utils.dart';
 import 'MainScreen.dart';
 
 
@@ -37,7 +39,7 @@ class AppDrawer extends StatelessWidget {
                       builder: (BuildContext context) => TransactionsScreen()))
           ),
 
-          _createDrawerItem( text: 'Logout',),
+          _createDrawerItem( text: 'Logout',onTap:()=> Utils.logOut(context)),
 
         ],
       ),
@@ -51,7 +53,8 @@ class AppDrawer extends StatelessWidget {
   }
 
   Widget _createDrawerItem(
-      {String text, GestureTapCallback onTap}) {
+      {String text, Function onTap}) {
+
     return ListTile(
       title: Row(
         children: <Widget>[
@@ -61,7 +64,8 @@ class AppDrawer extends StatelessWidget {
           )
         ],
       ),
-      onTap: onTap,
+      onTap: onTap
+
     );
   }
 
