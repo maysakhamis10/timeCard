@@ -1,0 +1,36 @@
+import 'dart:math';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:timecarditg/ApiCalls/apiCalls.dart';
+import 'package:timecarditg/models/BaseModel.dart';
+import 'package:timecarditg/models/user.dart';
+import 'package:timecarditg/utils/utils.dart';
+
+import 'InternetConnectionBloc.dart';
+
+class LoginBloc extends Bloc<BaseEvent , BaseResultState> {
+
+  @override
+  // TODO: implement initialState
+  BaseResultState get initialState => BaseResultState(result: dataResult.Empty);
+
+  @override
+  Stream<BaseResultState> mapEventToState(BaseEvent event) async*{
+    // TODO: implement mapEventToState
+    if(event is LoginEvent){
+      var status = await ApiCalls.Login(event.user);
+      if(status){
+        yield BaseResultState(result: dataResult.Loaded);
+      }
+      else yield BaseResultState(result: dataResult.Error);
+    }
+  }
+
+
+
+}
+
+class LoginEvent extends BaseEvent {
+  Logginer user ;
+  LoginEvent({this.user});
+}
