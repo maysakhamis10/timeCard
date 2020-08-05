@@ -20,11 +20,17 @@ class LoginBloc extends Bloc<BaseEvent , BaseResultState> {
     if(event is LoginEvent){
       yield BaseResultState(result: dataResult.Loading);
 
-      var status = await ApiCalls.Login(event.user);
+      var status = await ApiCalls.loginCall(event.user);
+      print('my object ===>>>>>>>>> ${event.user.password + "                 "+
+          event.user.username  + "            "  + event.user.macAddress}');
       if(status!=null){
         yield BaseResultState(result: dataResult.Loaded,model: status);
       }
-      else yield BaseResultState(result: dataResult.Error);
+
+      else {
+        yield BaseResultState(result: dataResult.Error);
+        print('errror => ${dataResult.Error}');
+      }
     }
   }
 

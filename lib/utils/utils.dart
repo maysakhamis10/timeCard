@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:ext_storage/ext_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -10,7 +9,7 @@ import 'package:timecarditg/Screens/LoginScreen.dart';
 import 'package:timecarditg/utils/sharedPreference.dart';
 
 
-class Utils {
+class UtilsClass {
  static logOut(BuildContext context){
    SharedPreferencesOperations.saveKeepMeLoggedIn(false);
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> BlocProvider<LoginBloc>(
@@ -59,27 +58,24 @@ class Utils {
   static Future<File> saveMacAddress(String macAddress) async {
     await initPlatformState();
     final file = await File(path);
-    // Write the file.
     return file.writeAsString(macAddress);
   }
 
   static Future<String> loadMacAddress() async {
     try {
       final file = await File(path);
-      // Read the file.
       String contents = await file.readAsString();
       print(contents);
       return contents;
     } catch (e) {
-      // If encountering an error, return 0.
       return '';
     }
   }
 
   static Future<Position> getCurrentLocation() async {
-    final Geolocator geolocator = Geolocator()
+    final Geolocator userLocation = Geolocator()
       ..forceAndroidLocationManager;
-    return await geolocator
+    return await userLocation
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
   }
 

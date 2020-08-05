@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:timecarditg/Blocs/CheckInBloc.dart';
+import 'package:timecarditg/Blocs/home_bloc.dart';
 import 'package:timecarditg/Screens/transactions_screens.dart';
 import 'package:timecarditg/utils/sharedPreference.dart';
 import 'package:timecarditg/utils/utils.dart';
-import 'MainScreen.dart';
+import '../Screens/MainScreen.dart';
 
 
 class AppDrawer extends StatelessWidget {
@@ -26,7 +27,7 @@ class AppDrawer extends StatelessWidget {
                     MaterialPageRoute(builder: (context) {
                       return  BlocProvider(
                         child: MainScreen(),
-                        create:(_)=> CheckInBloc(),
+                        create:(_)=> HomeInfoBloc(),
                       );
                     }),
                   )
@@ -39,7 +40,7 @@ class AppDrawer extends StatelessWidget {
                       builder: (BuildContext context) => TransactionsScreen()))
           ),
 
-          _createDrawerItem( text: 'Logout',onTap:()=> Utils.logOut(context)),
+          _createDrawerItem( text: 'Logout',onTap:()=> UtilsClass.logOut(context)),
 
         ],
       ),

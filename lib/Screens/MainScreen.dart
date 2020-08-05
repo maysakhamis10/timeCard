@@ -1,26 +1,19 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:sweet_alert_dialogs/sweet_alert_dialogs.dart';
-import 'package:timecarditg/ApiCalls/apiCalls.dart';
 import 'package:timecarditg/Blocs/CheckInBloc.dart';
 import 'package:timecarditg/Blocs/ClientsBloc.dart';
 import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
-import 'package:timecarditg/Screens/app_drawer.dart';
-import 'package:timecarditg/database/database.dart';
-import 'package:timecarditg/models/CheckModel.dart';
-import 'package:timecarditg/models/Employee.dart';
+import 'package:timecarditg/Blocs/home_bloc.dart';
+import 'package:timecarditg/customWidgets/CircleProgress.dart';
 import 'package:timecarditg/models/HomeInformation.dart';
-import 'package:timecarditg/models/checkInResponse.dart';
 import 'package:timecarditg/utils/sharedPreference.dart';
-import 'package:timecarditg/utils/utils.dart';
-import 'dart:io' show Platform;
+import 'package:timecarditg/utils/utils.dart' ;
 import 'AdditionalInfo.dart';
-class MainScreen extends StatefulWidget {
-//  Employee empModel ;
-  static const String routeName = '/home';
+import 'transactions_screens.dart';
 
+class MainScreen extends StatefulWidget {
+  static const String routeName = '/home';
   MainScreen();
 
   @override
@@ -28,316 +21,385 @@ class MainScreen extends StatefulWidget {
 
 }
 
+class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateMixin  {
 
-class _MainScreenState extends State<MainScreen> {
   String checkInTime, checkOutTime;
-  Employee empModel;
-  CheckInBloc _bloc ;
-  String location='';
-  HomeInfo homeInfo;
-  DateTime now;
-  static const platform = const MethodChannel('com.myapp/intent');
-  String _responseFromNativeCode = 'Waiting for Response...';
+  HomeInfo _homeInfo;
+  var height, width;
+  HomeInfoBloc homeInfoBloc;
+  AnimationController progressController ;
+  Animation animation ;
+  double percentage ;
+//  BuildContext _context ;
+//  Future<AssetData> imageFile;
+//  SharedPreferences prefs;
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getLocation().then((onValue) {
-      location = onValue;
-    });
-    _gpsService();
-   _bloc = BlocProvider.of<CheckInBloc>(context);
-}
-  var height, width;
+    _homeInfo = new HomeInfo();
+    homeInfoBloc = BlocProvider.of<HomeInfoBloc>(context);
+    callHomeInfoService();
+    var hours = 3.5;
+    percentage = (hours / 9) * 100;
+    progressController = AnimationController(vsync: this,duration: Duration(milliseconds: 2000));
+    animation = Tween<double>(begin: 0, end: percentage).animate(progressController)
+      ..addListener(() {
+        setState(() {});
+      });
+
+    progressController.forward();
+
+  }
+
+  void callHomeInfoService() async {
+    if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
+      homeInfoBloc.add(HomeInfoEvent());
+    }
+    else {
+      String fetchHomeStr = await SharedPreferencesOperations.fetchHomeData();
+      var homeJson = jsonDecode(fetchHomeStr);
+      print('SHARED_PERF ===>>>> $homeJson');
+      if (mounted) {
+        setState(() {
+          _homeInfo = HomeInfo.fromJson(homeJson);
+          print('_homeInfo ===>>>> ${_homeInfo.toJson()}');
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-     height = MediaQuery.of(context).size.height;
-     width = MediaQuery.of(context).size.width;
-    getApiKeyAndId();
-     ApiCalls.getHomeInformation().then((onValue){
-       homeInfo=onValue;
-     });
+    height = MediaQuery
+        .of(context)
+        .size
+        .height;
+    width = MediaQuery
+        .of(context)
+        .size
+        .width;
     return Scaffold(
-      appBar:
-      AppBar(title: new Center(child: Text('Information'),),
-        backgroundColor: Color(0xff1295df),),
-      body: buildBodyView(height,width),
-      drawer: AppDrawer()
+        appBar: AppBar(title: new Center(
+          child: Text('TimeCard', textAlign: TextAlign.center,),),
+          backgroundColor: Color(0xff1295df),),
+        body: BlocBuilder<HomeInfoBloc, BaseResultState>(
+            builder: (context, state) {
+              if (state.result == dataResult.Loading) {
+              //  if (mounted) {
+                 // showProgressDialog();
+               // }
+              }
+              else if (state.result == dataResult.Loaded) {
+                _homeInfo = state.model;
+                print(('object from api => ${_homeInfo.toJson()}'));
+//                if (pr != null) {
+//                  pr.hide();
+//                }
+              }
+              else if (state.result == dataResult.Error) {
+//                if (pr != null) {
+//                  pr.hide();
+//                }
+              }
+              return buildHomeUi();
+            }
+        )
     );
   }
 
-  Widget buildBodyView( var height ,   var width){
-    return Stack(
+  Widget buildHomeUi() {
+    return ListView(
       children: <Widget>[
-        Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xff1295df),
-                    Colors.white
-                  ]
-              )
-          ),
-          child:  Column(
+        Center(
+          child: Column(
             children: <Widget>[
-              Container(
-                color: Colors.white,
-                height: height*.4,
-                child: GridView(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: false,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 0.0,
-                      mainAxisSpacing: 0.0,
-                      childAspectRatio: 2
-                  ),
-                  children: <Widget>[
-                    buildTextInGridView(title:'Today Check in',checkType:CheckType.checkIn),
-                    buildTextInGridView(title:'You Can Check out At ',checkType :CheckType.checkOut),
-                    buildTextInGridView(title:'Last Check out '),
-                    buildTextInGridView(title:'empty'),
-                  ],
-                ),
-              ),
-              SizedBox(height: height*.05,),
-              GestureDetector(
-                onTap:(){
-                  Navigator.push(context, MaterialPageRoute(
-                      builder: (context) =>
-                          MultiBlocProvider(
-                            child: AdditionalInfo(),
-                            providers: [
-                              BlocProvider<ClientsBloc>(
-                                create: (_) => ClientsBloc(),
-                              ), BlocProvider(
-                                create: (_) => CheckInBloc(),
-                              ),
-                            ],
-
-                          )
-                  ));
-                },
-                child: Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.only(left: 15, right: 15),
-                  width: width,
-                  height: height * .08,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                  ),
-                  child: Text('Check in'),
-                ),
-              ),
-              SizedBox(height: height*.01,),
-              checkOutListener(),
-              GestureDetector(
-                onTap: ()async{
-                   now = DateTime.now();
-                   if(await Utils.checkConnectivity()==connectStatus.connected){
-                  _bloc.add(CheckOutEvent(
-                      employeeId: empModel.employeeId.toString(),
-                      logginMachine: Platform.isAndroid ? 'Android' : "IOS",
-                      client: "' '",
-                      addressInfo: "' '",
-                      location: location,
-                      checkOutTime: now.toString(),
-                      apiKey: empModel.apiKey.toString()
-                  ));
-                  await saveChecksToDB(synced: true);
-                   }
-                   else{
-                     await saveChecksToDB(synced: false);
-                     Utils.showMyDialog(content: 'There is no internet now , your transactions will saved locally and it will be synced later ',
-                         context: context,
-                         type: DialogType.warning,
-                     );
-                   }
-                },
-                child: Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.only(left: 15, right: 15),
-                  width: width,
-                  height: height * .08,
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          colors: [
-                            Color(0xff1295df),
-                            Color(0xff0d88cd)
-                          ]
-                      )
-                  ),
-                  child: Text('Check out', style: TextStyle(
-                      color: Colors.white
-                  ),),
-                ),
-              ),
-
+              buildUserPic(),
+              SizedBox(height: 10,),
+              buildUserName(),
+              SizedBox(height: 10,),
+              buildTextInGridView(
+                  title: 'Today Check in', checkType: CheckType.checkIn),
+              SizedBox(height: 10,),
+              buildTextInGridView(title: 'You Can Check out At ',
+                  checkType: CheckType.checkOut),
+              SizedBox(height: 10,),
+              buildTextInGridView(title: 'Last Check out '),
+              SizedBox(height: 10,),
+              buildSignIn(),
+              SizedBox(height: 10,),
+              buildSignOut(),
+              SizedBox(height: 10,),
+              buildOtherButtons()
             ],
-          ) ,
+          ),
         ),
       ],
     );
   }
 
-  Widget buildTextInGridView ({String title,CheckType checkType} ){
-    if(title=='empty'){
-      return Container(color: Colors.white,);
-    }
-    else {
-      return Container(
-          child:
-            Container(
-              margin: EdgeInsets.only(left : width*.005),
-              child:  Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                IconButton(
-                  icon: new Image.asset('assets/images/clock_blue.png'),
-                  onPressed: ()=> print('okay'),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(title, style: TextStyle(color: Colors.black54),),
-                    Text(getTime(checkType)??"00.00.00", style: TextStyle(color: Colors.blue),),
-                  ],
-                )
-              ],
-            ),)
-
-      );
-    }
-  }
-String getTime(CheckType checkType){
-    if(homeInfo!=null){
-      if(checkType==CheckType.checkIn){
-        return homeInfo.CheckIn;
-      }
-    else if(checkType==CheckType.checkOut){
-        return homeInfo.CheckOutAt;
-      }
-      else{
-        return homeInfo.LastCheckOutDate + ' '+ homeInfo.LastCheckOutTime;
-      }
-    }
-    else{
-
-    }
-}
-  Future<String> _getLocation() async {
-    Position position = await Utils.getCurrentLocation();
-    return position.latitude.toString() + ":" + position.longitude.toString();
-  }
-
-  Future<void> responseFromNativeCode() async {
-    String response = "";
-    try {
-      final String result = await platform.invokeMethod('settings');
-      response = result;
-    } on PlatformException catch (e) {
-      response = "Failed to Invoke: '${e.message}'.";
-    }
-    setState(() {
-      _responseFromNativeCode = response;
-      print('response is ==> $_responseFromNativeCode');
-      if(_responseFromNativeCode=="ENABLED"){
-        _getLocation();
-
-      }
-    });
-  }
-
-  Future _gpsService() async {
-    if (!(await Geolocator().isLocationServiceEnabled())) {
-      _checkGps();
-      return null;
-    } else
-      _getLocation();
-    return true;
-  }
-
-  Future _checkGps() async {
-    if (!(await Geolocator().isLocationServiceEnabled())) {
-      if (Theme.of(context).platform == TargetPlatform.android) {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return RichAlertDialog(
-                alertTitle: richTitle("Can't get current location"),
-                alertSubtitle: richSubtitle("Please make sure you enable GPS"),
-                alertType: RichAlertType.INFO,
-                actions: <Widget>[
-                  FlatButton(
-                    textColor: Colors.black,
-                    child: Text("OK"),
-                    onPressed: (){
-                      responseFromNativeCode();
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-              );
-            });
-      }
-    }
-  }
-
-
-
-  Widget checkOutListener() {
-    return BlocListener<CheckInBloc, BaseResultState>(
-      listener: (context, state) {
-        if (state.result == dataResult.Empty) {
-
-        }
-        else if (state.result == dataResult.Loaded) {
-          var flag = (state.model as CheckInResponse).flag;
-          if (flag == 1) {
-            Utils.showMyDialog(context: context,
-              content: 'Checked out successfully .',
-              type: DialogType.confirmation,
-            );
-          }
-          else {
-            Utils.showMyDialog(context: context,
-              content: 'something went wrong , please check out again .',
-              type: DialogType.warning,
-            );
-          }
-        }
-      },
-      child: Container(),
+  Widget buildUserPic() {
+    return Container(
+      padding: EdgeInsets.all(10.0),
+      child: Center(
+        child:  CustomPaint(
+            foregroundPainter: CircleProgress(animation.value),
+            child: Container(
+              width: 200,
+              height: 200,
+              child: Center(
+                child: GestureDetector(
+//                  onTap: () {
+//                    pickImageFromGallery();
+//                  },
+                  child:CircleAvatar(
+    radius: 100,
+    backgroundImage: NetworkImage(
+    'http://kundenarea.at/app-assets/images/user/12.jpg') ,
+                ),),
+            ),
+          ),
+    ),
+      ),
     );
   }
 
-  getApiKeyAndId() async {
-    empModel = await SharedPreferencesOperations.getApiKeyAndId();
+//  Widget showImage() {
+//    return CircleAvatar(
+//            radius: 100,
+//            backgroundImage: FileImage(File(prefs.getString('user_profile_image')
+//                ?? AssetImage('assets/images/logo.png')),),);
+////    return FutureBuilder<AssetData>(
+////      future: imageFile,
+////      builder: (BuildContext context, AsyncSnapshot<AssetData> snapshot) {
+////        if (snapshot.connectionState == ConnectionState.done &&
+////            snapshot.data != null) {
+////          return Container(
+////              width: 200,
+////              height: 200,
+////              decoration: BoxDecoration(
+////                shape: BoxShape.circle,
+////                image: DecorationImage(
+////                    image: AssetDataImage(snapshot.data,),
+////                    fit: BoxFit.fill
+////                ),
+////              ),);
+////        } else if (snapshot.error != null) {
+////          return CircleAvatar(
+////            radius: 100,
+////            backgroundImage: FileImage(File(prefs.getString('user_profile_image')??
+////                AssetImage('assets/images/logo.png')
+////            ),),
+////          );
+////        } else {
+////          return CircleAvatar(
+////                      radius: 100,
+////                      backgroundImage: FileImage(File(prefs.getString('user_profile_image')??
+////                          AssetImage('assets/images/logo.png')
+////        ),),
+////                  );
+////        }
+////      },
+////    );
+//  }
+
+
+  Widget buildUserName() {
+    return Text('Maysa khamis',
+      style: TextStyle(color: Colors.black, fontSize: 25),);
   }
-  saveChecksToDB({bool synced}){
-    var  nowDate = now.year.toString() + '/'+now.month.toString() + '/'+now.day.toString();
-    var nowTime= now.hour.toString() + ':'+now.minute.toString() + ':'+now.second.toString();
-    DbOperations _operations = DbOperations();
-    _operations.openMyDatabase().then((onValue){
-      _operations.insertTransaction(CheckModel(
-          apiKey: empModel.apiKey,
-          addressInfo: " ' ' ",
-          location: location ,
-          client: " ' ' ",
-          logginMachine:Platform.isAndroid ? 'Android' : 'IOS' ,
-          date:nowDate  ,
-          time: nowTime,
-          checkType: 2,
-          sync: synced ?1 :0,
-          isOnline: synced? 1:0,
-          employeeId: empModel.employeeId.toString()
-      ));
-    });
+
+  Widget buildSignIn() {
+    return GestureDetector(
+      onTap: () => signInOnTap(),
+      child: Container(
+        alignment: Alignment.center,
+        margin: EdgeInsets.only(left: 15, right: 15),
+        width: width * 0.6,
+        height: height * .07,
+        decoration: BoxDecoration(
+          color: Color(0xff1295df),
+          borderRadius: BorderRadius.circular(20.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.white,
+              offset: Offset(0.0, 2.0),
+            ),
+          ],
+        ),
+        child: Text('Check in', style: TextStyle(color: Colors.white),),
+      ),
+    );
   }
+
+  signInOnTap() {
+    Navigator.push(context, MaterialPageRoute(
+        builder: (context) =>
+            MultiBlocProvider(
+              child: AdditionalInfo(checkType: 1,),
+              providers: [
+                BlocProvider<ClientsBloc>(
+                  create: (_) => ClientsBloc(),
+                ), BlocProvider(
+                  create: (_) => CheckBloc(),
+                ),
+              ],
+            )
+    ));
+  }
+
+  Widget buildSignOut() {
+    return GestureDetector(
+      onTap: () => signOutOnTap(),
+      child: Container(
+        alignment: Alignment.center,
+        margin: EdgeInsets.only(left: 15, right: 15),
+        width: width * 0.6,
+        height: height * .07,
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(20.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.white,
+              offset: Offset(0.0, 2.0),
+            ),
+          ],
+        ),
+        child: Text('Check out', style: TextStyle(color: Colors.white),),
+      ),
+    );
+  }
+
+  signOutOnTap() {
+    Navigator.push(context, MaterialPageRoute(
+        builder: (context) =>
+            MultiBlocProvider(
+              child: AdditionalInfo(checkType: 0,),
+              providers: [
+                BlocProvider<ClientsBloc>(
+                  create: (_) => ClientsBloc(),
+                ), BlocProvider(
+                  create: (_) => CheckBloc(),
+                ),
+              ],
+            )
+    ));
+  }
+
+  Widget buildTextInGridView({String title, CheckType checkType}) {
+    return Container(
+
+      ///  margin: EdgeInsets.only(right: 10.0),
+        child: Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(title, style: TextStyle(color: Colors.black54),),
+                  Text(fetchTime(checkType) ?? "00.00.00",
+                    style: TextStyle(color: Colors.black54),),
+                ],
+              )
+            ],
+          ),)
+
+    );
+  }
+
+  String fetchTime(CheckType checkType) {
+    if (_homeInfo != null) {
+      if (checkType == CheckType.checkIn) {
+        return _homeInfo.CheckIn;
+      }
+      else if (checkType == CheckType.checkOut) {
+        return _homeInfo.CheckOutAt;
+      }
+      else {
+        if (_homeInfo.LastCheckOutDate != null &&
+            _homeInfo.LastCheckOutTime != null) {
+          return _homeInfo.LastCheckOutDate + ' ' + _homeInfo.LastCheckOutTime;
+        }
+      }
+    }
+    return null;
+  }
+
+  Widget buildOtherButtons() {
+    return Container(
+        margin: EdgeInsets.all(10.0),
+          padding: EdgeInsets.all(10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center ,
+            children: <Widget>[
+              GestureDetector(
+                child: Column(
+                  children: <Widget>[
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor:Colors.black26,
+                      child: Icon(Icons.date_range,
+                        size: 20.0,color: Colors.white,),
+                    ),
+                    SizedBox(height: 10,),
+                    Text('Transactions')],
+                ),
+                  onTap: () =>
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (BuildContext context) => TransactionsScreen()))
+                //  onTap: print('test'),
+              ),
+              SizedBox(width: 40,),
+              GestureDetector(
+                child: Column(
+                  children: <Widget>[ CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.black26,
+                    child: Icon(Icons.add_to_home_screen,
+                      size: 20.0,color: Colors.white,),
+                  ),
+                    SizedBox(height: 10,),
+                    Text('Logout')],
+                ),
+                  onTap:()=> UtilsClass.logOut(context)
+                //  onTap: print('test'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+//  pickImageFromGallery() {
+//    ImagePicker.singlePicker(_context, singleCallback: (data) {
+//      setState(() async {
+//      final String path = await findLocalPath();
+//      var  fileName = basename(data.path);
+//      prefs = await SharedPreferences.getInstance();
+//      prefs.setString('user_profile_image', '$path/$fileName');
+//      });
+//    });
+//  }
+//
+//  Future<String> findLocalPath() async {
+//    final directory = Platform.isAndroid
+//        ? await getExternalStorageDirectory()
+//        : await getApplicationDocumentsDirectory();
+//    return directory.path;
+//  }
+
+
+
 }
+
 enum CheckType{
   checkIn ,
   checkOut

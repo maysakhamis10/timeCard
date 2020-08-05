@@ -1,5 +1,8 @@
-class HomeInfo{
-  String CheckIn ,BreakOut , BreakIn , ShortBreak,CheckOutAt, LastCheckOutTime,LastCheckOutDate,DiviceMacAddress;
+import 'BaseModel.dart';
+
+class HomeInfo extends BaseModel{
+  String CheckIn ,BreakOut , BreakIn , ShortBreak,CheckOutAt,
+      LastCheckOutTime,LastCheckOutDate,DiviceMacAddress;
 
   HomeInfo({
       this.CheckIn,
@@ -10,10 +13,9 @@ class HomeInfo{
       this.LastCheckOutTime,
       this.LastCheckOutDate,
       this.DiviceMacAddress});
+
   factory HomeInfo.fromJson(Map<String, dynamic> json) {
-
-    var jsonDecoded =json['Attendance_Information'];
-
+  var jsonDecoded = json['Attendance_Information'];
     return HomeInfo(
       CheckIn:jsonDecoded['CheckIn'],
       BreakOut : jsonDecoded['BreakOut'],
@@ -25,4 +27,16 @@ class HomeInfo{
       DiviceMacAddress: jsonDecoded['DiviceMacAddress'],
     );
   }
+  Map<String, dynamic> toJson() => {
+    'CheckIn': CheckIn,
+    'BreakOut': BreakOut,
+    'BreakIn': BreakIn,
+    'ShortBreak': ShortBreak,
+    'CheckOutAt' : CheckOutAt ,
+    'LastCheckOutTime' : LastCheckOutTime,
+    'LastCheckOutDate' : LastCheckOutDate,
+    'DiviceMacAddress' : DiviceMacAddress,
+  };
+
+
 }

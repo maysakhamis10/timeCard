@@ -13,7 +13,7 @@ class ClientsBloc extends Bloc<BaseEvent , ClientListState>{
   Stream<ClientListState> mapEventToState(BaseEvent event)async* {
     // TODO: implement mapEventToSta
     if (event is ClientEvent ){
-      List<String> clientNames =await ApiCalls.getClientNames(event.apiKey);
+      List<String> clientNames =await ApiCalls.fetchClientNames(event.apiKey);
       yield ClientListState(result: dataResult.Loaded,list: clientNames);
     }
   }

@@ -8,7 +8,6 @@ class CheckInResponse extends BaseModel{
   CheckInResponse({this.status, this.message, this.flag});
 
   factory CheckInResponse.fromJson(Map<String, dynamic> json) {
-
     return CheckInResponse(
       flag: json['Flag'],
       message : json['Message'],
