@@ -42,6 +42,9 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.black87),
             ),
+            iconTheme: IconThemeData(
+              color: Colors.black
+            ),
           backgroundColor: Color(0xFFEEEEEE),),
         body: buildBody());
   }
