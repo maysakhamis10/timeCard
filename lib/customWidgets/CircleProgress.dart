@@ -11,11 +11,11 @@ class CircleProgress extends CustomPainter{
   void paint(Canvas canvas, Size size) {
     // TODO: implement paint
   Paint outerCircle = Paint()
-      ..strokeWidth=7
+      ..strokeWidth=4
     ..color = Colors.black26
       ..style = PaintingStyle.stroke;
   Paint completeArc = Paint()
-  ..strokeWidth =7
+  ..strokeWidth =4
   .. style = PaintingStyle.stroke
     ..color=Colors.blue
    .. strokeCap= StrokeCap.round;

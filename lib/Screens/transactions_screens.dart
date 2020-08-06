@@ -14,7 +14,7 @@ class TransactionsScreen extends StatefulWidget {
 
 class _TransactionsScreenState extends State<TransactionsScreen> {
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+ // final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   DbOperations _operations = DbOperations();
   List<CheckModel> _allTranactions =  [];
   DateTime now;
@@ -35,7 +35,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        key: _scaffoldKey,
+       // key: _scaffoldKey,
         appBar: AppBar(
           title: Text("My Transactions"),
         ),
@@ -43,12 +43,9 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   }
 
   Widget buildBody() {
-   return ListView(
-      children: <Widget>[
-        buildEditDateText(),
-        buildListView(),
-      ],
-    );
+   return Container(
+     child: buildListView(),
+   );
   }
 
   Widget buildListView(){
@@ -57,10 +54,14 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       builder: (BuildContext context , AsyncSnapshot<List<CheckModel>> snapshot){
         if (snapshot.hasData) {
           return ListView.builder(
-            itemCount: snapshot.data.length,
+            itemCount: snapshot.data.length+1,
+            scrollDirection: Axis.vertical,
+            physics: ScrollPhysics(),
             shrinkWrap: true,
             itemBuilder: (context, index) {
-              return buildTransactionItem(_allTranactions[index]);
+              if ( index == 0 )
+                return buildEditDateText() ;
+              return buildTransactionItem(_allTranactions[index-1]);
             },
           );
         }
@@ -195,12 +196,12 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       }
   }
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    Navigator.pop(_scaffoldKey.currentState.context);
-  }
+//  @override
+//  void dispose() {
+//    // TODO: implement dispose
+//    super.dispose();
+//    Navigator.pop(_scaffoldKey.currentState.context);
+//  }
 
 }
 

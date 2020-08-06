@@ -39,7 +39,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   Color mainColor = Color(0xff1295df);
   ClientsBloc _clientsBloc ;
   CheckModel _checkObject ;
-  ProgressDialog pr;
+  ProgressDialog progressLoading;
   DbOperations _operations = DbOperations();
 
   @override
@@ -103,17 +103,18 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   }
 
 
-  Widget buildRowOfClientDropDown(){
+  Widget buildRowOfClientDropDown( ){
     return Container(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center ,
         children: <Widget>[
-          buildClientTxt(),
+//          buildClientTxt(),
           SizedBox(width: 2,),
           checkListener(),
+          clientsListener(),
           SizedBox(width: 2,),
-          dropDownList(),
+         // dropDownList(),
         ],
       ),
     );
@@ -216,7 +217,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
           content: 'There is no internet now , your transactions will saved locally and it will be synced later ',
           context: context,
           type: DialogType.warning,
-          onPressed: navigateToMain()
+          onPressed: navigateToMain
       );
 
     }
@@ -225,7 +226,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   Widget dropDownList() {
     return SingleChildScrollView(
       child: Container(
-        width: width*0.5,
+        width: width,
         child: DropdownButton<String>(
             isExpanded: true,
             icon: Icon(Icons.arrow_drop_down),
@@ -240,23 +241,28 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
                 dropdownValue = newValue;
               });
             },
-            items:
-            clients.map<DropdownMenuItem<String>>((String value) {
+            items: clients.length<=1 ? clients.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: dropdownValue ,
+                child: Text(dropdownValue),
+              );}).toList():clients
+                .map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
               );
-            }).toList()
+            })
+                .toList()
         ),
       ),
     );
   }
 
   showProgressDialog()async{
-    pr = await ProgressDialog(context,type: ProgressDialogType.Normal,
+    progressLoading = await ProgressDialog(context,type: ProgressDialogType.Normal,
       isDismissible: true,
       showLogs: false,);
-    pr..style(
+    progressLoading..style(
         message: 'Loading ...',
         borderRadius: 10.0,
         backgroundColor: Colors.white,
@@ -270,14 +276,14 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
         messageTextStyle: TextStyle(
             color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
     );
-    pr.show();
+    progressLoading.show();
   }
 
-  Widget checkListener() {
+  Widget checkListener( ) {
     return BlocListener<CheckBloc, BaseResultState>(
       listener: (context, state) {
-        if(pr!=null) {
-          pr.hide();
+        if(progressLoading!=null) {
+          progressLoading.hide();
         }
         if (state.result == dataResult.Loaded) {
           var flag = (state.model as CheckInResponse).flag;
@@ -285,15 +291,15 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
           if (flag == 1) {
             saveChecksToDB(true, _checkObject);
             UtilsClass.showMyDialog(content:  message.toString(),
-                context: _scaffoldKey.currentContext,
-                onPressed: navigateToMain(),
+                context: context,
+                onPressed: navigateToMain,
                 type: DialogType.confirmation);
           }
           else {
             UtilsClass.showMyDialog(
                 content: 'There is something wrong please check in again ',
-                context: _scaffoldKey.currentContext,
-                onPressed: navigateToMain(),
+                context: context,
+                onPressed: navigateToMain,
                 type: DialogType.confirmation);
           }
         }
@@ -302,12 +308,30 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
     );
   }
 
+  Widget clientsListener(){
+    return BlocBuilder<ClientsBloc, ClientListState>(
+      builder: (context , ClientListState realState){
+        if(realState.result == dataResult.Empty)
+        {
+          //clients.add('Client Name');
+          return dropDownList();
+        }
+        else if(realState.result == dataResult.Loaded)
+        {
+          clients=realState.list;
+          return dropDownList();
+        }
+        return Container();
+      },
+    );
+  }
+
   Future<Employee> getApiKeyAndId() async {
     return await SharedPreferencesOperations.getApiKeyAndId();
   }
 
   navigateToMain() {
-    pr.hide();
+    Navigator.of(context).pop();
     Navigator.pushReplacement(context, MaterialPageRoute(
         builder: (context) =>
             BlocProvider(
@@ -331,17 +355,12 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
 
   }
 
+
   Future <CheckModel> fetchSavedTransactionFromDB()async{
    CheckModel savedObject = await _operations.fetchSaveTransInDb() ;
    return savedObject ;
   }
 
-   @override
-  void dispose() {
-    // TODO: implement dispose
-  super.dispose();
-    Navigator.pop(_scaffoldKey.currentContext);
-  }
 
 }
 

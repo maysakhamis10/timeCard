@@ -12,6 +12,7 @@ import 'LoginScreen.dart';
 
 class SplashScreen extends StatelessWidget {
   bool keepLoggedIn = false;
+
   @override
   Widget build(BuildContext context) {
 
@@ -33,19 +34,19 @@ class SplashScreen extends StatelessWidget {
 
   _count(context){
   Timer(Duration(seconds: 3), () {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) {
-        return keepLoggedIn ? BlocProvider<HomeInfoBloc>(
-          create: (_) => HomeInfoBloc(),
-          child: MainScreen(),
-        ) :
-        BlocProvider<LoginBloc>(
-          create: (_) => LoginBloc(),
-          child: SignIn(),
-        );
-      }),
-    );
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) {
+          return keepLoggedIn ? BlocProvider<HomeInfoBloc>(
+            create: (_) => HomeInfoBloc(),
+            child: MainScreen(),
+          ) :
+          BlocProvider<LoginBloc>(
+            create: (_) => LoginBloc(),
+            child: SignIn(),
+          );
+        }));
+
+
   });
 }
 

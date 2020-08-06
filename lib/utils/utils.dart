@@ -89,9 +89,7 @@ class UtilsClass {
           child: Text(
               'Ok'
           ),
-          onPressed: () {
-            onPressed ?? Navigator.pop(context) ;
-          },
+          onPressed: () => onPressed(),
         )
       ],
     );
