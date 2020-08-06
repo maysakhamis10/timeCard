@@ -79,38 +79,41 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
         //   title: Text('Additional Info'),
         // ),
         backgroundColor: Colors.transparent,
-        body: SingleChildScrollView(
-          child: Container(
-            margin: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              color: Colors.white,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                buildRowOfClientDropDown(),
-                SizedBox(
-                  height: height * .01,
-                ),
-                // buildAdditionalInfoTxt(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: buildContainerTxt(),
-                ),
-                Divider(
-                  color: Colors.grey,
-                  endIndent: 30,
-                  indent: 30,
-                ),
-                SizedBox(
-                  height: height * .08,
-                ),
-                buildSaveBtn(),
-                SizedBox(
-                  height: height * .08,
-                ),
-              ],
+        body: Center(
+          child: SingleChildScrollView(
+            child: Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.white,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  buildRowOfClientDropDown(),
+                  SizedBox(
+                    height: height * .01,
+                  ),
+                  // buildAdditionalInfoTxt(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: buildContainerTxt(),
+                  ),
+                  Divider(
+                    color: Colors.grey,
+                    endIndent: 30,
+                    indent: 30,
+                  ),
+                  SizedBox(
+                    height: height * .08,
+                  ),
+                  buildSaveBtn(),
+                  SizedBox(
+                    height: height * .08,
+                  ),
+                ],
+              ),
             ),
           ),
         ));
@@ -119,6 +122,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   Widget buildRowOfClientDropDown() {
     return Container(
       margin: EdgeInsets.all(20),
+      alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
