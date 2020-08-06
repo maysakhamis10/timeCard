@@ -47,62 +47,64 @@ class _SignInState extends State<SignIn> {
      height = MediaQuery.of(context).size.height;
      width = MediaQuery.of(context).size.width;
     return Scaffold(
-
         body: ListView(
           children: <Widget>[
-            Stack(
-              children: <Widget>[
-                Container(
-                  width: width,
-                  height: height*0.6,
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(10.0),
-                    boxShadow: [
-                      BoxShadow(
+            Container(
+              color: Color(0xFFF5F5F5),
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                      width: width,
+                      height: height*0.6,
+                      decoration: BoxDecoration(
                         color: Colors.blue,
-                        offset: Offset(0.0, 2.0),
+                        borderRadius: BorderRadius.circular(10.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.blue,
+                            offset: Offset(0.0, 2.0),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child:
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(height: 80,),
-                        Center(
-                          child:
-                           Image.asset('assets/images/logo.png',
+                      child:
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(height: 80,),
+                          Center(
+                            child:
+                            Image.asset('assets/images/logo.png',
                               height: 100,
                               width: 100,
                               fit: BoxFit.contain,),
                           ),
-                    Text('  ITG TimeCard' , style:  TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
-                    ),
-                      ],
-                    )
-                ),
-                Container(
-                      margin: EdgeInsets.only(top: 300,left: 20,right: 20,bottom: 50),
-                        width: width,
-                        height: height*0.5,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26,
-                              offset: Offset(0.0, 2.0),
-                            ),
-                          ],
+                          Text('  ITG TimeCard' , style:  TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                        ],
+                      )
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 250,left: 20,right: 20,bottom: 50),
+                    width: width,
+                    height: height*0.5,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          offset: Offset(1.0, 4.0),
                         ),
-                  child: buildLoginForm(),
-                      ),
-              ],
+                      ],
+                    ),
+                    child: buildLoginForm(),
+                  ),
+                ],
+              ),
             )
           ],
-        )
+        ),
     );
   }
 
@@ -118,7 +120,7 @@ class _SignInState extends State<SignIn> {
   Widget buildTitle(){
     return  Center(child: Padding(
       padding: const EdgeInsets.only(top : 8.0),
-      child: Text('  ITG TimeCard' , style:  TextStyle(
+      child: Text('ITG TimeCard' , style:  TextStyle(
           color: Color(0xff0066CC), fontWeight: FontWeight.bold, fontSize: 20
       ),
       ),
