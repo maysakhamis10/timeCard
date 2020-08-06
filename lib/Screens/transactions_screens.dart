@@ -35,10 +35,14 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-       // key: _scaffoldKey,
         appBar: AppBar(
-          title: Text("My Transactions"),
-        ),
+          centerTitle: true,
+          title: Text(
+              'Transactions',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black87),
+            ),
+          backgroundColor: Color(0xFFEEEEEE),),
         body: buildBody());
   }
 

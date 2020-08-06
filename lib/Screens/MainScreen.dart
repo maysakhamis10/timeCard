@@ -95,8 +95,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin  
     width = MediaQuery.of(context).size.width;
     return Scaffold(
         appBar: AppBar(title: new Center(
-          child: Text('TimeCard', textAlign: TextAlign.center,),),
-          backgroundColor: Color(0xff1295df),),
+          child: Text(
+            'Time Card',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.black87),
+          ),),
+          backgroundColor: Color(0xFFEEEEEE),),
         body: BlocBuilder<HomeInfoBloc, BaseResultState>(
             builder: (context, state) {
               if (state.result == dataResult.Loading) {
@@ -207,8 +211,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin  
 
   signInOnTap(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(
-        builder: (context) =>
-            MultiBlocProvider(
+        fullscreenDialog: true,
+        builder: (context) => MultiBlocProvider(
               child: AdditionalInfo(checkType: 1,),
               providers: [
                 BlocProvider<ClientsBloc>(
@@ -303,33 +307,35 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin  
 
   Widget buildOtherButtons(BuildContext context) {
     return Container(
-          margin: EdgeInsets.only(left: 60,right: 60,top: 20),
+          margin: EdgeInsets.only(left: 60,right: 60,top: 40),
           child: Row(
-
-
             mainAxisAlignment: MainAxisAlignment.spaceBetween ,
             children: <Widget>[
               buildLogOutButton(),
-              buildRefreshButton() ,
               buildTransactionsButton(),
-
+              buildRefreshButton() ,
 
             ],
           ),
     );
   }
-  Widget buildLogOutButton(){
-    return     GestureDetector(
-        child: Column(
 
+  Widget buildLogOutButton(){
+    return   GestureDetector(
+        child: Column(
           children: <Widget>[
-            CircleAvatar(
-            radius: 30,
-            backgroundColor: Colors.white,
-            child: Icon(Icons.add_to_home_screen, size: 20.0,color: Colors.black,),
-          ),
+           CircleAvatar(
+             radius: 31,
+             backgroundColor: Colors.blue,
+             child:  CircleAvatar(
+               radius: 30,
+               backgroundColor: Colors.white,
+               child: Icon(Icons.exit_to_app, size: 20.0,color: Colors.blue,),
+             ),
+           ),
             SizedBox(height: 10,),
-            Text('Logout')],
+            Center(child: Text('Logout'),),
+  ]
         ),
         onTap:()=> UtilsClass.logOut(context)
 
@@ -344,13 +350,17 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin  
         child: Column(
           children: <Widget>[
             CircleAvatar(
-              radius: 30,
-              backgroundColor:Colors.black26,
-              child: Icon(Icons.refresh,
-                size: 15.0,color: Colors.white,),
+              radius: 31,
+              backgroundColor: Colors.blue,
+              child:  CircleAvatar(
+                radius: 30,
+                backgroundColor: Colors.white,
+                child: Icon(Icons.cached, size: 20.0,color: Colors.blue,),
+              ),
             ),
             SizedBox(height: 10,),
-            Text('Refresh')],
+            Center(child: Text('Refresh'),),
+           ],
         ),
         onTap: () => callHomeInfoService()
       //  onTap: print('test'),
@@ -362,13 +372,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin  
         child: Column(
           children: <Widget>[
             CircleAvatar(
-              radius: 30,
-              backgroundColor:Colors.black26,
-              child: Icon(Icons.date_range,
-                size: 15.0,color: Colors.white,),
+              radius: 31,
+              backgroundColor: Colors.blue,
+              child:  CircleAvatar(
+                radius: 30,
+                backgroundColor: Colors.white,
+                child: Icon(Icons.calendar_today, size: 20.0,color: Colors.blue,),
+              ),
             ),
             SizedBox(height: 10,),
-            Text('Transactions')],
+            Center(child: Text('Transactions',),)],
         ),
         onTap: () =>
             Navigator.of(context).push(MaterialPageRoute(
@@ -376,7 +389,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin  
       //  onTap: print('test'),
     );
   }
-
 
 
   showProgressDialog()async{
@@ -442,6 +454,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin  
     });
 
   }
+
 
   @override
   void dispose() {

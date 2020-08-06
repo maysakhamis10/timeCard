@@ -1,9 +1,10 @@
 import 'dart:async';
+import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:progress_dialog/progress_dialog.dart';
-import 'package:timecarditg/Blocs/CheckInBloc.dart';
 import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
 import 'package:timecarditg/Blocs/LoginBloc.dart';
 import 'package:timecarditg/Blocs/home_bloc.dart';
@@ -32,6 +33,7 @@ class _SignInState extends State<SignIn> {
   final formKey = GlobalKey<FormState>();
   bool switchState = true;
   var mainColor = Color(0xFF1589d2);
+  var height, width;
 
   @override
   void initState() {
@@ -42,37 +44,63 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery
-        .of(context)
-        .size
-        .height;
-    var width = MediaQuery
-        .of(context)
-        .size
-        .width;
+     height = MediaQuery.of(context).size.height;
+     width = MediaQuery.of(context).size.width;
     return Scaffold(
-        body: Stack(
+
+        body: ListView(
           children: <Widget>[
-            Image.asset('assets/images/login.png', height: height,
-              width: width,
-              fit: BoxFit.cover,),
-            SingleChildScrollView(
-                child:
-                Column(
-                  children: <Widget>[
-                    buildLogo(),
-                    buildTitle(),
-                    SizedBox(height: height * .23,),
-                    Container(height: height - 50, child:
-                    Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 24
-                          ),
-                          child: buildLoginForm()
+            Stack(
+              children: <Widget>[
+                Container(
+                  width: width,
+                  height: height*0.6,
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(10.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.blue,
+                        offset: Offset(0.0, 2.0),
                       ),
+                    ],
+                  ),
+                  child:
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(height: 80,),
+                        Center(
+                          child:
+                           Image.asset('assets/images/logo.png',
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.contain,),
+                          ),
+                    Text('  ITG TimeCard' , style:  TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
                     ),
-                  ],
-                )),
+                      ],
+                    )
+                ),
+                Container(
+                      margin: EdgeInsets.only(top: 300,left: 20,right: 20,bottom: 50),
+                        width: width,
+                        height: height*0.5,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              offset: Offset(0.0, 2.0),
+                            ),
+                          ],
+                        ),
+                  child: buildLoginForm(),
+                      ),
+              ],
+            )
           ],
         )
     );
@@ -98,61 +126,72 @@ class _SignInState extends State<SignIn> {
 }
 
   Widget buildLoginForm(){
-    return Form(
-      key: formKey,
-      child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            BlocListener<LoginBloc , BaseResultState>(
-              bloc: _bloc,
-              listener: (context , state) async{
-                if (state.result == dataResult.Loading) {
-                  showProgressDialog();
-                }
-                else if (state.result == dataResult.Loaded) {
-                  saveKeepMeLoggedIn();
-                  var employee = (state.model as Employee);
-                  saveApiKey(employee);
-                  Timer(Duration(seconds: 3), () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) {
-                        return   BlocProvider(
-                          child: MainScreen(),
-                          create: (_)=>HomeInfoBloc(),
-                        );
-                      }),
+    return Container(
+      margin: EdgeInsets.all(20.0),
+      child:     Form(
+
+        key: formKey,
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              BlocListener<LoginBloc , BaseResultState>(
+                bloc: _bloc,
+                listener: (context , state) async{
+                  if (state.result == dataResult.Loading) {
+                    showProgressDialog();
+                  }
+                  else if (state.result == dataResult.Loaded) {
+                    saveKeepMeLoggedIn();
+                    var employee = (state.model as Employee);
+                    saveApiKey(employee);
+                    Timer(Duration(seconds: 3), () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) {
+                          return   BlocProvider(
+                            child: MainScreen(),
+                            create: (_)=>HomeInfoBloc(),
+                          );
+                        }),
+                      );
+                    });
+                  }
+                  else if (state.result == dataResult.Error) {
+                    if(pr !=null){
+                      pr.hide();}
+                    UtilsClass.showMyDialog(content: "Invalid username or password or may "
+                        "be your mac Address is not Registered",
+                        context: context,
+                        type: DialogType.warning,
+                        onPressed: dismissLoading
                     );
-                  });
-                }
-                else if (state.result == dataResult.Error) {
-                  if(pr !=null){
-                    pr.hide();}
-                  UtilsClass.showMyDialog(content: "Invalid username or password or may "
-                      "be your mac Address is not Registered",
-                    context: context,
-                    type: DialogType.warning,
-                    onPressed: dismissLoading
-                  );
-                }
-              },
-              child: Container(),
-            ),
-            buildUserName(),
-            SizedBox(height:8,) ,
-            buildPassword(),
-            SizedBox(height: 8,),
-            buildKeepMeLogIn(),
-            SizedBox(height: 8,),
-            buildLogInButton(),
-            SizedBox(height: 16,),
-            Row(
-              children: <Widget>[
-                Text('Mac Address :', style: TextStyle(color: Colors.black87 , fontWeight: FontWeight.bold),),
-                Text(_platformVersion, style: TextStyle(color: mainColor , fontWeight: FontWeight.bold),)
-              ],
-            )
-          ]
+                  }
+                },
+                child: Container(),
+              ),
+              buildUserName(),
+              SizedBox(height:8,) ,
+              buildPassword(),
+              SizedBox(height: 8,),
+              buildKeepMeLogIn(),
+
+
+              SizedBox(height: 8,),
+
+              Row(
+                children: <Widget>[
+                  Text('Mac Address :', style: TextStyle(color: Colors.black87 , fontWeight: FontWeight.normal),),
+                  Text(_platformVersion, style: TextStyle(color: mainColor , fontWeight: FontWeight.normal),)
+                ],
+              ),
+
+              SizedBox(height: 16,),
+
+              buildLogInButton(),
+              SizedBox(height: 16,),
+
+            ]
+        ),
       ),
     );
   }
@@ -162,13 +201,12 @@ class _SignInState extends State<SignIn> {
             controller: emailTextEditingController,
             textAlign: TextAlign.start,
             style: TextStyle(color: Colors.black),
-            decoration: customInputDecoration('username') ,
+            decoration: customInputDecoration('User name') ,
             validator: (val){
               return val.length < 4 ? "Enter a Valid username" : null;
             }
       );
   }
-
 
 
   void dismissLoading()async{
@@ -195,7 +233,7 @@ class _SignInState extends State<SignIn> {
   return Row(
     children: <Widget>[
       Text('Keep me logged in ', style: TextStyle(
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.normal,
           color: Colors.black
       ),),
       Spacer(),
@@ -221,14 +259,22 @@ class _SignInState extends State<SignIn> {
     return GestureDetector(
       onTap: () => logInFun(),
       child: Container(
-        alignment: Alignment.center,
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(vertical: 16),
-        child: Text('Sign in' , style:  simpleTextStyle(),),
-        decoration: BoxDecoration(
-          color: mainColor,
-        ),
+      alignment: Alignment.center,
+      margin: EdgeInsets.only(left: 15, right: 15),
+      width: width * 0.6,
+      height: height * .07,
+      decoration: BoxDecoration(
+        color: Color(0xff1295df),
+        borderRadius: BorderRadius.circular(30.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.white,
+            offset: Offset(0.0, 2.0),
+          ),
+        ],
       ),
+      child: Text('Sign in', style: TextStyle(color: Colors.white),),
+    ),
     );
 
 }
