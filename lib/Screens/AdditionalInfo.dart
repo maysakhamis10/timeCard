@@ -273,31 +273,12 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   }
 
   showProgressDialog() async {
-    progressLoading = await ProgressDialog(
-      context,
-      type: ProgressDialogType.Normal,
-      isDismissible: true,
-      showLogs: false,
-    );
-    progressLoading
-      ..style(
-          message: 'Loading ...',
-          borderRadius: 10.0,
-          backgroundColor: Colors.white,
-          progressWidget: CircularProgressIndicator(
-            backgroundColor: Colors.grey,
-          ),
-          elevation: 10.0,
-          insetAnimCurve: Curves.easeInOut,
-          progress: 0.0,
-          maxProgress: 100.0,
-          progressTextStyle: TextStyle(
-              color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
-          messageTextStyle: TextStyle(
-              color: Colors.black,
-              fontSize: 19.0,
-              fontWeight: FontWeight.w600));
-    progressLoading.show();
+    await Future.delayed(const Duration(milliseconds: 100), ()  {
+      progressLoading =  ProgressDialog(context,type: ProgressDialogType.Normal,
+        isDismissible: true,
+        showLogs: false,);
+      progressLoading.show();
+    });
   }
 
   Widget checkListener() {

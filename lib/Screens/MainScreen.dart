@@ -92,13 +92,15 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
     return Scaffold(
-        appBar: AppBar(title: new Center(
-          child: Text(
-            'Time Card',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.black87),
-          ),),
-          backgroundColor: Color(0xFFEEEEEE),),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: Text(
+          'Time card',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.black87),
+        ),
+        backgroundColor: Color(0xFFEEEEEE),),
         body: BlocBuilder<HomeInfoBloc, BaseResultState>(
             builder: (context, state) {
           if (state.result == dataResult.Loading) {
@@ -207,23 +209,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   signInOnTap(BuildContext context) {
-    // Navigator.of(context, rootNavigator:true).push(
-    //   MaterialPageRoute(
-    //       builder: (context) => MultiBlocProvider(
-    //             child: AdditionalInfo(
-    //               checkType: 1,
-    //             ),
-    //             providers: [
-    //               BlocProvider<ClientsBloc>(
-    //                 create: (_) => ClientsBloc(),
-    //               ),
-    //               BlocProvider(
-    //                 create: (_) => CheckBloc(),
-    //               ),
-    //             ],
-    //           ),
-    //       fullscreenDialog: true),
-    // );
     showDialog(
       context: context,
       builder: (context) => MultiBlocProvider(

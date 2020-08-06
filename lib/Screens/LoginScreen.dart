@@ -26,7 +26,7 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
 
   String _platformVersion = 'Unknown';
-  ProgressDialog pr;
+  ProgressDialog progressLoading;
   LoginBloc _bloc ;
   TextEditingController emailTextEditingController = TextEditingController();
   TextEditingController passwordTextEditingController = TextEditingController();
@@ -98,7 +98,11 @@ class _SignInState extends State<SignIn> {
                         ),
                       ],
                     ),
-                    child: buildLoginForm(),
+                    child: ListView(
+                      children: <Widget>[
+                        buildLoginForm()
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -130,8 +134,7 @@ class _SignInState extends State<SignIn> {
   Widget buildLoginForm(){
     return Container(
       margin: EdgeInsets.all(20.0),
-      child:     Form(
-
+      child:   Form(
         key: formKey,
         child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -159,8 +162,8 @@ class _SignInState extends State<SignIn> {
                     });
                   }
                   else if (state.result == dataResult.Error) {
-                    if(pr !=null){
-                      pr.hide();}
+                    if(progressLoading !=null){
+                      progressLoading.hide();}
                     UtilsClass.showMyDialog(content: "Invalid username or password or may "
                         "be your mac Address is not Registered",
                         context: context,
@@ -310,24 +313,12 @@ class _SignInState extends State<SignIn> {
   }
 
   showProgressDialog()async{
-    pr = await ProgressDialog(context,type: ProgressDialogType.Normal,
-      isDismissible: true,
-      showLogs: false,);
-    pr..style(
-        message: 'Loading ...',
-        borderRadius: 10.0,
-        backgroundColor: Colors.white,
-        progressWidget: CircularProgressIndicator(backgroundColor: Colors.grey,),
-        elevation: 10.0,
-        insetAnimCurve: Curves.easeInOut,
-        progress: 0.0,
-        maxProgress: 100.0,
-        progressTextStyle: TextStyle(
-            color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
-        messageTextStyle: TextStyle(
-            color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
-    );
-    pr.show();
+    await Future.delayed(const Duration(milliseconds: 100), ()  {
+      progressLoading =  ProgressDialog(context,type: ProgressDialogType.Normal,
+        isDismissible: true,
+        showLogs: false,);
+      progressLoading.show();
+    });
   }
 
   Future<String> macAddressChecker ()async{
