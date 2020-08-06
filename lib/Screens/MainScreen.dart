@@ -29,14 +29,13 @@ class MainScreen extends StatefulWidget {
 
 }
 
-class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin  {
-
+class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   HomeInfo _homeInfo;
   var height, width;
   HomeInfoBloc homeInfoBloc;
-  AnimationController progressController ;
-  Animation animation ;
-  double percentage  = 0;
+  AnimationController progressController;
+  Animation animation;
+  double percentage = 0;
   File _image;
   final picker = ImagePicker();
   SharedPreferences prefs;
@@ -54,30 +53,29 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin  
     callHomeInfoService();
   }
 
-  void fetchUserData() async{
-    empModel = await getUserData() ;
+  void fetchUserData() async {
+    empModel = await getUserData();
   }
 
   Future<Employee> getUserData() async {
     return await SharedPreferencesOperations.getApiKeyAndId();
   }
 
-  _initValue()async{
+  _initValue() async {
     prefs = await SharedPreferences.getInstance();
     _homeInfo = new HomeInfo();
     homeInfoBloc = BlocProvider.of<HomeInfoBloc>(context);
-    progressController = AnimationController(vsync: this,duration: Duration(milliseconds: 2000));
-    animation = Tween<double>(begin: 0, end: percentage).animate(progressController)..addListener(() {});
+    progressController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 2000));
+    animation = Tween<double>(begin: 0, end: percentage)
+        .animate(progressController)
+          ..addListener(() {});
   }
-
 
   void callHomeInfoService() async {
     if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
-       homeInfoBloc.add(HomeInfoEvent());
-
-
-    }
-    else {
+      homeInfoBloc.add(HomeInfoEvent());
+    } else {
       String fetchHomeStr = await SharedPreferencesOperations.fetchHomeData();
       var homeJson = jsonDecode(fetchHomeStr);
       if (mounted) {
@@ -103,24 +101,20 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin  
           backgroundColor: Color(0xFFEEEEEE),),
         body: BlocBuilder<HomeInfoBloc, BaseResultState>(
             builder: (context, state) {
-              if (state.result == dataResult.Loading) {
-                if (mounted) {
-                 showProgressDialog();
-                }
-              }
-              else if (state.result == dataResult.Loaded) {
-                _homeInfo = state.model;
-              dismissLoading();
-                calDifferenceHours(_homeInfo);
-                print(('object from api => ${_homeInfo.toJson()}'));
-              }
-              else if (state.result == dataResult.Error) {
-                dismissLoading();
-              }
-              return buildHomeUi(context);
+          if (state.result == dataResult.Loading) {
+            if (mounted) {
+              showProgressDialog();
             }
-        )
-    );
+          } else if (state.result == dataResult.Loaded) {
+            _homeInfo = state.model;
+            dismissLoading();
+            calDifferenceHours(_homeInfo);
+            print(('object from api => ${_homeInfo.toJson()}'));
+          } else if (state.result == dataResult.Error) {
+            dismissLoading();
+          }
+          return buildHomeUi(context);
+        }));
   }
 
   Widget buildHomeUi(BuildContext context) {
@@ -204,25 +198,51 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin  
             ),
           ],
         ),
-        child: Text('Check in', style: TextStyle(color: Colors.white),),
+        child: Text(
+          'Check in',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
     );
   }
 
   signInOnTap(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(
-        fullscreenDialog: true,
-        builder: (context) => MultiBlocProvider(
-              child: AdditionalInfo(checkType: 1,),
-              providers: [
-                BlocProvider<ClientsBloc>(
-                  create: (_) => ClientsBloc(),
-                ), BlocProvider(
-                  create: (_) => CheckBloc(),
-                ),
-              ],
-            )
-    ));
+    // Navigator.of(context, rootNavigator:true).push(
+    //   MaterialPageRoute(
+    //       builder: (context) => MultiBlocProvider(
+    //             child: AdditionalInfo(
+    //               checkType: 1,
+    //             ),
+    //             providers: [
+    //               BlocProvider<ClientsBloc>(
+    //                 create: (_) => ClientsBloc(),
+    //               ),
+    //               BlocProvider(
+    //                 create: (_) => CheckBloc(),
+    //               ),
+    //             ],
+    //           ),
+    //       fullscreenDialog: true),
+    // );
+    showDialog(
+      context: context,
+      builder: (context) => MultiBlocProvider(
+        child: Container(
+          margin: EdgeInsets.all(30),
+          child: AdditionalInfo(
+            checkType: 1,
+          ),
+        ),
+        providers: [
+          BlocProvider<ClientsBloc>(
+            create: (_) => ClientsBloc(),
+          ),
+          BlocProvider(
+            create: (_) => CheckBloc(),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget buildSignOut(BuildContext context) {
@@ -243,25 +263,53 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin  
             ),
           ],
         ),
-        child: Text('Check out', style: TextStyle(color: Colors.white),),
+        child: Text(
+          'Check out',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
     );
   }
 
   signOutOnTap(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(
-        builder: (context) =>
-            MultiBlocProvider(
-              child: AdditionalInfo(checkType: 0,),
-              providers: [
-                BlocProvider<ClientsBloc>(
-                  create: (_) => ClientsBloc(),
-                ), BlocProvider(
-                  create: (_) => CheckBloc(),
-                ),
-              ],
-            )
-    ));
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => MultiBlocProvider(
+    //       child: AdditionalInfo(
+    //         checkType: 0,
+    //       ),
+    //       providers: [
+    //         BlocProvider<ClientsBloc>(
+    //           create: (_) => ClientsBloc(),
+    //         ),
+    //         BlocProvider(
+    //           create: (_) => CheckBloc(),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
+
+    showDialog(
+      context: context,
+      builder: (context) => MultiBlocProvider(
+        child: Container(
+          margin: EdgeInsets.all(30),
+          child: AdditionalInfo(
+            checkType: 0,
+          ),
+        ),
+        providers: [
+          BlocProvider<ClientsBloc>(
+            create: (_) => ClientsBloc(),
+          ),
+          BlocProvider(
+            create: (_) => CheckBloc(),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget buildTextInGridView({String title, CheckType checkType}) {
