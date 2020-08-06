@@ -101,21 +101,17 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin  
             builder: (context, state) {
               if (state.result == dataResult.Loading) {
                 if (mounted) {
-                  showProgressDialog(context);
+                 showProgressDialog();
                 }
               }
               else if (state.result == dataResult.Loaded) {
                 _homeInfo = state.model;
-//                if (progressLoading != null) {
-//                  progressLoading.hide();
-//                }
+              dismissLoading();
                 calDifferenceHours(_homeInfo);
                 print(('object from api => ${_homeInfo.toJson()}'));
               }
               else if (state.result == dataResult.Error) {
-//                if (progressLoading != null) {
-//                  progressLoading.hide();
-//                }
+                dismissLoading();
               }
               return buildHomeUi(context);
             }
@@ -188,8 +184,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin  
 
   Widget buildSignIn(BuildContext context) {
     return GestureDetector(
-      onTap: () =>                   showProgressDialog(context),
-
+      onTap: () => signInOnTap(context),
       child: Container(
         alignment: Alignment.center,
         margin: EdgeInsets.only(left: 15, right: 15),
@@ -310,93 +305,88 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin  
     return Container(
           margin: EdgeInsets.only(left: 60,right: 60,top: 20),
           child: Row(
+
+
             mainAxisAlignment: MainAxisAlignment.spaceBetween ,
             children: <Widget>[
-              GestureDetector(
-          child: Column(
-            children: <Widget>[ CircleAvatar(
-            radius: 30,
-            backgroundColor: Colors.black26,
-            child: Icon(Icons.add_to_home_screen,
-              size: 15.0,color: Colors.white,),
-          ),
-      SizedBox(height: 10,),
-      Text('Logout')],
-    ),
-    onTap:()=> UtilsClass.logOut(context)
-    //  onTap: print('test'),
-    ),
-              GestureDetector(
-                  child: Column(
-                    children: <Widget>[
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor:Colors.black26,
-                        child: Icon(Icons.refresh,
-                          size: 15.0,color: Colors.white,),
-                      ),
-                      SizedBox(height: 10,),
-                      Text('Refresh')],
-                  ),
-                  onTap: () => callHomeInfoService()
-                //  onTap: print('test'),
-              ) ,
-              GestureDetector(
-                  child: Column(
-                    children: <Widget>[
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor:Colors.black26,
-                        child: Icon(Icons.date_range,
-                          size: 15.0,color: Colors.white,),
-                      ),
-                      SizedBox(height: 10,),
-                      Text('Transactions')],
-                  ),
-                  onTap: () =>
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (BuildContext context) => TransactionsScreen()))
-                //  onTap: print('test'),
-              ) ,
+              buildLogOutButton(),
+              buildRefreshButton() ,
+              buildTransactionsButton(),
 
 
             ],
           ),
     );
   }
+  Widget buildLogOutButton(){
+    return     GestureDetector(
+        child: Column(
 
-  showProgressDialog(BuildContext context){
-//
-//    progressLoading = await ProgressDialog(context,type: ProgressDialogType.Normal,
-//      isDismissible: true,
-//      showLogs: false,);
-//    progressLoading..style(
-//        message: 'Loading ...',
-//        borderRadius: 10.0,
-//        backgroundColor: Colors.white,
-//        progressWidget: CircularProgressIndicator(backgroundColor: Colors.grey,),
-//        elevation: 10.0,
-//        insetAnimCurve: Curves.easeInOut,
-//        progress: 0.0,
-//        maxProgress: 100.0,
-//        progressTextStyle: TextStyle(
-//            color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
-//        messageTextStyle: TextStyle(
-//            color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
-//    );
-//    progressLoading.show();
-  showDialog(context: context, builder: (context)
-  {
-return Container(
-  color: Colors.red,
-  width: 100,
-  height: 100,
-);
+          children: <Widget>[
+            CircleAvatar(
+            radius: 30,
+            backgroundColor: Colors.white,
+            child: Icon(Icons.add_to_home_screen, size: 20.0,color: Colors.black,),
+          ),
+            SizedBox(height: 10,),
+            Text('Logout')],
+        ),
+        onTap:()=> UtilsClass.logOut(context)
 
-  });
 
+
+      //  onTap: print('test'),
+    );
   }
 
+  Widget buildRefreshButton(){
+    return GestureDetector(
+        child: Column(
+          children: <Widget>[
+            CircleAvatar(
+              radius: 30,
+              backgroundColor:Colors.black26,
+              child: Icon(Icons.refresh,
+                size: 15.0,color: Colors.white,),
+            ),
+            SizedBox(height: 10,),
+            Text('Refresh')],
+        ),
+        onTap: () => callHomeInfoService()
+      //  onTap: print('test'),
+    );
+  }
+
+  Widget buildTransactionsButton(){
+    return GestureDetector(
+        child: Column(
+          children: <Widget>[
+            CircleAvatar(
+              radius: 30,
+              backgroundColor:Colors.black26,
+              child: Icon(Icons.date_range,
+                size: 15.0,color: Colors.white,),
+            ),
+            SizedBox(height: 10,),
+            Text('Transactions')],
+        ),
+        onTap: () =>
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) => TransactionsScreen()))
+      //  onTap: print('test'),
+    );
+  }
+
+
+
+  showProgressDialog()async{
+    await Future.delayed(const Duration(milliseconds: 100), ()  {
+      progressLoading =  ProgressDialog(context,type: ProgressDialogType.Normal,
+        isDismissible: true,
+        showLogs: false,);
+      progressLoading.show();
+    });
+  }
 
   @override
   void didChangeDependencies() {
@@ -444,6 +434,20 @@ return Container(
     progressController.forward();
 
 
+  }
+
+  void dismissLoading()async{
+    await Future.delayed(const Duration(milliseconds: 100), () {
+      progressLoading.hide();
+    });
+
+  }
+
+  @override
+  void dispose() {
+    progressController.dispose();
+    // TODO: implement dispose
+    super.dispose();
   }
 
 }

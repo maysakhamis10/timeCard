@@ -132,6 +132,7 @@ class _SignInState extends State<SignIn> {
                       "be your mac Address is not Registered",
                     context: context,
                     type: DialogType.warning,
+                    onPressed: dismissLoading
                   );
                 }
               },
@@ -167,6 +168,16 @@ class _SignInState extends State<SignIn> {
             }
       );
   }
+
+
+
+  void dismissLoading()async{
+    await Future.delayed(const Duration(milliseconds: 100), () {
+      Navigator.of(context).pop();
+    });
+
+  }
+
 
   Widget buildPassword(){
     return  TextFormField(

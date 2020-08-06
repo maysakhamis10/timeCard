@@ -21,8 +21,6 @@ class LoginBloc extends Bloc<BaseEvent , BaseResultState> {
       yield BaseResultState(result: dataResult.Loading);
 
       var status = await ApiCalls.loginCall(event.user);
-      print('my object ===>>>>>>>>> ${event.user.password + "                 "+
-          event.user.username  + "            "  + event.user.macAddress}');
       if(status!=null){
         yield BaseResultState(result: dataResult.Loaded,model: status);
       }

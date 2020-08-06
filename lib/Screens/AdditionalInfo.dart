@@ -251,8 +251,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
                 value: value,
                 child: Text(value),
               );
-            })
-                .toList()
+            }).toList()
         ),
       ),
     );
