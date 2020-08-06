@@ -15,10 +15,8 @@ import 'package:timecarditg/utils/sharedPreference.dart';
 import 'dart:io' show Platform;
 import 'package:timecarditg/utils/utils.dart';
 
-
 class AdditionalInfo extends StatefulWidget {
-
-  int checkType ;
+  int checkType;
   AdditionalInfo({this.checkType});
 
   @override
@@ -26,7 +24,6 @@ class AdditionalInfo extends StatefulWidget {
 }
 
 class _AdditionalInfoState extends State<AdditionalInfo> {
-
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String dropdownValue = "Client Name";
   Employee empModel;
@@ -37,8 +34,8 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   String location = '';
   DateTime now;
   Color mainColor = Color(0xff1295df);
-  ClientsBloc _clientsBloc ;
-  CheckModel _checkObject ;
+  ClientsBloc _clientsBloc;
+  CheckModel _checkObject;
   ProgressDialog progressLoading;
   DbOperations _operations = DbOperations();
 
@@ -49,7 +46,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
     _checkObject = new CheckModel();
     _clientsBloc = BlocProvider.of<ClientsBloc>(context);
     _checkInBloc = BlocProvider.of<CheckBloc>(context);
-    _operations.openMyDatabase() ;
+    _operations.openMyDatabase();
     clients.add(dropdownValue);
     fetchLocation();
     fetchApiKey();
@@ -60,17 +57,16 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
     return position.latitude.toString() + ":" + position.longitude.toString();
   }
 
-  void fetchLocation()async{
+  void fetchLocation() async {
     location = await getLocation();
   }
 
-  void fetchApiKey() async{
-     empModel = await getApiKeyAndId() ;
-      if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
-        _clientsBloc.add(ClientEvent(apiKey: empModel.apiKey));
-      }
+  void fetchApiKey() async {
+    empModel = await getApiKeyAndId();
+    if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
+      _clientsBloc.add(ClientEvent(apiKey: empModel.apiKey));
+    }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -78,43 +74,64 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
     height = MediaQuery.of(context).size.height;
     return Scaffold(
         key: _scaffoldKey,
-        appBar: AppBar(
-        backgroundColor: mainColor,
-        title: Text('Additional Info'),
-      ),
-      body: ListView(
-        children: <Widget>[
-          Container(
+        //   appBar: AppBar(
+        //   backgroundColor: mainColor,
+        //   title: Text('Additional Info'),
+        // ),
+        backgroundColor: Colors.transparent,
+        body: SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Colors.white,
+            ),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SizedBox(height: height * .01,),
                 buildRowOfClientDropDown(),
-                SizedBox(height: height * .02,),
+                SizedBox(
+                  height: height * .01,
+                ),
                 // buildAdditionalInfoTxt(),
-                buildContainerTxt(),
-                SizedBox(height: height * .08,),
-                buildSaveBtn()
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: buildContainerTxt(),
+                ),
+                Divider(
+                  color: Colors.grey,
+                  endIndent: 30,
+                  indent: 30,
+                ),
+                SizedBox(
+                  height: height * .08,
+                ),
+                buildSaveBtn(),
+                SizedBox(
+                  height: height * .08,
+                ),
               ],
             ),
           ),
-        ],
-      )
-    );
+        ));
   }
 
-
-  Widget buildRowOfClientDropDown( ){
+  Widget buildRowOfClientDropDown() {
     return Container(
+      margin: EdgeInsets.all(20),
       child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center ,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
 //          buildClientTxt(),
-          SizedBox(width: 2,),
+          SizedBox(
+            width: 2,
+          ),
           checkListener(),
           clientsListener(),
-          SizedBox(width: 2,),
-         // dropDownList(),
+          SizedBox(
+            width: 2,
+          ),
+          // dropDownList(),
         ],
       ),
     );
@@ -123,34 +140,33 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   Widget buildClientTxt() {
     return Row(
       children: <Widget>[
-        Text('Clients ', style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 16
-        ),), Text('(Optional) ', style: TextStyle(
-            color: Colors.black54,
-            fontSize: 16
-        ),),
+        Text(
+          'Clients ',
+          style: TextStyle(
+              color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        Text(
+          '(Optional) ',
+          style: TextStyle(color: Colors.black54, fontSize: 16),
+        ),
       ],
     );
   }
 
-
   Widget buildContainerTxt() {
     return Container(
-      margin: EdgeInsets.only(left: 10,right: 10),
+      margin: EdgeInsets.only(left: 10, right: 10),
       width: width,
       child: TextFormField(
-        textAlign: TextAlign.center,
+        // textAlign: TextAlign.center,
         controller: addressInfoController,
         style: TextStyle(color: Colors.black),
         decoration: InputDecoration(
-            fillColor: Colors.white,
-            hintText : 'Additional info ...',
-            border: OutlineInputBorder(
-                gapPadding: 5
-            )
+          fillColor: Colors.white,
+          hintText: 'Additional info ...',
+          border: InputBorder.none,
         ),
+        showCursor: true,
         maxLines: 8,
       ),
     );
@@ -163,18 +179,16 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
         alignment: Alignment.center,
         margin: EdgeInsets.only(left: 15, right: 15),
         width: width,
-        height: height * .08,
+        height: height * .07,
         decoration: BoxDecoration(
             gradient: LinearGradient(
-                colors: [
-                  Color(0xff1295df),
-                  Color(0xff0d88cd)
-                ]
-            )
+              colors: [Color(0xff1295df), Color(0xff0d88cd)],
+            ),
+            borderRadius: BorderRadius.circular(30)),
+        child: Text(
+          'save',
+          style: TextStyle(color: Colors.white, fontSize: 20),
         ),
-        child: Text('save', style: TextStyle(
-            color: Colors.white
-        ),),
       ),
     );
   }
@@ -182,19 +196,25 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   saveButtonOnTap() async {
     CheckModel checkObject = new CheckModel();
     now = DateTime.now();
-    var nowDate = now.year.toString() + '/' + now.month.toString() + '/' +
+    var nowDate = now.year.toString() +
+        '/' +
+        now.month.toString() +
+        '/' +
         now.day.toString();
-    var nowTime = now.hour.toString() + ':' + now.minute.toString() + ':' +
+    var nowTime = now.hour.toString() +
+        ':' +
+        now.minute.toString() +
+        ':' +
         now.second.toString();
-    checkObject.apiKey =  empModel.apiKey;
-    checkObject.addressInfo=  addressInfoController.text;
-    checkObject.location =  location;
-    checkObject.date= nowDate.toString();
+    checkObject.apiKey = empModel.apiKey;
+    checkObject.addressInfo = addressInfoController.text;
+    checkObject.location = location;
+    checkObject.date = nowDate.toString();
     checkObject.client = dropdownValue;
-    checkObject.logginMachine =  Platform.isAndroid ? 'Android' : 'IOS' ;
+    checkObject.logginMachine = Platform.isAndroid ? 'Android' : 'IOS';
     checkObject.checkType = widget.checkType;
     checkObject.employeeId = empModel.employeeId;
-    checkObject.time =  nowTime.toString() ;
+    checkObject.time = nowTime.toString();
     print('CHECK OBJECT FROM SAVE BTN ${checkObject.toJson()}');
     if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
       showProgressDialog();
@@ -203,23 +223,19 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
         print('saved one is => ${savedOne.isAdded}');
         this._checkObject = savedOne;
         _checkInBloc.add(savedOne);
-      }
-      else {
+      } else {
         this._checkObject = checkObject;
         _checkInBloc.add(_checkObject);
         print('online object => ${_checkObject.toJson()}');
       }
-
-    }
-    else {
-      await saveChecksToDB(false,checkObject);
+    } else {
+      await saveChecksToDB(false, checkObject);
       UtilsClass.showMyDialog(
-          content: 'There is no internet now , your transactions will saved locally and it will be synced later ',
+          content:
+              'There is no internet now , your transactions will saved locally and it will be synced later ',
           context: context,
           type: DialogType.warning,
-          onPressed: navigateToMain
-      );
-
+          onPressed: navigateToMain);
     }
   }
 
@@ -232,56 +248,62 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
             icon: Icon(Icons.arrow_drop_down),
             value: dropdownValue,
             elevation: 1,
-            style: TextStyle(
-                color: Colors.black
-            ),
+            style: TextStyle(color: Colors.black),
             focusColor: Colors.white,
             onChanged: (String newValue) {
               setState(() {
                 dropdownValue = newValue;
               });
             },
-            items: clients.length<=1 ? clients.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: dropdownValue ,
-                child: Text(dropdownValue),
-              );}).toList():clients
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList()
-        ),
+            items: clients.length <= 1
+                ? clients.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: dropdownValue,
+                      child: Text(dropdownValue),
+                    );
+                  }).toList()
+                : clients.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList()),
       ),
     );
   }
 
-  showProgressDialog()async{
-    progressLoading = await ProgressDialog(context,type: ProgressDialogType.Normal,
+  showProgressDialog() async {
+    progressLoading = await ProgressDialog(
+      context,
+      type: ProgressDialogType.Normal,
       isDismissible: true,
-      showLogs: false,);
-    progressLoading..style(
-        message: 'Loading ...',
-        borderRadius: 10.0,
-        backgroundColor: Colors.white,
-        progressWidget: CircularProgressIndicator(backgroundColor: Colors.grey,),
-        elevation: 10.0,
-        insetAnimCurve: Curves.easeInOut,
-        progress: 0.0,
-        maxProgress: 100.0,
-        progressTextStyle: TextStyle(
-            color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
-        messageTextStyle: TextStyle(
-            color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
+      showLogs: false,
     );
+    progressLoading
+      ..style(
+          message: 'Loading ...',
+          borderRadius: 10.0,
+          backgroundColor: Colors.white,
+          progressWidget: CircularProgressIndicator(
+            backgroundColor: Colors.grey,
+          ),
+          elevation: 10.0,
+          insetAnimCurve: Curves.easeInOut,
+          progress: 0.0,
+          maxProgress: 100.0,
+          progressTextStyle: TextStyle(
+              color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+          messageTextStyle: TextStyle(
+              color: Colors.black,
+              fontSize: 19.0,
+              fontWeight: FontWeight.w600));
     progressLoading.show();
   }
 
-  Widget checkListener( ) {
+  Widget checkListener() {
     return BlocListener<CheckBloc, BaseResultState>(
       listener: (context, state) {
-        if(progressLoading!=null) {
+        if (progressLoading != null) {
           progressLoading.hide();
         }
         if (state.result == dataResult.Loaded) {
@@ -289,12 +311,12 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
           var message = (state.model as CheckInResponse).message;
           if (flag == 1) {
             saveChecksToDB(true, _checkObject);
-            UtilsClass.showMyDialog(content:  message.toString(),
+            UtilsClass.showMyDialog(
+                content: message.toString(),
                 context: context,
                 onPressed: navigateToMain,
                 type: DialogType.confirmation);
-          }
-          else {
+          } else {
             UtilsClass.showMyDialog(
                 content: 'There is something wrong please check in again ',
                 context: context,
@@ -307,17 +329,14 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
     );
   }
 
-  Widget clientsListener(){
+  Widget clientsListener() {
     return BlocBuilder<ClientsBloc, ClientListState>(
-      builder: (context , ClientListState realState){
-        if(realState.result == dataResult.Empty)
-        {
+      builder: (context, ClientListState realState) {
+        if (realState.result == dataResult.Empty) {
           //clients.add('Client Name');
           return dropDownList();
-        }
-        else if(realState.result == dataResult.Loaded)
-        {
-          clients=realState.list;
+        } else if (realState.result == dataResult.Loaded) {
+          clients = realState.list;
           return dropDownList();
         }
         return Container();
@@ -331,37 +350,27 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
 
   navigateToMain() {
     Navigator.of(context).pop();
-    Navigator.pushReplacement(context, MaterialPageRoute(
-        builder: (context) =>
-            BlocProvider(
-              child: MainScreen(),
-              create: (_) => HomeInfoBloc(),
-            )
-    ));
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  child: MainScreen(),
+                  create: (_) => HomeInfoBloc(),
+                )));
   }
 
-  saveChecksToDB(bool synced, CheckModel checkObject ) {
-
-      checkObject.isOnline = synced ? 1 : 0;
-      checkObject.sync = synced ? 1 : 0;
-      if(checkObject.isAdded==1) {
-        _operations.updateTransaction(checkObject);
-      }
-      else{
-        _operations.insertTransaction(checkObject);
-      }
-
-
+  saveChecksToDB(bool synced, CheckModel checkObject) {
+    checkObject.isOnline = synced ? 1 : 0;
+    checkObject.sync = synced ? 1 : 0;
+    if (checkObject.isAdded == 1) {
+      _operations.updateTransaction(checkObject);
+    } else {
+      _operations.insertTransaction(checkObject);
+    }
   }
 
-
-  Future <CheckModel> fetchSavedTransactionFromDB()async{
-   CheckModel savedObject = await _operations.fetchSaveTransInDb() ;
-   return savedObject ;
+  Future<CheckModel> fetchSavedTransactionFromDB() async {
+    CheckModel savedObject = await _operations.fetchSaveTransInDb();
+    return savedObject;
   }
-
-
 }
-
-
-
