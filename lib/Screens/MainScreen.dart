@@ -120,31 +120,27 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   Widget buildHomeUi(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        Center(
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 10,),
-              buildUserPic(),
-              SizedBox(height: 20,),
-              buildTextInGridView(
-                  title: 'Today Check in', checkType: CheckType.checkIn),
-              SizedBox(height: 20,),
-              buildTextInGridView(title: 'You Can Check out At ',
-                  checkType: CheckType.checkOut),
-              SizedBox(height: 20,),
-              buildTextInGridView(title: 'Last Check out '),
-              SizedBox(height: 20,),
-              buildSignIn(context),
-              SizedBox(height: 20,),
-              buildSignOut(context),
-              SizedBox(height: 20,),
-              buildOtherButtons(context)
-            ],
-          ),
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 40),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            
+            buildUserPic(),
+            SizedBox(height: 20,),
+            buildTextInGridView(
+                title: 'Today Check in', checkType: CheckType.checkIn),
+            buildTextInGridView(title: 'You Can Check out At ',
+                checkType: CheckType.checkOut),
+            buildTextInGridView(title: 'Last Check out '),
+            SizedBox(height: 20,),
+            buildSignIn(context),
+            buildSignOut(context),
+            buildOtherButtons(context)
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -189,7 +185,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         alignment: Alignment.center,
         margin: EdgeInsets.only(left: 15, right: 15),
         width: width * 0.6,
-        height: height * .07,
+        height: 50,
         decoration: BoxDecoration(
           color: Color(0xff1295df),
           borderRadius: BorderRadius.circular(30.0),
@@ -237,7 +233,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         alignment: Alignment.center,
         margin: EdgeInsets.only(left: 15, right: 15),
         width: width * 0.6,
-        height: height * .07,
+        height: 50,
         decoration: BoxDecoration(
           color: Colors.red,
           borderRadius: BorderRadius.circular(30.0),

@@ -265,9 +265,9 @@ class _SignInState extends State<SignIn> {
       onTap: () => logInFun(),
       child: Container(
       alignment: Alignment.center,
-      margin: EdgeInsets.only(left: 15, right: 15),
+      margin: EdgeInsets.only(left: 15, right: 15, top: 60),
       width: width * 0.6,
-      height: height * .07,
+      height: 50,
       decoration: BoxDecoration(
         color: Color(0xff1295df),
         borderRadius: BorderRadius.circular(30.0),

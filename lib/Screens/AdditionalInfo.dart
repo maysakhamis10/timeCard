@@ -183,7 +183,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
         alignment: Alignment.center,
         margin: EdgeInsets.only(left: 15, right: 15),
         width: width,
-        height: height * .07,
+        height: 50,
         decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xff1295df), Color(0xff0d88cd)],

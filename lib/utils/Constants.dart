@@ -21,7 +21,7 @@ class Constants {
   static String getLoginUrl(String userName, String pass, String macAddress) {
     String loginurl = baseUrl;
     loginurl += "LogIn?" + "Username=" + userName + "&Password=" + pass +
-        "&MacAddress=" + macAddress;
+        "&MacAddress=" + "00:00:00:00:00:00";//macAddress;
     return loginurl;
   }
 
