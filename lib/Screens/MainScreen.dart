@@ -15,7 +15,7 @@ import 'package:timecarditg/customWidgets/CircleProgress.dart';
 import 'package:timecarditg/models/Employee.dart';
 import 'package:timecarditg/models/HomeInformation.dart';
 import 'package:timecarditg/utils/sharedPreference.dart';
-import 'package:timecarditg/utils/utils.dart' ;
+import 'package:timecarditg/utils/utils.dart';
 import 'AdditionalInfo.dart';
 import 'transactions_screens.dart';
 import 'package:path/path.dart' as Path;
@@ -26,7 +26,6 @@ class MainScreen extends StatefulWidget {
 
   @override
   _MainScreenState createState() => _MainScreenState();
-
 }
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
@@ -41,7 +40,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   SharedPreferences prefs;
   Employee empModel;
   ProgressDialog progressLoading;
-
 
   @override
   void initState() {
@@ -92,52 +90,68 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        title: Text(
-          'Time card',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.black87),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          title: Text(
+            'Time card',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.black87),
+          ),
+          backgroundColor: Color(0xFFEEEEEE),
         ),
-        backgroundColor: Color(0xFFEEEEEE),),
-        body: BlocBuilder<HomeInfoBloc, BaseResultState>(
-            builder: (context, state) {
-          if (state.result == dataResult.Loading) {
-            if (mounted) {
-              showProgressDialog();
-            }
-          } else if (state.result == dataResult.Loaded) {
-            _homeInfo = state.model;
-            dismissLoading();
-            calDifferenceHours(_homeInfo);
-            print(('object from api => ${_homeInfo.toJson()}'));
-          } else if (state.result == dataResult.Error) {
-            dismissLoading();
-          }
-          return buildHomeUi(context);
-        }));
+        body: WillPopScope(
+          onWillPop: () async => false,
+          child: SingleChildScrollView(
+            child: BlocBuilder<HomeInfoBloc, BaseResultState>(
+                builder: (context, state) {
+              if (state.result == dataResult.Loading) {
+                if (mounted) {
+                  showProgressDialog();
+                }
+              } else if (state.result == dataResult.Loaded) {
+                _homeInfo = state.model;
+                dismissLoading();
+                calDifferenceHours(_homeInfo);
+                print(('object from api => ${_homeInfo.toJson()}'));
+              } else if (state.result == dataResult.Error) {
+                dismissLoading();
+              }
+              return buildHomeUi(context);
+            }),
+          ),
+        ));
   }
 
   Widget buildHomeUi(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 40),
+      height: MediaQuery.of(context).size.height,
+      width:  MediaQuery.of(context).size.width,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            
             buildUserPic(),
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
             buildTextInGridView(
                 title: 'Today Check in', checkType: CheckType.checkIn),
-            buildTextInGridView(title: 'You Can Check out At ',
-                checkType: CheckType.checkOut),
+            buildTextInGridView(
+                title: 'You Can Check out At ', checkType: CheckType.checkOut),
             buildTextInGridView(title: 'Last Check out '),
-            SizedBox(height: 20,),
+            Spacer(
+              flex: 1,
+            ),
             buildSignIn(context),
+            SizedBox(
+              height: 20,
+            ),
             buildSignOut(context),
-            buildOtherButtons(context)
+            Spacer(flex: 1,),
+            buildOtherButtons(context),
+            Spacer(flex: 2,),
           ],
         ),
       ),
@@ -160,13 +174,18 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 },
                 child: CircleAvatar(
                   radius: 120,
-                  backgroundImage:
-                  prefs!=null ? prefs.getString('user_profile_image') != null ?
-                  FileImage(File(prefs.getString('user_profile_image')),scale: 1.0) :
-                  NetworkImage('http://kundenarea.at/app-assets/images/user/12.jpg'):
-                  NetworkImage('http://kundenarea.at/app-assets/images/user/12.jpg'),
-                  ),
-              ),),
+                  backgroundImage: prefs != null
+                      ? prefs.getString('user_profile_image') != null
+                          ? FileImage(
+                              File(prefs.getString('user_profile_image')),
+                              scale: 1.0)
+                          : NetworkImage(
+                              'http://kundenarea.at/app-assets/images/user/12.jpg')
+                      : NetworkImage(
+                          'http://kundenarea.at/app-assets/images/user/12.jpg'),
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -174,8 +193,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   Widget buildUserName() {
-    return Text('${empModel.username}',
-      style: TextStyle(color: Colors.black, fontSize: 25),);
+    return Text(
+      '${empModel.username}',
+      style: TextStyle(color: Colors.black, fontSize: 25),
+    );
   }
 
   Widget buildSignIn(BuildContext context) {
@@ -296,35 +317,39 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   Widget buildTextInGridView({String title, CheckType checkType}) {
     return Container(
 
-      ///  margin: EdgeInsets.only(right: 10.0),
+        ///  margin: EdgeInsets.only(right: 10.0),
         child: Container(
-          child: Row(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(title, style: TextStyle(color: Colors.black54),),
-                  SizedBox(width: 10,),
-                  Text(fetchTime(checkType) ?? "00.00.00",
-                    style: TextStyle(color: Colors.black54),),
-                ],
-              )
+              Text(
+                title,
+                style: TextStyle(color: Colors.black54),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                fetchTime(checkType) ?? "00.00.00",
+                style: TextStyle(color: Colors.black54),
+              ),
             ],
-          ),)
-
-    );
+          )
+        ],
+      ),
+    ));
   }
 
   String fetchTime(CheckType checkType) {
     if (_homeInfo != null) {
       if (checkType == CheckType.checkIn) {
         return _homeInfo.CheckIn;
-      }
-      else if (checkType == CheckType.checkOut) {
+      } else if (checkType == CheckType.checkOut) {
         return _homeInfo.CheckOutAt;
-      }
-      else {
+      } else {
         if (_homeInfo.LastCheckOutDate != null &&
             _homeInfo.LastCheckOutTime != null) {
           return _homeInfo.LastCheckOutDate + ' ' + _homeInfo.LastCheckOutTime;
@@ -336,95 +361,118 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   Widget buildOtherButtons(BuildContext context) {
     return Container(
-          margin: EdgeInsets.only(left: 60,right: 60,top: 40),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween ,
-            children: <Widget>[
-              buildLogOutButton(),
-              buildTransactionsButton(),
-              buildRefreshButton() ,
+      margin: EdgeInsets.only(left: 60, right: 60, top: 40),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          buildLogOutButton(),
+          buildTransactionsButton(),
+          buildRefreshButton(),
+        ],
+      ),
+    );
+  }
 
-            ],
+  Widget buildLogOutButton() {
+    return GestureDetector(
+        child: Column(children: <Widget>[
+          CircleAvatar(
+            radius: 31,
+            backgroundColor: Colors.blue,
+            child: CircleAvatar(
+              radius: 30,
+              backgroundColor: Colors.white,
+              child: Icon(
+                Icons.exit_to_app,
+                size: 20.0,
+                color: Colors.blue,
+              ),
+            ),
           ),
-    );
+          SizedBox(
+            height: 10,
+          ),
+          Center(
+            child: Text('Logout'),
+          ),
+        ]),
+        onTap: () => UtilsClass.logOut(context)
+
+        //  onTap: print('test'),
+        );
   }
 
-  Widget buildLogOutButton(){
-    return   GestureDetector(
-        child: Column(
-          children: <Widget>[
-           CircleAvatar(
-             radius: 31,
-             backgroundColor: Colors.blue,
-             child:  CircleAvatar(
-               radius: 30,
-               backgroundColor: Colors.white,
-               child: Icon(Icons.exit_to_app, size: 20.0,color: Colors.blue,),
-             ),
-           ),
-            SizedBox(height: 10,),
-            Center(child: Text('Logout'),),
-  ]
-        ),
-        onTap:()=> UtilsClass.logOut(context)
-
-
-
-      //  onTap: print('test'),
-    );
-  }
-
-  Widget buildRefreshButton(){
+  Widget buildRefreshButton() {
     return GestureDetector(
         child: Column(
           children: <Widget>[
             CircleAvatar(
               radius: 31,
               backgroundColor: Colors.blue,
-              child:  CircleAvatar(
+              child: CircleAvatar(
                 radius: 30,
                 backgroundColor: Colors.white,
-                child: Icon(Icons.cached, size: 20.0,color: Colors.blue,),
+                child: Icon(
+                  Icons.cached,
+                  size: 20.0,
+                  color: Colors.blue,
+                ),
               ),
             ),
-            SizedBox(height: 10,),
-            Center(child: Text('Refresh'),),
-           ],
+            SizedBox(
+              height: 10,
+            ),
+            Center(
+              child: Text('Refresh'),
+            ),
+          ],
         ),
         onTap: () => callHomeInfoService()
-      //  onTap: print('test'),
-    );
+        //  onTap: print('test'),
+        );
   }
 
-  Widget buildTransactionsButton(){
+  Widget buildTransactionsButton() {
     return GestureDetector(
         child: Column(
           children: <Widget>[
             CircleAvatar(
               radius: 31,
               backgroundColor: Colors.blue,
-              child:  CircleAvatar(
+              child: CircleAvatar(
                 radius: 30,
                 backgroundColor: Colors.white,
-                child: Icon(Icons.calendar_today, size: 20.0,color: Colors.blue,),
+                child: Icon(
+                  Icons.calendar_today,
+                  size: 20.0,
+                  color: Colors.blue,
+                ),
               ),
             ),
-            SizedBox(height: 10,),
-            Center(child: Text('Transactions',),)],
+            SizedBox(
+              height: 10,
+            ),
+            Center(
+              child: Text(
+                'Transactions',
+              ),
+            )
+          ],
         ),
-        onTap: () =>
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => TransactionsScreen()))
-      //  onTap: print('test'),
-    );
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => TransactionsScreen()))
+        //  onTap: print('test'),
+        );
   }
 
-
-  showProgressDialog()async{
-    await Future.delayed(const Duration(milliseconds: 100), ()  {
-      progressLoading =  ProgressDialog(context,type: ProgressDialogType.Normal,
+  showProgressDialog() async {
+    await Future.delayed(const Duration(milliseconds: 100), () {
+      progressLoading = ProgressDialog(
+        context,
+        type: ProgressDialogType.Normal,
         isDismissible: true,
-        showLogs: false,);
+        showLogs: false,
+      );
       progressLoading.show();
     });
   }
@@ -437,20 +485,19 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   Future getImage() async {
     prefs.remove('user_profile_image');
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
-      setState(() {
-        if(pickedFile!=null){
-          _image = File(pickedFile.path);
-        }
-      });
-      final String path = await findLocalPath();
-      String fileNameOfSelectedImage =  Path.basename(_image.path);
-      final File newImage = await _image.copy('$path/$fileNameOfSelectedImage');
-      var fileName = Path.basename(newImage.path);
-      var tesssst = '$path/$fileName' ;
-      print('pathhhhhhhhhh=====>>>>> $tesssst');
-      prefs.setString('user_profile_image', '$path/$fileName');
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      }
+    });
+    final String path = await findLocalPath();
+    String fileNameOfSelectedImage = Path.basename(_image.path);
+    final File newImage = await _image.copy('$path/$fileNameOfSelectedImage');
+    var fileName = Path.basename(newImage.path);
+    var tesssst = '$path/$fileName';
+    print('pathhhhhhhhhh=====>>>>> $tesssst');
+    prefs.setString('user_profile_image', '$path/$fileName');
   }
-
 
   Future<String> findLocalPath() async {
     final directory = Platform.isAndroid
@@ -459,13 +506,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     return directory.path;
   }
 
-
   void calDifferenceHours(HomeInfo homeInfo) {
+    if (homeInfo.CheckIn == '') return;
     var date = DateTime.now();
     var formate2 = "${date.year}-${date.month}-${date.day}";
     String timeOfCheckIn = '${formate2} ${homeInfo.CheckIn}';
     var pos = timeOfCheckIn.lastIndexOf(' ');
-    String result = (pos != -1)? timeOfCheckIn.substring(0, pos): timeOfCheckIn;
+    String result =
+        (pos != -1) ? timeOfCheckIn.substring(0, pos) : timeOfCheckIn;
     DateTime checkInpDate = new DateFormat("yyyy-MM-dd hh:mm:ss").parse(result);
     DateTime currentDate = DateTime.now();
     print('tesst $result');
@@ -473,17 +521,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     print('hourssss =>> $difference');
     percentage = (difference / 9) * 100;
     progressController.forward();
-
-
   }
 
-  void dismissLoading()async{
+  void dismissLoading() async {
     await Future.delayed(const Duration(milliseconds: 100), () {
       progressLoading.hide();
     });
-
   }
-
 
   @override
   void dispose() {
@@ -491,10 +535,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     // TODO: implement dispose
     super.dispose();
   }
-
 }
 
-enum CheckType{
-  checkIn ,
-  checkOut
-}
+enum CheckType { checkIn, checkOut }

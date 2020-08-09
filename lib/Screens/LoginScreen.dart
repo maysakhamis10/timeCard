@@ -57,12 +57,13 @@ class _SignInState extends State<SignIn> {
                       width: width,
                       height: height*0.6,
                       decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(10.0),
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.blue,
-                            offset: Offset(0.0, 2.0),
+                            color: Colors.black26,
+                            blurRadius: 3,
+                            offset: Offset(0.0, 5.0),
                           ),
                         ],
                       ),
@@ -79,7 +80,7 @@ class _SignInState extends State<SignIn> {
                               fit: BoxFit.contain,),
                           ),
                           Text('  ITG TimeCard' , style:  TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+                              color: mainColor, fontWeight: FontWeight.bold, fontSize: 20),
                           ),
                         ],
                       )
@@ -94,6 +95,7 @@ class _SignInState extends State<SignIn> {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black26,
+                          blurRadius: 10,
                           offset: Offset(1.0, 4.0),
                         ),
                       ],
@@ -278,7 +280,7 @@ class _SignInState extends State<SignIn> {
           ),
         ],
       ),
-      child: Text('Sign in', style: TextStyle(color: Colors.white),),
+      child: Text('Sign in', style: TextStyle(color: Colors.white, fontSize: 18),),
     ),
     );
 
