@@ -47,90 +47,84 @@ class _SignInState extends State<SignIn> {
      height = MediaQuery.of(context).size.height;
      width = MediaQuery.of(context).size.width;
     return Scaffold(
-        body: ListView(
-          children: <Widget>[
-            Container(
-              color: Color(0xFFF5F5F5),
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                      width: width,
-                      height: height*0.6,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 3,
-                            offset: Offset(0.0, 5.0),
-                          ),
-                        ],
-                      ),
-                      child:
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(height: 80,),
-                          Center(
-                            child:
-                            Image.asset('assets/images/logo.png',
-                              height: 100,
-                              width: 100,
-                              fit: BoxFit.contain,),
-                          ),
-                          Text('  ITG TimeCard' , style:  TextStyle(
-                              color: mainColor, fontWeight: FontWeight.bold, fontSize: 20),
-                          ),
-                        ],
-                      )
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 250,left: 20,right: 20,bottom: 50),
+      backgroundColor: Colors.white,
+      body: ListView(
+        children: <Widget>[
+          Container(
+            color: Colors.white,
+            child: Stack(
+              children: <Widget>[
+                Container(
                     width: width,
-                    height: height*0.5,
+                    height: height,
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20.0),
+                      color:  Colors.white,
+                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black26,
-                          blurRadius: 10,
-                          offset: Offset(1.0, 4.0),
+                          blurRadius: 3,
+                          offset: Offset(0.0, 5.0),
                         ),
                       ],
                     ),
-                    child: ListView(
+                    child:
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        buildLoginForm()
+                        SizedBox(height: 80,),
+                        Center(
+                          child:
+                          Image.asset('assets/images/logo.png',
+                            height: 100,
+                            width: 100,
+                            fit: BoxFit.contain,),
+                        ),
+                        Text('  ITG TimeCard' , style:  TextStyle(
+                            color: mainColor, fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
                       ],
-                    ),
+                    )
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 240,left: 20,right: 20,bottom: 50),
+                  width: width,
+                  height: height*0.57,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 10,
+                        offset: Offset(1.0, 4.0),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )
-          ],
-        ),
+                  child: ListView(
+                    children: <Widget>[
+                      buildLoginForm()
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 
   Widget buildLogo(){
-    return  Padding(
-      padding: const EdgeInsets.only(top:50.0),
-      child: Center(
-        child: Image.asset('assets/images/logo.png',height: 100,),
-      ),
-    );
+    return Center(child: Image.asset('assets/images/logo.png',
+                      height: height*0.2,
+                      width: width*0.4,
+                      fit: BoxFit.contain,),);
 }
 
   Widget buildTitle(){
-    return  Center(child: Padding(
-      padding: const EdgeInsets.only(top : 8.0),
-      child: Text('ITG TimeCard' , style:  TextStyle(
-          color: Color(0xff0066CC), fontWeight: FontWeight.bold, fontSize: 20
-      ),
-      ),
-    ));
+    return  Center(child:Text('  ITG TimeCard' , style:  TextStyle(
+                      color: mainColor, fontWeight: FontWeight.bold, fontSize: 20),));
 }
 
   Widget buildLoginForm(){
@@ -177,26 +171,14 @@ class _SignInState extends State<SignIn> {
                 child: Container(),
               ),
               buildUserName(),
-              SizedBox(height:8,) ,
+              SizedBox(height: 10,),
               buildPassword(),
-              SizedBox(height: 8,),
+              SizedBox(height: 10,),
               buildKeepMeLogIn(),
-
-
-              SizedBox(height: 8,),
-
-              Row(
-                children: <Widget>[
-                  Text('Mac Address :', style: TextStyle(color: Colors.black87 , fontWeight: FontWeight.normal),),
-                  Text(_platformVersion, style: TextStyle(color: mainColor , fontWeight: FontWeight.normal),)
-                ],
-              ),
-
-              SizedBox(height: 16,),
-
+              SizedBox(height: 10,),
+              buildMacAddress(),
+              SizedBox(height: 10,),
               buildLogInButton(),
-              SizedBox(height: 16,),
-
             ]
         ),
       ),
@@ -204,15 +186,47 @@ class _SignInState extends State<SignIn> {
   }
 
   Widget buildUserName(){
-    return TextFormField(
-            controller: emailTextEditingController,
-            textAlign: TextAlign.start,
-            style: TextStyle(color: Colors.black),
-            decoration: customInputDecoration('User name') ,
-            validator: (val){
-              return val.length < 4 ? "Enter a Valid username" : null;
-            }
-      );
+    return Container(
+      margin: EdgeInsets.only(top: 10,bottom: 10),
+      padding: EdgeInsets.only(left: 10.0 , right: 10.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+          border: Border.all(
+            color: Colors.blue,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(30))
+      ),
+      child: TextFormField(
+          controller: emailTextEditingController,
+          textAlign: TextAlign.start,
+          style: TextStyle(color: Colors.blue),
+          decoration: InputDecoration(
+            prefixIcon: Icon(Icons.account_circle,color: Colors.blue,),
+            labelText: 'User Name',
+            labelStyle: TextStyle(color: Colors.blue,letterSpacing: 1.0),
+            border: InputBorder.none,
+          ),
+          validator: (val){
+            return val.length < 4 ? "Enter a Valid username" : null;
+          }
+      ),
+    );
+  }
+
+  Widget buildMacAddress(){
+    return  Container(
+      margin: EdgeInsets.only(left:10.0,right: 10.0),
+      child: Align(
+        child: Row(
+          children: <Widget>[
+            Text('Mac Address :', style: TextStyle(  color: Colors.black87 , fontWeight: FontWeight.normal),),
+            Text(_platformVersion, style: TextStyle(color: mainColor , fontWeight: FontWeight.normal),)
+          ],
+        ),
+
+      )
+    );
+
   }
 
 
@@ -225,40 +239,60 @@ class _SignInState extends State<SignIn> {
 
 
   Widget buildPassword(){
-    return  TextFormField(
-        controller: passwordTextEditingController,
-        style: TextStyle(color: Colors.black),
-        decoration: customInputDecoration('Password') ,
-        obscureText: true,
-        validator: (val){
-          return val.length < 4 ? "Enter Password 6+ characters" : null;
-        }
+    return Container(
+      margin: EdgeInsets.only(top: 10,bottom: 10),
+      padding: EdgeInsets.only(left: 10.0 , right: 10.0),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(
+            color: Colors.blue,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(30))
+      ),
+      child: TextFormField(
+          controller: passwordTextEditingController,
+          textAlign: TextAlign.start,
+          obscureText: true,
+          style: TextStyle(color: Colors.blue),
+          decoration: InputDecoration(
+            prefixIcon: Icon(Icons.lock,color: Colors.blue,),
+            labelText: 'Password',
+            labelStyle: TextStyle(color: Colors.blue,letterSpacing: 1.0),
+            border: InputBorder.none,
+          ),
+          validator: (val){
+            return val.length < 4 ? "Enter Password 6+ characters" : null;
+          }
+      ),
     );
   }
 
   Widget buildKeepMeLogIn() {
-  return Row(
-    children: <Widget>[
-      Text('Keep me logged in ', style: TextStyle(
-          fontWeight: FontWeight.normal,
-          color: Colors.black
-      ),),
-      Spacer(),
-      Flexible(
-        child: Container(
-          alignment: Alignment.centerRight,
-          child: Switch(
-            value: switchState,
-            activeColor: mainColor,
-            onChanged: (bool s) {
-              setState(() {
-                switchState = s;
-              });
-            },
+  return Container(
+    margin: EdgeInsets.all(10.0),
+    child: Row(
+      children: <Widget>[
+        Text('Keep me logged in ', style: TextStyle(
+            fontWeight: FontWeight.normal,
+            color: Colors.black
+        ),),
+        Spacer(),
+        Flexible(
+          child: Container(
+            alignment: Alignment.centerRight,
+            child: Switch(
+              value: switchState,
+              activeColor: mainColor,
+              onChanged: (bool s) {
+                setState(() {
+                  switchState = s;
+                });
+              },
+            ),
           ),
         ),
-      ),
-    ],
+      ],
+    ),
   );
 }
 
@@ -267,9 +301,9 @@ class _SignInState extends State<SignIn> {
       onTap: () => logInFun(),
       child: Container(
       alignment: Alignment.center,
-      margin: EdgeInsets.only(left: 15, right: 15, top: 60),
-      width: width * 0.6,
-      height: 50,
+      margin: EdgeInsets.only(left: 10, right: 10, top: 20),
+      width: width ,
+      height: height*0.08,
       decoration: BoxDecoration(
         color: Color(0xff1295df),
         borderRadius: BorderRadius.circular(30.0),
@@ -368,6 +402,72 @@ class _SignInState extends State<SignIn> {
       print('denied');
     }
   }
+
+
+
+//  Widget buildLoginUiWithOldDesign(){
+//   return Container(
+//      color: Color(0xFFF5F5F5),
+//      child: Stack(
+//        children: <Widget>[
+//          Container(
+//              width: width,
+//              height: height*0.6,
+//              decoration: BoxDecoration(
+//                color: Colors.grey[200],
+//                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10),
+//                    bottomRight: Radius.circular(10)),
+//                boxShadow: [
+//                  BoxShadow(
+//                    color: Colors.black26,
+//                    blurRadius: 3,
+//                    offset: Offset(0.0, 5.0),
+//                  ),
+//                ],
+//              ),
+//              child:
+//              Column(
+//                crossAxisAlignment: CrossAxisAlignment.center,
+//                children: <Widget>[
+//                  SizedBox(height: 80,),
+//                  Center(
+//                    child:
+//                    Image.asset('assets/images/logo.png',
+//                      height: 100,
+//                      width: 100,
+//                      fit: BoxFit.contain,),
+//                  ),
+//                  Text('  ITG TimeCard' , style:  TextStyle(
+//                      color: mainColor, fontWeight: FontWeight.bold, fontSize: 20),
+//                  ),
+//                ],
+//              )
+//          ),
+//          Container(
+//            margin: EdgeInsets.only(top: 250,left: 20,right: 20,bottom: 50),
+//            width: width,
+//            height: height*0.54,
+//            decoration: BoxDecoration(
+//              color: Colors.blue,
+//              borderRadius: BorderRadius.circular(20.0),
+//              boxShadow: [
+//                BoxShadow(
+//                  color: Colors.white12,
+//                  blurRadius: 10,
+//                  offset: Offset(1.0, 4.0),
+//                ),
+//              ],
+//            ),
+//            child: ListView(
+//              children: <Widget>[
+//                buildLoginForm()
+//              ],
+//            ),
+//          ),
+//        ],
+//      ),
+//    )
+//  }
 
 }
 

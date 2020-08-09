@@ -9,19 +9,21 @@ Widget appBarMain(BuildContext context) {
 
 InputDecoration customInputDecoration(String hintText) {
   return InputDecoration(
+    prefixIcon: Icon(Icons.lock,color: Colors.blue,),
     labelText: hintText,
-    labelStyle: TextStyle(color: Colors.black,letterSpacing: 1.0),
-    focusedBorder: UnderlineInputBorder(
-        borderSide: BorderSide(
-            color: Colors.black
-        )
-    ),
-    enabledBorder: UnderlineInputBorder(
-        borderSide: BorderSide(
-          color: Colors.black,
-
-        )
-    ),
+    labelStyle: TextStyle(color: Colors.blue,letterSpacing: 1.0),
+//    focusedBorder: UnderlineInputBorder(
+//        borderSide: BorderSide(
+//            color: Colors.black
+//        )
+//    ),
+    border: InputBorder.none,
+//    enabledBorder: UnderlineInputBorder(
+//        borderSide: BorderSide(
+//          color: Colors.black,
+//
+//        )
+//    ),
   );
 }
 TextStyle simpleTextStyle (){

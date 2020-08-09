@@ -274,25 +274,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   signOutOnTap(BuildContext context) {
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => MultiBlocProvider(
-    //       child: AdditionalInfo(
-    //         checkType: 0,
-    //       ),
-    //       providers: [
-    //         BlocProvider<ClientsBloc>(
-    //           create: (_) => ClientsBloc(),
-    //         ),
-    //         BlocProvider(
-    //           create: (_) => CheckBloc(),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
-
     showDialog(
       context: context,
       builder: (context) => MultiBlocProvider(
