@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:timecarditg/Screens/SplashScreen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:timecarditg/Blocs/LoginBloc.dart';
+import 'package:timecarditg/Blocs/home_bloc.dart';
+import 'package:timecarditg/Screens/LoginScreen.dart';
+import 'package:timecarditg/Screens/MainScreen.dart';
+import 'package:timecarditg/utils/sharedPreference.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  bool keepLoggedIn = false;
+
   @override
   Widget build(BuildContext context) {
+    getKeep().then((onValue) {
+      print(onValue);
+      keepLoggedIn = onValue ?? false;
+    });
+
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Time card',
@@ -13,7 +25,18 @@ class MyApp extends StatelessWidget {
           accentColor: Colors.white,
           primaryColor: Color(0xff0099FF),
         ),
-        home:  SplashScreen()
-    );
+        home: keepLoggedIn
+            ? BlocProvider<HomeInfoBloc>(
+                create: (_) => HomeInfoBloc(),
+                child: MainScreen(),
+              )
+            : BlocProvider<LoginBloc>(
+                create: (_) => LoginBloc(),
+                child: SignIn(),
+              ));
+  }
+
+  Future<bool> getKeep() async {
+    return await SharedPreferencesOperations.getKeepMeLoggedIn();
   }
 }
