@@ -1,6 +1,4 @@
 import 'package:timecarditg/Screens/MainScreen.dart';
-import 'package:timecarditg/models/HomeInformation.dart';
-
 import '../Screens/transactions_screens.dart';
 
 class Constants {
@@ -47,6 +45,7 @@ class Constants {
   static String getClientsUrl(String apiKey) {
     String clientsUrl = baseUrl;
     clientsUrl += "GetClients?" + "apiKey=" + apiKey;
+    print('aaaaaaaaaa=> $clientsUrl');
     return clientsUrl;
   }
 

@@ -96,7 +96,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           title: Text(
             'Time card',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.black87),
+            style: TextStyle(color: Colors.blue, fontSize: 16),
           ),
           backgroundColor: Color(0xFFEEEEEE),
         ),
@@ -109,12 +109,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 if (mounted) {
                   showProgressDialog();
                 }
-              } else if (state.result == dataResult.Loaded) {
+              }
+              else if (state.result == dataResult.Loaded) {
                 _homeInfo = state.model;
                 dismissLoading();
                 calDifferenceHours(_homeInfo);
                 print(('object from api => ${_homeInfo.toJson()}'));
-              } else if (state.result == dataResult.Error) {
+              }
+              else if (state.result == dataResult.Error) {
                 dismissLoading();
               }
               return buildHomeUi(context);
@@ -138,9 +140,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             ),
             buildTextInGridView(
                 title: 'Today Check in', checkType: CheckType.checkIn),
+            SizedBox(
+              height: 10,
+            ),
             buildTextInGridView(
                 title: 'You Can Check out At ', checkType: CheckType.checkOut),
+            SizedBox(
+              height: 10,
+            ),
             buildTextInGridView(title: 'Last Check out '),
+
             Spacer(
               flex: 1,
             ),
@@ -151,7 +160,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             buildSignOut(context),
             Spacer(flex: 1,),
             buildOtherButtons(context),
-            Spacer(flex: 2,),
+            Spacer(flex: 3,),
           ],
         ),
       ),
@@ -219,7 +228,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         ),
         child: Text(
           'Check in',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white,fontSize: 15),
         ),
       ),
     );
@@ -267,7 +276,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         ),
         child: Text(
           'Check out',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white,fontSize: 15),
         ),
       ),
     );

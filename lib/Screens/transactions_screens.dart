@@ -35,15 +35,17 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      backgroundColor: Colors.white,
         appBar: AppBar(
           centerTitle: true,
           title: Text(
               'Transactions',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.black87),
+
+              style: TextStyle(color: Colors.blue,fontSize: 16),
             ),
             iconTheme: IconThemeData(
-              color: Colors.black
+              color: Colors.blue
             ),
           backgroundColor: Color(0xFFEEEEEE),),
         body: buildBody());
@@ -93,81 +95,156 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       Stack(
         children: <Widget>[
           Container(
-              margin: EdgeInsets.all(10.0),
-              padding: EdgeInsets.all(10.0),
+             margin: EdgeInsets.all(10.0),
+              padding: EdgeInsets.all(5.0),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(5.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black38,
-                    offset: Offset(0.0, 2.0),
+                  color:  checkModel.sync == 0  ? Colors.red[500] :
+                  checkModel.checkType ==1 ? Colors.blue : Colors.green[400] ,
+                  border: Border.all(
+                    color: Color(0xFFD6D6D6),
                   ),
-                ],
+                  borderRadius: BorderRadius.all(Radius.circular(25))
               ),
               child: Center(
-                child: Column(
-                  children: <Widget>[
-                    buildCenterText(checkModel),
-                  ],
-                ),
-              )
+                child: buildCenterText(checkModel),
+              ),
           ),
         ],
       );
   }
 
+
+
   Widget buildCenterText(CheckModel checkModel) {
-    return Center(child: Row(
-        children: <Widget>[
-          Icon(
-            checkModel.checkType == 1 ? Icons.check_box : Icons.exit_to_app,
-            size: 30.0,
-            color: checkModel.checkType == 1
-                ? Colors.green
-                : Colors.red,
-          ),
-          SizedBox(width: 10,),
-          Text(checkModel.date + '\n' + checkModel.time,style: TextStyle(color: Colors.black26 ),),
-          SizedBox(
-              width: MediaQuery.of(context).size.width * 0.6,
-              child: Container(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(checkModel.checkType == 1?'Checked in' : 'Checked out',
-                    style: TextStyle(
-                      color: checkModel.checkType == 1 ? Color(0xff1295df) : Colors.red,),
-                    textAlign: TextAlign.right,
-                    textDirection: TextDirection.rtl,
-                  ),
+    return Container(
+        padding: EdgeInsets.all(5.0),
+        child: Row(
+
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                SizedBox(height: 10,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Icon(Icons.access_time, size: 30.0, color: Colors.white),
+                    SizedBox(width: 10,),
+                    Text(checkModel.date + ' ' + checkModel.time,
+                      style: TextStyle(color: Colors.white),),
+                  ],
                 ),
-              )
-          )
-        ],
-      ),
+                SizedBox(height: 10,),
+                Row(
+
+                  children: <Widget>[
+                    Icon(Icons.info_outline, size: 30.0, color: Colors.white),
+                    SizedBox(width: 10,),
+                    Text('Additional info',textAlign: TextAlign.left,
+                      style: TextStyle(color: Colors.white),),
+
+                  ],
+                ),
+
+              ],
+
+            ),
+            SizedBox(width: 15,),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                SizedBox(height: 10,),
+                Row(
+                  children: <Widget>[
+                    Icon(Icons.account_circle,
+                        size: 30.0,
+                        color: Colors.white
+                    ),
+                    SizedBox(width: 10,),
+                    Text(checkModel.client,
+                      style: TextStyle(color: Colors.white),),
+
+                  ],
+                ),
+                SizedBox(height: 10,),
+                Row(
+                  children: <Widget>[
+                    Icon(Icons.sync,
+                        size: 30.0,
+                        color: Colors.white
+                    ),
+                    SizedBox(width: 10,),
+                    Text(
+                      checkModel.sync == 1 ? 'Online synced' : 'Offline synced'
+                      , style: TextStyle(color: Colors.white),),
+
+                  ],
+                ),
+                ],
+            )
+          ],
+
+
+        )
+
+
     );
   }
 
   Widget buildEditDateText(){
     return Container(
       margin: EdgeInsets.all(10.0),
-             width: MediaQuery.of(context).size.width,
-             decoration: BoxDecoration(
-               color: Color(0xff1295df),
-               borderRadius: BorderRadius.circular(10.0),
-               boxShadow: [
-                 BoxShadow(
-                   color: Colors.white,
-                   offset: Offset(0.0, 2.0),
-                 ),
-               ],
-             ),
-             child: RaisedButton(
-               color: Color(0xff1295df),
-               textColor: Colors.white,
-               child: Text('Date : '+ formattedDate, ),
-               onPressed: _pickDateDialog ,
-             ),
+      width: MediaQuery.of(context).size.width,
+      child:Column(
+        children: <Widget>[
+          SizedBox(height: 20,),
+
+          Center(
+            child: GestureDetector(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(width: 10,),
+                  Icon(Icons.event, size: 30.0, color: Colors.blue),
+                  SizedBox(width: 10,),
+                  Text( formattedDate, textAlign: TextAlign.center,style: TextStyle(fontSize: 25),),
+                  SizedBox(width: 10,),
+                ],
+              ),
+              onTap: () =>   _pickDateDialog(),
+            ),
+          ),
+          SizedBox(height: 20,),
+
+          Center(
+            child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(width: 10,),
+                  Icon(Icons.check_circle_outline, size: 30.0, color: Colors.blue),
+                  SizedBox(width: 5,),
+                  Text( 'Check in ', textAlign: TextAlign.center,),
+                  SizedBox(width: 10,),
+                  Icon(Icons.exit_to_app, size: 30.0, color: Colors.green[400]),
+                  SizedBox(width: 5,),
+                  Text( 'Check out ', textAlign: TextAlign.center,),
+                  SizedBox(width: 10,),
+                  Icon(Icons.phonelink_erase, size: 30.0, color: Colors.red[400]),
+                  SizedBox(width: 5,),
+                  Text( 'Offline synced', textAlign: TextAlign.center,),
+
+                ],
+              ),
+
+          )
+
+        ],
+      ),
+
     );
   }
 
@@ -203,12 +280,6 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       }
   }
 
-//  @override
-//  void dispose() {
-//    // TODO: implement dispose
-//    super.dispose();
-//    Navigator.pop(_scaffoldKey.currentState.context);
-//  }
 
 }
 

@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:ui';
-import 'package:timecarditg/Screens/MainScreen.dart';
 import 'package:timecarditg/models/CheckModel.dart';
 import 'package:timecarditg/models/Client.dart';
 import 'package:timecarditg/models/Employee.dart';
@@ -90,9 +88,9 @@ class ApiCalls {
     http.Response response =await   http.get(clientsUrl);
     var json = await jsonDecode(response.body);
     List<Client> clients = List() ;
-//    json['AllClients'].forEach((v) {
-//      clients.add(new Client.fromJson(v));
-//    });
+    json['AllClients'].forEach((v) {
+      clients.add(new Client.fromJson(v));
+    });
     return clients;
   }
 
@@ -102,6 +100,7 @@ class ApiCalls {
     var list = await fetchClient(apiKey);
     list.forEach((f){
       companyNames.add(f.companyName);
+      print('${f.companyName}');
     });
 
     return companyNames;

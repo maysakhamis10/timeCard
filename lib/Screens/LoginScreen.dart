@@ -47,24 +47,23 @@ class _SignInState extends State<SignIn> {
      height = MediaQuery.of(context).size.height;
      width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.white,
       body: ListView(
         children: <Widget>[
           Container(
-            color: Colors.white,
+            color: Colors.white12,
             child: Stack(
               children: <Widget>[
                 Container(
                     width: width,
-                    height: height,
+                    height: height*0.6,
                     decoration: BoxDecoration(
                       color:  Colors.white,
-                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black26,
+                          color: Colors.black12,
                           blurRadius: 3,
-                          offset: Offset(0.0, 5.0),
+                          offset: Offset(0.0, 2.0),
                         ),
                       ],
                     ),
@@ -75,13 +74,10 @@ class _SignInState extends State<SignIn> {
                         SizedBox(height: 80,),
                         Center(
                           child:
-                          Image.asset('assets/images/logo.png',
-                            height: 100,
-                            width: 100,
+                          Image.asset('assets/images/icon.png',
+                            height: 150,
+                            width: 150,
                             fit: BoxFit.contain,),
-                        ),
-                        Text('  ITG TimeCard' , style:  TextStyle(
-                            color: mainColor, fontWeight: FontWeight.bold, fontSize: 20),
                         ),
                       ],
                     )
@@ -171,7 +167,7 @@ class _SignInState extends State<SignIn> {
                 child: Container(),
               ),
               buildUserName(),
-              SizedBox(height: 10,),
+              SizedBox(height: 5,),
               buildPassword(),
               SizedBox(height: 10,),
               buildKeepMeLogIn(),
@@ -187,7 +183,8 @@ class _SignInState extends State<SignIn> {
 
   Widget buildUserName(){
     return Container(
-      margin: EdgeInsets.only(top: 10,bottom: 10),
+      height: height*0.08,
+      margin: EdgeInsets.only(top: 5,bottom: 10),
       padding: EdgeInsets.only(left: 10.0 , right: 10.0),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -203,7 +200,7 @@ class _SignInState extends State<SignIn> {
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.account_circle,color: Colors.blue,),
             labelText: 'User Name',
-            labelStyle: TextStyle(color: Colors.blue,letterSpacing: 1.0),
+            labelStyle: TextStyle(color: Colors.blue,fontSize: 15),
             border: InputBorder.none,
           ),
           validator: (val){
@@ -240,7 +237,9 @@ class _SignInState extends State<SignIn> {
 
   Widget buildPassword(){
     return Container(
-      margin: EdgeInsets.only(top: 10,bottom: 10),
+      height: height*0.08,
+
+      margin: EdgeInsets.only(top: 5,bottom: 10),
       padding: EdgeInsets.only(left: 10.0 , right: 10.0),
       decoration: BoxDecoration(
           color: Colors.white,
@@ -257,7 +256,7 @@ class _SignInState extends State<SignIn> {
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.lock,color: Colors.blue,),
             labelText: 'Password',
-            labelStyle: TextStyle(color: Colors.blue,letterSpacing: 1.0),
+            labelStyle: TextStyle(color: Colors.blue,fontSize: 15),
             border: InputBorder.none,
           ),
           validator: (val){

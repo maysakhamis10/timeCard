@@ -75,7 +75,7 @@ class DbOperations {
     print('date is ==> $date');
    /// var formattedOne  = new DateFormat('');
     List<Map<String, dynamic>> rows  = await _database.rawQuery('SELECT * FROM '
-       '$tableName Where  date = ? And sync=?  ', [date,1] );
+       '$tableName Where  date = ?  ', [date] );
    if(rows.length != 0 ) {
      List<CheckModel> list = _parseRows(rows);
      return list ;

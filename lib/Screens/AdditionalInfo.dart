@@ -1,3 +1,5 @@
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -23,7 +25,7 @@ class AdditionalInfo extends StatefulWidget {
   _AdditionalInfoState createState() => _AdditionalInfoState();
 }
 
-class _AdditionalInfoState extends State<AdditionalInfo> {
+class _AdditionalInfoState extends State<AdditionalInfo>  {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String dropdownValue = "Client Name";
   Employee empModel;
@@ -38,6 +40,8 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   CheckModel _checkObject;
   ProgressDialog progressLoading;
   DbOperations _operations = DbOperations();
+  bool _isExpand = false ;
+
 
   @override
   void initState() {
@@ -74,66 +78,50 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
     height = MediaQuery.of(context).size.height;
     return Scaffold(
         key: _scaffoldKey,
-        //   appBar: AppBar(
-        //   backgroundColor: mainColor,
-        //   title: Text('Additional Info'),
-        // ),
         backgroundColor: Colors.transparent,
-        body: Center(
-          child: SingleChildScrollView(
-            child: Container(
-              alignment: Alignment.center,
-              margin: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: Colors.white,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  buildRowOfClientDropDown(),
-                  SizedBox(
-                    height: height * .01,
-                  ),
-                  // buildAdditionalInfoTxt(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: buildContainerTxt(),
-                  ),
-                  Divider(
-                    color: Colors.grey,
-                    endIndent: 30,
-                    indent: 30,
-                  ),
-                  SizedBox(
-                    height: height * .08,
-                  ),
-                  buildSaveBtn(),
-                  SizedBox(
-                    height: height * .08,
-                  ),
-                ],
+        body: Align(
+            alignment: Alignment.center,
+            child:  Container(
+                height: height*0.6,
+                alignment: Alignment.center,
+                margin: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.white,
+                ),
+                child: ListView(
+                  children: <Widget>[
+                        buildRowOfClientDropDown(),
+                        SizedBox(height: 2,),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: buildContainerTxt(),
+                        ),
+                    SizedBox(height: 10,),
+                    buildSaveBtn(),
+                    SizedBox(height: 2,)
+                  ],
+                )
               ),
             ),
-          ),
-        ));
+    );
   }
 
   Widget buildRowOfClientDropDown() {
     return Container(
-      margin: EdgeInsets.all(20),
+      margin: EdgeInsets.all(10),
+      padding:EdgeInsets.all(10),
       alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-//          buildClientTxt(),
           SizedBox(
-            width: 2,
+            width: 5,
           ),
           checkListener(),
           clientsListener(),
           SizedBox(
-            width: 2,
+            width: 5,
           ),
           // dropDownList(),
         ],
@@ -159,7 +147,13 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
 
   Widget buildContainerTxt() {
     return Container(
-      margin: EdgeInsets.only(left: 10, right: 10),
+      padding: EdgeInsets.all(10.0),
+      decoration: BoxDecoration(
+          color:  Colors.white30,
+          border: Border.all(
+            color: Color(0xFFD6D6D6),
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(25))),
       width: width,
       child: TextFormField(
         // textAlign: TextAlign.center,
@@ -171,7 +165,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
           border: InputBorder.none,
         ),
         showCursor: true,
-        maxLines: 8,
+        maxLines: 5,
       ),
     );
   }
@@ -181,7 +175,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
       onTap: () => saveButtonOnTap(),
       child: Container(
         alignment: Alignment.center,
-        margin: EdgeInsets.only(left: 15, right: 15),
+        margin: EdgeInsets.only(left: 20, right: 20),
         width: width,
         height: 50,
         decoration: BoxDecoration(
@@ -190,7 +184,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
             ),
             borderRadius: BorderRadius.circular(30)),
         child: Text(
-          'save',
+          'Save',
           style: TextStyle(color: Colors.white, fontSize: 20),
         ),
       ),
@@ -232,7 +226,8 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
         _checkInBloc.add(_checkObject);
         print('online object => ${_checkObject.toJson()}');
       }
-    } else {
+    }
+    else {
       await saveChecksToDB(false, checkObject);
       UtilsClass.showMyDialog(
           content:
@@ -243,38 +238,276 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
     }
   }
 
-  Widget dropDownList() {
-    return SingleChildScrollView(
-      child: Container(
-        width: width,
-        child: DropdownButton<String>(
-            isExpanded: true,
-            icon: Icon(Icons.arrow_drop_down),
-            value: dropdownValue,
-            elevation: 1,
-            style: TextStyle(color: Colors.black),
-            focusColor: Colors.white,
-            onChanged: (String newValue) {
-              setState(() {
-                dropdownValue = newValue;
-              });
-            },
-            items: clients.length <= 1
-                ? clients.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: dropdownValue,
-                      child: Text(dropdownValue),
-                    );
-                  }).toList()
-                : clients.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList()),
-      ),
+
+//  Widget test(){
+//    return MenuButton(
+//      child: button(),
+//      items: clients,
+//      topDivider: true,
+//      popupHeight: 200,
+//      scrollPhysics: AlwaysScrollableScrollPhysics(),
+//      itemBuilder: (value) => Container(
+//          width: width,
+//          height: 40,
+//          alignment: Alignment.centerLeft,
+//          padding: const EdgeInsets.symmetric(horizontal: 16),
+//          child: Text(value)
+//      ),
+//      toggledChild: Container(
+//        color: Colors.white,
+//        child: button(),
+//      ),
+//      divider: Container(
+//        height: 1,
+//        color: Colors.grey,
+//      ),
+//      onItemSelected: (value) {
+//        dropdownValue = value;
+//        // Action when new item is selected
+//      },
+//      decoration: BoxDecoration(
+//          border: Border.all(color: Colors.grey[300]),
+//          borderRadius: const BorderRadius.all(Radius.circular(30.0)),
+//          color: Colors.white
+//      ),
+//      onMenuButtonToggle: (isToggle) {
+//        print(isToggle);
+//      },
+//    );
+//  }
+
+//  Widget dropDownList( ) {
+//   return MenuButton(
+//        child: buildBtn(),
+//        items: clients,
+//        topDivider: true,
+//        popupHeight: height*0.4,
+//        scrollPhysics: AlwaysScrollableScrollPhysics(),
+//        itemBuilder: (value) => Container(
+//            width: width,
+//            height: height*0.1,
+//            alignment: Alignment.centerLeft,
+//            padding: const EdgeInsets.symmetric(horizontal: 10),
+//            child: Text(value)
+//        ),
+//        toggledChild: Container(
+//          color: Colors.white,
+//          child: buildBtn(),
+//        ),
+//        divider: Container(
+//          height: 1,
+//          color: Colors.grey,
+//        ),
+//        onItemSelected: (value) {
+//          dropdownValue = value;
+//        },
+//        decoration: BoxDecoration(
+//            border: Border.all(color: Colors.grey[300]),
+//            borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+//            color: Colors.white
+//        ),
+//        onMenuButtonToggle: (isToggle) {
+//          print('isToggle ==> $isToggle');
+//        },
+//      );
+//  }
+//
+//
+
+  Widget buildDropDownList(){
+    return Column(
+      children: <Widget>[
+        SizedBox(height: 10,),
+        buildExpandedUi(),
+        buildExpandedList(),
+
+      ],
     );
   }
+
+  Widget buildExpandedUi(){
+   return GestureDetector(
+      child: Container(
+        decoration: BoxDecoration(
+            color:  Colors.white30 ,
+            border: Border.all(
+              color: Colors.black12,
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(25))
+        ),
+        width: width,
+        height: 40,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Flexible(
+                child: Text(
+                  dropdownValue,
+                  style: TextStyle(color: Colors.black),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              SizedBox(
+                  width: 14,
+                  height: 17,
+                  child: FittedBox(
+                      fit: BoxFit.fill,
+                      child: Icon(
+                        Icons.arrow_drop_down,
+                        color: Colors.grey,
+                      )
+                  )
+              ),
+            ],
+          ),
+        ),
+      ),
+      onTap:()=> _toggle(),
+    );
+  }
+
+  Widget buildExpandedList(){
+    return Visibility(
+      visible: _isExpand,
+      child: Container(
+        height: height*0.14,
+        width: width,
+        child:  ListView.builder(
+        itemCount: clients.length,
+        scrollDirection: Axis.vertical,
+          itemBuilder: (context, index) {
+          return Container(
+            padding: EdgeInsets.all(2.0),
+            margin: EdgeInsets.only(left: 10,right: 10),
+            child:  Column(
+              children: <Widget>[
+                GestureDetector(
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(clients[index], style: TextStyle(color: Colors.black,),textDirection: TextDirection.ltr,),
+                  ),
+                  onTap: ()=> onItemSelected(clients[index]),
+                ),
+                Divider(),
+              ],
+            ),
+          );
+        },
+        ),
+      ),
+    );
+
+  }
+
+  void onItemSelected(String selectedOne){
+    print('selected one is => $selectedOne');
+    setState(() {
+      dropdownValue = selectedOne ;
+      _toggle();
+    });
+  }
+
+
+
+
+//  Widget dropDownList( ) {
+//    return Container(
+//      width: width,
+//      child: DefaultDropdownMenuController(
+//        child: Container(
+//            height: /*clients.length> 1 ?( _isExpand ? height*0.1 : height*0.2):*/ height*0.4 ,
+//            child: Column(
+//              children: <Widget>[
+//                buildDropdownHeader(onTap:_onTapHead),
+//                 Expanded(
+//                    child:  Stack(
+//                      children: <Widget>[
+//                        buildDropdownMenu()
+//                      ],
+//                    ))
+//              ],
+//            ),
+//          ),
+//        onSelected: ({int menuIndex, int index, int subIndex, dynamic data}) {
+////          if(_isExpand){
+////            setState(() {
+////                _isExpand = true;
+////            });
+////          }
+////          else{
+////            setState(() {
+////              _isExpand = false;
+////            });
+////          }
+//        },
+//      ),
+//    );
+//  }
+
+//  Widget buildDropdownHeader({DropdownMenuHeadTapCallback onTap}) {
+//    return Container(
+//      width: width,
+//      child: Column(
+//        mainAxisSize: MainAxisSize.max,
+//        crossAxisAlignment: CrossAxisAlignment.start,
+//        children: <Widget>[
+//          DropdownHeader(
+//             height: 60.0,
+//             titles: [clients[0]],
+//         ),
+//        ],
+//      ),
+//    );
+//  }
+//
+//  void _onTapHead(int index) {
+//     print('yess done is done ');
+//  }
+//
+//  DropdownMenu buildDropdownMenu() {
+//    return  DropdownMenu(
+//        maxMenuHeight: kDropdownMenuItemHeight * 10,
+//        switchStyle: DropdownMenuShowHideSwitchStyle.directHideAnimationShow,
+//        menus: [
+//           DropdownMenuBuilder(
+//
+//             builder: (BuildContext context) {
+//                return  DropdownListMenu(
+//                  selectedIndex: 0,
+//                  itemExtent: 60.0,
+//                  data: clients,
+//                  itemBuilder: (BuildContext context, dynamic data,
+//                      bool selected) {
+//                    return  DecoratedBox(
+//                        decoration:  BoxDecoration(
+//                            border:  Border(bottom:  Divider.createBorderSide(context))),
+//                        child:  Padding(
+//                          padding: const EdgeInsets.only(
+//                              top: 10, bottom: 10),
+//                          child: Row(
+//                            children: <Widget>[
+//                              Expanded(
+//                                child: Text('${data.toString()}',
+//                                  maxLines: 6,
+//                                  textDirection: TextDirection.ltr,
+//                                ),
+//                              ),
+//                            ],
+//                          ),
+//                        )
+//                    );
+//                  }
+//                  );
+//                },
+//               height: kDropdownMenuItemHeight * clients.length
+//
+//
+//           ),
+//        ],
+//    );
+//  }
 
   showProgressDialog() async {
     await Future.delayed(const Duration(milliseconds: 100), ()  {
@@ -315,14 +548,23 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   }
 
   Widget clientsListener() {
+   // showProgressDialog();
+
     return BlocBuilder<ClientsBloc, ClientListState>(
       builder: (context, ClientListState realState) {
         if (realState.result == dataResult.Empty) {
-          //clients.add('Client Name');
-          return dropDownList();
+//          if (progressLoading.isShowing()) {
+//            progressLoading.hide();
+//          }
+          return buildDropDownList();
+
         } else if (realState.result == dataResult.Loaded) {
+//          if (progressLoading.isShowing()) {
+//            progressLoading.hide();
+//          }
           clients = realState.list;
-          return dropDownList();
+          print('sizeee==> ${clients.length}');
+          return buildDropDownList();
         }
         return Container();
       },
@@ -345,17 +587,30 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   }
 
   saveChecksToDB(bool synced, CheckModel checkObject) {
+
     checkObject.isOnline = synced ? 1 : 0;
+
     checkObject.sync = synced ? 1 : 0;
+
     if (checkObject.isAdded == 1) {
       _operations.updateTransaction(checkObject);
     } else {
       _operations.insertTransaction(checkObject);
     }
+
+
   }
 
   Future<CheckModel> fetchSavedTransactionFromDB() async {
     CheckModel savedObject = await _operations.fetchSaveTransInDb();
     return savedObject;
   }
+
+  void _toggle() {
+    setState(() {
+      _isExpand= !_isExpand;
+      print('testtttt');
+    });
+  }
+
 }
