@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:ui';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -8,7 +7,6 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
 import 'package:timecarditg/Blocs/LoginBloc.dart';
 import 'package:timecarditg/Blocs/home_bloc.dart';
-import 'package:timecarditg/customWidgets/customWidgets.dart';
 import 'package:flutter/services.dart';
 import 'package:get_mac/get_mac.dart';
 import 'package:timecarditg/models/Employee.dart';
@@ -98,7 +96,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
               position: _formContainerAnimation,
               child: Container(
                 margin:
-                    EdgeInsets.only(top: 240, left: 20, right: 20, bottom: 50),
+                EdgeInsets.only(top: 240, left: 20, right: 20, bottom: 50),
                 width: width,
                 height: height * 0.6,
                 decoration: BoxDecoration(
@@ -144,18 +142,6 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       ],
     );
   }
-
-  Widget buildLogo(){
-    return Center(child: Image.asset('assets/images/logo.png',
-                      height: height*0.2,
-                      width: width*0.4,
-                      fit: BoxFit.contain,),);
-}
-
-  Widget buildTitle(){
-    return  Center(child:Text('  ITG TimeCard' , style:  TextStyle(
-                      color: mainColor, fontWeight: FontWeight.bold, fontSize: 20),));
-}
 
   Widget buildLoginForm() {
     return Container(
@@ -262,7 +248,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
               Text(
                 _platformVersion,
                 style:
-                    TextStyle(color: mainColor, fontWeight: FontWeight.normal),
+                TextStyle(color: mainColor, fontWeight: FontWeight.normal),
               )
             ],
           ),
@@ -313,7 +299,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
           Text(
             'Keep me logged in ',
             style:
-                TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
+            TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
           ),
           Spacer(),
           Flexible(
@@ -382,7 +368,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 
   saveApiKey(Employee employee) async {
     await SharedPreferencesOperations.saveApiKeyAndId(
-            employee.apiKey, employee.employeeId)
+        employee.apiKey, employee.employeeId)
         .then((onValue) {
       print('api key and saved ');
     });
@@ -446,8 +432,6 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       print('denied');
     }
   }
-
-
 
 //  Widget buildLoginUiWithOldDesign(){
 //   return Container(
@@ -514,4 +498,3 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 //  }
 
 }
-
