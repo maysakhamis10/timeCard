@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timecarditg/models/HomeInformation.dart';
 import 'package:timecarditg/utils/Constants.dart';
 import 'package:timecarditg/models/Employee.dart';
 
