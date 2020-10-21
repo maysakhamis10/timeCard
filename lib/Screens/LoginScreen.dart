@@ -124,7 +124,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         SizedBox(
-          height: 80,
+          height: 60,
         ),
         Center(
           child: Image.asset(
@@ -214,18 +214,18 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
           border: Border.all(
             color: Colors.blue,
           ),
-          borderRadius: BorderRadius.all(Radius.circular(30))),
+          borderRadius: BorderRadius.all(Radius.circular(10))),
       child: TextFormField(
           controller: emailTextEditingController,
           textAlign: TextAlign.start,
-          style: TextStyle(color: Colors.blue),
+          style: TextStyle(color: Colors.blue[50]),
           decoration: InputDecoration(
             prefixIcon: Icon(
               Icons.account_circle,
-              color: Colors.blue,
+              color: Colors.grey[700],
             ),
             labelText: 'User Name',
-            labelStyle: TextStyle(color: Colors.blue, letterSpacing: 1.0),
+            labelStyle: TextStyle(color: Colors.grey[700], letterSpacing: 1.0),
             border: InputBorder.none,
           ),
           validator: (val) {
@@ -322,26 +322,28 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   }
 
   Widget buildLogInButton() {
-    return GestureDetector(
-      onTap: () => logInFun(),
-      child: Container(
-        alignment: Alignment.center,
-        margin: EdgeInsets.only(left: 10, right: 10, top: 20),
-        width: width,
-        height: height * 0.08,
-        decoration: BoxDecoration(
-          color: Color(0xff1295df),
-          borderRadius: BorderRadius.circular(30.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.white,
-              offset: Offset(0.0, 2.0),
-            ),
-          ],
-        ),
-        child: Text(
-          'Sign in',
-          style: TextStyle(color: Colors.white, fontSize: 18),
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => logInFun(),
+        child: Container(
+          alignment: Alignment.center,
+          margin: EdgeInsets.only(left: 10, right: 10, top: 20),
+          width: width,
+          height: height * 0.08,
+          decoration: BoxDecoration(
+            color: Color(0xff1295df),
+            borderRadius: BorderRadius.circular(30.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.white,
+                offset: Offset(0.0, 2.0),
+              ),
+            ],
+          ),
+          child: Text(
+            'Sign in',
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
         ),
       ),
     );
