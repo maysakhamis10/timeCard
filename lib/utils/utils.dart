@@ -57,13 +57,13 @@ class UtilsClass {
 
   static Future<File> saveMacAddress(String macAddress) async {
     await initPlatformState();
-    final file = await File(path);
+    final file =  File(path);
     return file.writeAsString(macAddress);
   }
 
   static Future<String> loadMacAddress() async {
     try {
-      final file = await File(path);
+      final file =  File(path);
       String contents = await file.readAsString();
       print(contents);
       return contents;

@@ -19,6 +19,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   List<CheckModel> _allTranactions =  [];
   DateTime now;
   var formattedDate;
+  List<TransactionItem> transactionItems = new List();
 
   @override
   void initState() {
@@ -29,6 +30,9 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   void _initCurrentDate(){
     now = DateTime.now();
     formattedDate = '${now.year.toString()}/${now.month.toString()}/${now.day.toString()}';
+    transactionItems.add(new TransactionItem(Icons.check_circle_outline, Colors.blue, 'Check in '));
+    transactionItems.add(new TransactionItem(Icons.exit_to_app, Colors.green[400], 'Check out '));
+    transactionItems.add(new TransactionItem(Icons.phonelink_erase, Colors.red[400], 'Offline synced'));
   }
 
 
@@ -37,17 +41,17 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     return new Scaffold(
       backgroundColor: Colors.white,
         appBar: AppBar(
-          centerTitle: true,
+          centerTitle: false,
           title: Text(
               'Transactions',
               textAlign: TextAlign.center,
 
-              style: TextStyle(color: Colors.blue,fontSize: 16),
+              style: TextStyle(color: Colors.white,fontSize: 16),
             ),
             iconTheme: IconThemeData(
-              color: Colors.blue
+              color: Colors.white
             ),
-          backgroundColor: Color(0xFFEEEEEE),),
+          backgroundColor: Colors.blue,),
         body: buildBody());
   }
 
@@ -62,16 +66,25 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       future: _fetchAllSyncTransactions(formattedDate),
       builder: (BuildContext context , AsyncSnapshot<List<CheckModel>> snapshot){
         if (snapshot.hasData) {
-          return ListView.builder(
-            itemCount: snapshot.data.length+1,
-            scrollDirection: Axis.vertical,
-            physics: ScrollPhysics(),
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              if ( index == 0 )
-                return buildEditDateText() ;
-              return buildTransactionItem(_allTranactions[index-1]);
-            },
+          return Column(
+            children: <Widget>[
+               buildEditDateText() ,
+              Expanded(
+                child: SafeArea(
+                  bottom: true,
+                  top: true,
+                  child: ListView.builder(
+                    itemCount: snapshot.data.length,
+                    scrollDirection: Axis.vertical,
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return buildTransactionItem(_allTranactions[index]);
+                    },
+                  ),
+                ),
+              ),
+            ],
           );
         }
         else if(snapshot.hasError){
@@ -92,24 +105,22 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
   Widget buildTransactionItem(CheckModel checkModel) {
     return
-      Stack(
-        children: <Widget>[
-          Container(
-             margin: EdgeInsets.all(10.0),
-              padding: EdgeInsets.all(5.0),
-              decoration: BoxDecoration(
-                  color:  checkModel.sync == 0  ? Colors.red[500] :
-                  checkModel.checkType ==1 ? Colors.blue : Colors.green[400] ,
-                  border: Border.all(
-                    color: Color(0xFFD6D6D6),
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(25))
-              ),
-              child: Center(
-                child: buildCenterText(checkModel),
-              ),
+      Card(
+        elevation: 8.0,
+        margin: EdgeInsets.all(10.0),
+        color:  checkModel.sync == 0  ? Colors.red[300] :
+        checkModel.checkType ==1 ? Colors.blue[300] : Colors.green[300] ,
+
+        shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(30.0),
+         ),
+        child: Container(
+          margin: EdgeInsets.all(10.0),
+          // padding: EdgeInsets.all(10.0),
+          child: Center(
+            child: buildCenterText(checkModel),
           ),
-        ],
+        ),
       );
   }
 
@@ -118,72 +129,63 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   Widget buildCenterText(CheckModel checkModel) {
     return Container(
         padding: EdgeInsets.all(5.0),
-        child: Row(
+        child: Column(
 
           children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                SizedBox(height: 10,),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Icon(Icons.access_time, size: 30.0, color: Colors.white),
+                    Icon(Icons.access_time,  color: Colors.white),
                     SizedBox(width: 10,),
                     Text(checkModel.date + ' ' + checkModel.time,
                       style: TextStyle(color: Colors.white),),
                   ],
                 ),
-                SizedBox(height: 10,),
-                Row(
 
-                  children: <Widget>[
-                    Icon(Icons.info_outline, size: 30.0, color: Colors.white),
-                    SizedBox(width: 10,),
-                    Text('Additional info',textAlign: TextAlign.left,
-                      style: TextStyle(color: Colors.white),),
+              Row(
+                children: <Widget>[
+                  Icon(Icons.sync,
+                      color: Colors.white
+                  ),
+                  SizedBox(width: 10,),
+                  Text(
+                    checkModel.sync == 1 ? 'Online synced' : 'Offline synced'
+                    , style: TextStyle(color: Colors.white),),
+                ],
+              )
+              ],
+            ),
+            SizedBox(height: 10,),
 
-                  ],
+            SizedBox(height: 10,),
+            Row(
+
+              children: <Widget>[
+                Icon(Icons.info_outline,  color: Colors.white),
+                SizedBox(width: 10,),
+                Text('Additional info',textAlign: TextAlign.left,
+                  style: TextStyle(color: Colors.white),),
+
+              ],
+            ),
+            SizedBox(width: 15,),
+            SizedBox(height: 10,),
+            Row(
+              children: <Widget>[
+                Icon(Icons.account_circle,
+                    color: Colors.white
+                ),
+                SizedBox(width: 10,),
+                Expanded(
+                  child: Text(checkModel.client,
+                    style: TextStyle(color: Colors.white),),
                 ),
 
               ],
-
             ),
-            SizedBox(width: 15,),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                SizedBox(height: 10,),
-                Row(
-                  children: <Widget>[
-                    Icon(Icons.account_circle,
-                        size: 30.0,
-                        color: Colors.white
-                    ),
-                    SizedBox(width: 10,),
-                    Text(checkModel.client,
-                      style: TextStyle(color: Colors.white),),
-
-                  ],
-                ),
-                SizedBox(height: 10,),
-                Row(
-                  children: <Widget>[
-                    Icon(Icons.sync,
-                        size: 30.0,
-                        color: Colors.white
-                    ),
-                    SizedBox(width: 10,),
-                    Text(
-                      checkModel.sync == 1 ? 'Online synced' : 'Offline synced'
-                      , style: TextStyle(color: Colors.white),),
-
-                  ],
-                ),
-                ],
-            )
+            SizedBox(height: 10,)
           ],
 
 
@@ -208,9 +210,10 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   SizedBox(width: 10,),
-                  Icon(Icons.event, size: 30.0, color: Colors.blue),
+                  Icon(Icons.event, color: Colors.blue),
                   SizedBox(width: 10,),
-                  Text( formattedDate, textAlign: TextAlign.center,style: TextStyle(fontSize: 25),),
+                  Text( formattedDate,
+                    textAlign: TextAlign.center,style: TextStyle(fontSize: 20),),
                   SizedBox(width: 10,),
                 ],
               ),
@@ -219,28 +222,12 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
           ),
           SizedBox(height: 20,),
 
-          Center(
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(width: 10,),
-                  Icon(Icons.check_circle_outline, size: 30.0, color: Colors.blue),
-                  SizedBox(width: 5,),
-                  Text( 'Check in ', textAlign: TextAlign.center,),
-                  SizedBox(width: 10,),
-                  Icon(Icons.exit_to_app, size: 30.0, color: Colors.green[400]),
-                  SizedBox(width: 5,),
-                  Text( 'Check out ', textAlign: TextAlign.center,),
-                  SizedBox(width: 10,),
-                  Icon(Icons.phonelink_erase, size: 30.0, color: Colors.red[400]),
-                  SizedBox(width: 5,),
-                  Text( 'Offline synced', textAlign: TextAlign.center,),
-
-                ],
-              ),
-
-          )
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+              children: transactionItems.map((transactionItem) => buildTransactionItemDetail(transactionItem)).toList(),
+            )
 
         ],
       ),
@@ -280,9 +267,33 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       }
   }
 
+ Widget buildTransactionItemDetail(TransactionItem transactionItem) {
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Icon(transactionItem.icon, color: transactionItem.color),
+        // SizedBox(width: 5,),
+        Text( transactionItem.title, textAlign: TextAlign.center,),
+      ],
+    );
+  }
+
 
 }
 
+
+class TransactionItem {
+  IconData icon ;
+  Color color;
+  String title;
+
+  TransactionItem(this.icon, this.color, this.title);
+
+
+}
 
 
 

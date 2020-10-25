@@ -60,7 +60,7 @@ class DbOperations {
   void updateTransaction(CheckModel checkInfo) async {
     await _database.transaction((txn) async {
       Map<String, dynamic> values = new Map();
-      values.putIfAbsent('sync', () => 1);;
+      values.putIfAbsent('sync', () => 1);
       int id1 = await txn.update(tableName , values ,
           where: 'sync = ? AND employee_id = ? ',
           whereArgs: [0,checkInfo.employeeId],

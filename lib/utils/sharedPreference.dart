@@ -14,7 +14,7 @@ class SharedPreferencesOperations {
   static Future<String>saveHomeData(String homeInfo)async{
     final SharedPreferences prefs = await  SharedPreferences.getInstance();
 //    String convertObject  = json.encode(homeInfo);
-    if(await prefs.getString(Constants.homeInfoStr) !=null) {
+    if( prefs.getString(Constants.homeInfoStr) !=null) {
       prefs.remove(Constants.homeInfoStr);
     }
     var saveObjectStr  = await prefs.setString(Constants.homeInfoStr , homeInfo);
@@ -30,8 +30,8 @@ class SharedPreferencesOperations {
 
   static Future<Employee>getApiKeyAndId ( )async{
     final SharedPreferences prefs = await  SharedPreferences.getInstance();
-    String savedApiKey =await prefs.getString(Constants.apiKey);
-    int savedId =await prefs.getInt(Constants.id);
+    String savedApiKey = prefs.getString(Constants.apiKey);
+    int savedId = prefs.getInt(Constants.id);
     print(savedApiKey + savedId.toString());
     return Employee(apiKey: savedApiKey, employeeId: savedId);
 
@@ -46,7 +46,7 @@ class SharedPreferencesOperations {
 
   static Future<bool>getKeepMeLoggedIn ( )async{
     final SharedPreferences prefs = await  SharedPreferences.getInstance();
-    bool savedKeepMe =await prefs.getBool(Constants.keep);
+    bool savedKeepMe = prefs.getBool(Constants.keep);
     print('get keep me $savedKeepMe');
     return savedKeepMe;
   }
@@ -59,13 +59,13 @@ class SharedPreferencesOperations {
   static Future<bool>saveLoggedOut (bool isLogged )async{
 
     final SharedPreferences prefs = await  SharedPreferences.getInstance();
-    bool loggedOut =await prefs.setBool(Constants.IsLoggedOut, isLogged);
+    bool loggedOut =await prefs.setBool(Constants.isLoggedOut, isLogged);
     return loggedOut;
   }
 
   static Future<bool>getLoggedOut ( )async{
     final SharedPreferences prefs = await  SharedPreferences.getInstance();
-    bool loggedOut =await prefs.getBool(Constants.IsLoggedOut);
+    bool loggedOut = prefs.getBool(Constants.isLoggedOut);
     return loggedOut;
   }
 

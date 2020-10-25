@@ -1,9 +1,9 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:smart_select/smart_select.dart';
 import 'package:timecarditg/Blocs/CheckInBloc.dart';
 import 'package:timecarditg/Blocs/ClientsBloc.dart';
 import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
@@ -17,17 +17,19 @@ import 'package:timecarditg/utils/sharedPreference.dart';
 import 'dart:io' show Platform;
 import 'package:timecarditg/utils/utils.dart';
 
-class AdditionalInfo extends StatefulWidget {
+class  AdditionalInfo extends StatefulWidget {
   int checkType;
+
   AdditionalInfo({this.checkType});
 
   @override
   _AdditionalInfoState createState() => _AdditionalInfoState();
 }
 
-class _AdditionalInfoState extends State<AdditionalInfo>  {
+class _AdditionalInfoState extends State<AdditionalInfo> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String dropdownValue = "Client Name";
+  String fromWhere = "From Where";
   Employee empModel;
   CheckBloc _checkInBloc;
   List<String> clients = List();
@@ -40,8 +42,8 @@ class _AdditionalInfoState extends State<AdditionalInfo>  {
   CheckModel _checkObject;
   ProgressDialog progressLoading;
   DbOperations _operations = DbOperations();
-  bool _isExpand = false ;
-
+  bool _isExpand = false;
+  List<String>  fromWhereList = new List();
 
   @override
   void initState() {
@@ -51,7 +53,7 @@ class _AdditionalInfoState extends State<AdditionalInfo>  {
     _clientsBloc = BlocProvider.of<ClientsBloc>(context);
     _checkInBloc = BlocProvider.of<CheckBloc>(context);
     _operations.openMyDatabase();
-    clients.add(dropdownValue);
+    // clients.add(dropdownValue);
     fetchLocation();
     fetchApiKey();
   }
@@ -66,6 +68,9 @@ class _AdditionalInfoState extends State<AdditionalInfo>  {
   }
 
   void fetchApiKey() async {
+    fromWhereList.add("ITG");
+    fromWhereList.add("Home");
+    fromWhereList.add("Other");
     empModel = await getApiKeyAndId();
     if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
       _clientsBloc.add(ClientEvent(apiKey: empModel.apiKey));
@@ -77,52 +82,48 @@ class _AdditionalInfoState extends State<AdditionalInfo>  {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
     return Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: Colors.transparent,
-        body: Align(
-            alignment: Alignment.center,
-            child:  Container(
-                height: height*0.6,
-                alignment: Alignment.center,
-                margin: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: Colors.white,
-                ),
-                child: ListView(
-                  children: <Widget>[
-                        buildRowOfClientDropDown(),
-                        SizedBox(height: 2,),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          child: buildContainerTxt(),
-                        ),
-                    SizedBox(height: 10,),
-                    buildSaveBtn(),
-                    SizedBox(height: 2,)
-                  ],
-                )
-              ),
+      key: _scaffoldKey,
+      backgroundColor: Colors.transparent,
+      body: Align(
+        alignment: Alignment.center,
+        child: Container(
+            height: height * 0.6,
+            width: width,
+            margin: EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Colors.white,
             ),
+            child: Column(
+              children: <Widget>[
+                Expanded(flex: 1, child: buildRowOfClientDropDown()),
+                Expanded(
+                  flex: 3,
+                  child: buildContainerTxt(),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: buildFromWhereDropDown(),
+                ),
+                Expanded(flex: 0.5.toInt(), child: buildSaveBtn()),
+              ],
+            )),
+      ),
     );
   }
 
   Widget buildRowOfClientDropDown() {
     return Container(
-      margin: EdgeInsets.all(10),
-      padding:EdgeInsets.all(10),
+      // margin: EdgeInsets.all(10),
+      // padding:EdgeInsets.all(10),
       alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          SizedBox(
-            width: 5,
-          ),
           checkListener(),
           clientsListener(),
-          SizedBox(
-            width: 5,
-          ),
+
           // dropDownList(),
         ],
       ),
@@ -148,8 +149,9 @@ class _AdditionalInfoState extends State<AdditionalInfo>  {
   Widget buildContainerTxt() {
     return Container(
       padding: EdgeInsets.all(10.0),
+      margin: EdgeInsets.only(top : 10.0 , bottom: 10.0),
       decoration: BoxDecoration(
-          color:  Colors.white30,
+          color: Colors.white30,
           border: Border.all(
             color: Color(0xFFD6D6D6),
           ),
@@ -175,7 +177,7 @@ class _AdditionalInfoState extends State<AdditionalInfo>  {
       onTap: () => saveButtonOnTap(),
       child: Container(
         alignment: Alignment.center,
-        margin: EdgeInsets.only(left: 20, right: 20),
+        margin: EdgeInsets.only(left: 20, right: 20, top: 10),
         width: width,
         height: 50,
         decoration: BoxDecoration(
@@ -226,8 +228,7 @@ class _AdditionalInfoState extends State<AdditionalInfo>  {
         _checkInBloc.add(_checkObject);
         print('online object => ${_checkObject.toJson()}');
       }
-    }
-    else {
+    } else {
       await saveChecksToDB(false, checkObject);
       UtilsClass.showMyDialog(
           content:
@@ -239,102 +240,53 @@ class _AdditionalInfoState extends State<AdditionalInfo>  {
   }
 
 
-//  Widget test(){
-//    return MenuButton(
-//      child: button(),
-//      items: clients,
-//      topDivider: true,
-//      popupHeight: 200,
-//      scrollPhysics: AlwaysScrollableScrollPhysics(),
-//      itemBuilder: (value) => Container(
-//          width: width,
-//          height: 40,
-//          alignment: Alignment.centerLeft,
-//          padding: const EdgeInsets.symmetric(horizontal: 16),
-//          child: Text(value)
-//      ),
-//      toggledChild: Container(
-//        color: Colors.white,
-//        child: button(),
-//      ),
-//      divider: Container(
-//        height: 1,
-//        color: Colors.grey,
-//      ),
-//      onItemSelected: (value) {
-//        dropdownValue = value;
-//        // Action when new item is selected
-//      },
-//      decoration: BoxDecoration(
-//          border: Border.all(color: Colors.grey[300]),
-//          borderRadius: const BorderRadius.all(Radius.circular(30.0)),
-//          color: Colors.white
-//      ),
-//      onMenuButtonToggle: (isToggle) {
-//        print(isToggle);
-//      },
-//    );
-//  }
+  Widget buildDropDownList() {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.white30,
+            border: Border.all(
+              color: Color(0xFFD6D6D6),
+            ),
+            borderRadius: BorderRadius.all(Radius.circular(15))),
+        child: SmartSelect.single(
+            choiceType: SmartSelectChoiceType.radios,
+            modalType: SmartSelectModalType.popupDialog,
+            modalConfig: SmartSelectModalConfig(
+                useHeader: false,
+                style: SmartSelectModalStyle(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                )),
+            value: dropdownValue,
+            title: "Client Name",
+            options: clients.length == 0
+                ? [SmartSelectOption(title: "", value: "")]
+                : clients
+                    .map((client) =>
+                        SmartSelectOption(value: client, title: client))
+                    .toList(),
+            onChange: (newValue) {
+              print("tot $newValue");
+              dropdownValue = newValue;
+              setState(() {
 
-//  Widget dropDownList( ) {
-//   return MenuButton(
-//        child: buildBtn(),
-//        items: clients,
-//        topDivider: true,
-//        popupHeight: height*0.4,
-//        scrollPhysics: AlwaysScrollableScrollPhysics(),
-//        itemBuilder: (value) => Container(
-//            width: width,
-//            height: height*0.1,
-//            alignment: Alignment.centerLeft,
-//            padding: const EdgeInsets.symmetric(horizontal: 10),
-//            child: Text(value)
-//        ),
-//        toggledChild: Container(
-//          color: Colors.white,
-//          child: buildBtn(),
-//        ),
-//        divider: Container(
-//          height: 1,
-//          color: Colors.grey,
-//        ),
-//        onItemSelected: (value) {
-//          dropdownValue = value;
-//        },
-//        decoration: BoxDecoration(
-//            border: Border.all(color: Colors.grey[300]),
-//            borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-//            color: Colors.white
-//        ),
-//        onMenuButtonToggle: (isToggle) {
-//          print('isToggle ==> $isToggle');
-//        },
-//      );
-//  }
-//
-//
-
-  Widget buildDropDownList(){
-    return Column(
-      children: <Widget>[
-        SizedBox(height: 10,),
-        buildExpandedUi(),
-        buildExpandedList(),
-
-      ],
+              });
+            }),
+      ),
     );
   }
 
-  Widget buildExpandedUi(){
-   return GestureDetector(
+  Widget buildExpandedUi() {
+    return GestureDetector(
       child: Container(
         decoration: BoxDecoration(
-            color:  Colors.white30 ,
+            color: Colors.white30,
             border: Border.all(
               color: Colors.black12,
             ),
-            borderRadius: BorderRadius.all(Radius.circular(25))
-        ),
+            borderRadius: BorderRadius.all(Radius.circular(25))),
         width: width,
         height: 40,
         child: Padding(
@@ -357,60 +309,60 @@ class _AdditionalInfoState extends State<AdditionalInfo>  {
                       child: Icon(
                         Icons.arrow_drop_down,
                         color: Colors.grey,
-                      )
-                  )
-              ),
+                      ))),
             ],
           ),
         ),
       ),
-      onTap:()=> _toggle(),
+      onTap: () => _toggle(),
     );
   }
 
-  Widget buildExpandedList(){
+  Widget buildExpandedList() {
     return Visibility(
       visible: _isExpand,
       child: Container(
-        height: height*0.14,
+        height: height * 0.14,
         width: width,
-        child:  ListView.builder(
-        itemCount: clients.length,
-        scrollDirection: Axis.vertical,
+        child: ListView.builder(
+          itemCount: clients.length,
+          scrollDirection: Axis.vertical,
           itemBuilder: (context, index) {
-          return Container(
-            padding: EdgeInsets.all(2.0),
-            margin: EdgeInsets.only(left: 10,right: 10),
-            child:  Column(
-              children: <Widget>[
-                GestureDetector(
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(clients[index], style: TextStyle(color: Colors.black,),textDirection: TextDirection.ltr,),
+            return Container(
+              padding: EdgeInsets.all(2.0),
+              margin: EdgeInsets.only(left: 10, right: 10),
+              child: Column(
+                children: <Widget>[
+                  GestureDetector(
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        clients[index],
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                        textDirection: TextDirection.ltr,
+                      ),
+                    ),
+                    onTap: () => onItemSelected(clients[index]),
                   ),
-                  onTap: ()=> onItemSelected(clients[index]),
-                ),
-                Divider(),
-              ],
-            ),
-          );
-        },
+                  Divider(),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
-
   }
 
-  void onItemSelected(String selectedOne){
+  void onItemSelected(String selectedOne) {
     print('selected one is => $selectedOne');
     setState(() {
-      dropdownValue = selectedOne ;
+      dropdownValue = selectedOne;
       _toggle();
     });
   }
-
-
-
 
 //  Widget dropDownList( ) {
 //    return Container(
@@ -510,10 +462,13 @@ class _AdditionalInfoState extends State<AdditionalInfo>  {
 //  }
 
   showProgressDialog() async {
-    await Future.delayed(const Duration(milliseconds: 100), ()  {
-      progressLoading =  ProgressDialog(context,type: ProgressDialogType.Normal,
+    await Future.delayed(const Duration(milliseconds: 100), () {
+      progressLoading = ProgressDialog(
+        context,
+        type: ProgressDialogType.Normal,
         isDismissible: true,
-        showLogs: false,);
+        showLogs: false,
+      );
       progressLoading.show();
     });
   }
@@ -548,7 +503,7 @@ class _AdditionalInfoState extends State<AdditionalInfo>  {
   }
 
   Widget clientsListener() {
-   // showProgressDialog();
+    // showProgressDialog();
 
     return BlocBuilder<ClientsBloc, ClientListState>(
       builder: (context, ClientListState realState) {
@@ -557,13 +512,13 @@ class _AdditionalInfoState extends State<AdditionalInfo>  {
 //            progressLoading.hide();
 //          }
           return buildDropDownList();
-
         } else if (realState.result == dataResult.Loaded) {
 //          if (progressLoading.isShowing()) {
 //            progressLoading.hide();
 //          }
           clients = realState.list;
           print('sizeee==> ${clients.length}');
+          print('sizeee==> ${clients.first}');
           return buildDropDownList();
         }
         return Container();
@@ -587,7 +542,6 @@ class _AdditionalInfoState extends State<AdditionalInfo>  {
   }
 
   saveChecksToDB(bool synced, CheckModel checkObject) {
-
     checkObject.isOnline = synced ? 1 : 0;
 
     checkObject.sync = synced ? 1 : 0;
@@ -597,8 +551,6 @@ class _AdditionalInfoState extends State<AdditionalInfo>  {
     } else {
       _operations.insertTransaction(checkObject);
     }
-
-
   }
 
   Future<CheckModel> fetchSavedTransactionFromDB() async {
@@ -608,9 +560,43 @@ class _AdditionalInfoState extends State<AdditionalInfo>  {
 
   void _toggle() {
     setState(() {
-      _isExpand= !_isExpand;
+      _isExpand = !_isExpand;
       print('testtttt');
     });
   }
 
+  buildFromWhereDropDown() {
+    return Container(
+      // margin: EdgeInsets.only(top: 10),
+      decoration: BoxDecoration(
+          color: Colors.white30,
+          border: Border.all(
+            color: Color(0xFFD6D6D6),
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(15))),
+      child: SmartSelect.single(
+          choiceType: SmartSelectChoiceType.radios,
+          modalType: SmartSelectModalType.popupDialog,
+          modalConfig: SmartSelectModalConfig(
+              useHeader: false,
+              style: SmartSelectModalStyle(
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              )),
+          value: fromWhere,
+          title: "fromWhere",
+          options: fromWhereList.length == 0
+              ? [SmartSelectOption(title: "", value: "")]
+              : fromWhereList
+                  .map((fromWhere) =>
+                      SmartSelectOption(value: fromWhere, title: fromWhere))
+                  .toList(),
+          onChange: (newValue) {
+            print("tot $newValue");
+            fromWhere = newValue;
+            setState(() {});
+          }),
+    );
+  }
 }

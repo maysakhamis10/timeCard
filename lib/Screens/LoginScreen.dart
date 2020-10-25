@@ -84,6 +84,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       key: scaffoldKey,
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -102,29 +103,32 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                   ),
                 ),
               ),
-              Expanded(
-                flex: 4,
-                child: SlideTransition(
-                  position: _formContainerAnimation,
-                  child: Container(
-                    margin:
-                    EdgeInsets.only( left: 20, right: 20, bottom: 50),
-                    width: width,
-                    height: height * 0.6,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 10,
-                          offset: Offset(1.0, 4.0),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: SlideTransition(
+                      position: _formContainerAnimation,
+                      child: Container(
+                        margin:
+                        EdgeInsets.only( left: 20, right: 20, bottom: 50),
+                        width: width,
+                        height: height * 0.6,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 10,
+                              offset: Offset(1.0, 4.0),
+                            ),
+                          ],
                         ),
-                      ],
+                        child: buildLoginForm(),
+                      ),
                     ),
-                    child: buildLoginForm(),
                   ),
-                ),
+                ],
               ),
             ],
           ),
@@ -137,9 +141,6 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        SizedBox(
-          height: 60,
-        ),
         Center(
           child: Image.asset(
             'assets/images/logo.png',
@@ -331,7 +332,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     return Expanded(
       flex: 1,
       child: Container(
-        margin: EdgeInsets.all(10.0),
+        margin: EdgeInsetsDirectional.only(start : 10.0 , end :10.0),
         child: Row(
           children: <Widget>[
             Text(

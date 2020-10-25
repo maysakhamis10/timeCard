@@ -39,6 +39,8 @@ dependencies:
   shared_preferences: ^0.5.8
   image_picker: ^0.6.7+4
   intl: ^0.16.1
+  device_preview: any
+  smart_select: any
 
 
 dev_dependencies:

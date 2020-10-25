@@ -1,41 +1,41 @@
 import 'BaseModel.dart';
 
 class HomeInfo extends BaseModel{
-  String CheckIn ,BreakOut , BreakIn , ShortBreak,CheckOutAt,
-      LastCheckOutTime,LastCheckOutDate,DiviceMacAddress;
+  String checkIn ,breakOut , breakIn , shortBreak,checkOutAt,
+      lastCheckOutTime,lastCheckOutDate,diviceMacAddress;
 
   HomeInfo({
-      this.CheckIn,
-      this.BreakOut,
-      this.BreakIn,
-      this.ShortBreak,
-      this.CheckOutAt,
-      this.LastCheckOutTime,
-      this.LastCheckOutDate,
-      this.DiviceMacAddress});
+      this.checkIn,
+      this.breakOut,
+      this.breakIn,
+      this.shortBreak,
+      this.checkOutAt,
+      this.lastCheckOutTime,
+      this.lastCheckOutDate,
+      this.diviceMacAddress});
 
   factory HomeInfo.fromJson(Map<String, dynamic> json) {
   var jsonDecoded = json['Attendance_Information'];
     return HomeInfo(
-      CheckIn:jsonDecoded['CheckIn'],
-      BreakOut : jsonDecoded['BreakOut'],
-      BreakIn: jsonDecoded['BreakIn'],
-      ShortBreak: jsonDecoded['ShortBreak'],
-      CheckOutAt: jsonDecoded['CheckOutAt'],
-      LastCheckOutTime: jsonDecoded['LastCheckOutTime'],
-      LastCheckOutDate: jsonDecoded['LastCheckOutDate'],
-      DiviceMacAddress: jsonDecoded['DiviceMacAddress'],
+      checkIn:jsonDecoded['CheckIn'],
+      breakOut : jsonDecoded['BreakOut'],
+      breakIn: jsonDecoded['BreakIn'],
+      shortBreak: jsonDecoded['ShortBreak'],
+      checkOutAt: jsonDecoded['CheckOutAt'],
+      lastCheckOutTime: jsonDecoded['LastCheckOutTime'],
+      lastCheckOutDate: jsonDecoded['LastCheckOutDate'],
+      diviceMacAddress: jsonDecoded['DiviceMacAddress'],
     );
   }
   Map<String, dynamic> toJson() => {
-    'CheckIn': CheckIn,
-    'BreakOut': BreakOut,
-    'BreakIn': BreakIn,
-    'ShortBreak': ShortBreak,
-    'CheckOutAt' : CheckOutAt ,
-    'LastCheckOutTime' : LastCheckOutTime,
-    'LastCheckOutDate' : LastCheckOutDate,
-    'DiviceMacAddress' : DiviceMacAddress,
+    'CheckIn': checkIn,
+    'BreakOut': breakOut,
+    'BreakIn': breakIn,
+    'ShortBreak': shortBreak,
+    'CheckOutAt' : checkOutAt ,
+    'LastCheckOutTime' : lastCheckOutTime,
+    'LastCheckOutDate' : lastCheckOutDate,
+    'DiviceMacAddress' : diviceMacAddress,
   };
 
 

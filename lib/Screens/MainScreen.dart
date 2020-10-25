@@ -40,15 +40,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   SharedPreferences prefs;
   Employee empModel;
   ProgressDialog progressLoading;
+  List<BottomButtons> bottomButtons = new List() ;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     _initValue();
     fetchUserData();
     callHomeInfoService();
+    _initializeBottomList();
   }
 
   void fetchUserData() async {
@@ -90,16 +91,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          title: Text(
-            'Time card',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.blue, fontSize: 16),
-          ),
-          backgroundColor: Color(0xFFEEEEEE),
-        ),
+        // appBar: AppBar(
+        //   automaticallyImplyLeading: false,
+        //   centerTitle: true,
+        //   title: Text(
+        //     'Time card',
+        //     textAlign: TextAlign.center,
+        //     style: TextStyle(color: Colors.blue, fontSize: 16),
+        //   ),
+        //   backgroundColor: Color(0xFFEEEEEE),
+        // ),
         body: WillPopScope(
           onWillPop: () async => false,
           child: SingleChildScrollView(
@@ -134,33 +135,49 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            buildUserPic(),
-            SizedBox(
-              height: 20,
+            Flexible(
+                flex: 2,
+                child: buildUserPic()),
+            // SizedBox(
+            //   height: 20,
+            // ),
+            Flexible(
+              flex: 0.5.toInt(),
+              child: buildTextInGridView(
+                  title: 'Today Check in', checkType: CheckType.checkIn),
             ),
-            buildTextInGridView(
-                title: 'Today Check in', checkType: CheckType.checkIn),
-            SizedBox(
-              height: 10,
+            // SizedBox(
+            //   height: 10,
+            // ),
+            Flexible(
+              flex: 0.5.toInt(),
+              child: buildTextInGridView(
+                  title: 'You Can Check out At ', checkType: CheckType.checkOut),
             ),
-            buildTextInGridView(
-                title: 'You Can Check out At ', checkType: CheckType.checkOut),
-            SizedBox(
-              height: 10,
-            ),
-            buildTextInGridView(title: 'Last Check out '),
+            // SizedBox(
+            //   height: 10,
+            // ),
+            Flexible(
+                flex: 0.5.toInt(),
+                child: buildTextInGridView(title: 'Last Check out ')),
 
-            Spacer(
-              flex: 1,
-            ),
-            buildSignIn(context),
-            SizedBox(
-              height: 20,
-            ),
-            buildSignOut(context),
-            Spacer(flex: 1,),
-            buildOtherButtons(context),
-            Spacer(flex: 3,),
+            // Spacer(
+            //   flex: 1,
+            // ),
+            Flexible(
+                flex: 1.5.toInt(),
+                child: buildSignIn(context)),
+            // SizedBox(
+            //   height: 20,
+            // ),
+            Flexible(
+                flex: 1.5.toInt(),
+                child: buildSignOut(context)),
+            // Spacer(flex: 1,),
+            Flexible(
+                flex:3,
+                child: buildOtherButtons(context)),
+            // Spacer(flex: 3,),
           ],
         ),
       ),
@@ -336,13 +353,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   String fetchTime(CheckType checkType) {
     if (_homeInfo != null) {
       if (checkType == CheckType.checkIn) {
-        return _homeInfo.CheckIn;
+        return _homeInfo.checkIn;
       } else if (checkType == CheckType.checkOut) {
-        return _homeInfo.CheckOutAt;
+        return _homeInfo.checkOutAt;
       } else {
-        if (_homeInfo.LastCheckOutDate != null &&
-            _homeInfo.LastCheckOutTime != null) {
-          return _homeInfo.LastCheckOutDate + ' ' + _homeInfo.LastCheckOutTime;
+        if (_homeInfo.lastCheckOutDate != null &&
+            _homeInfo.lastCheckOutTime != null) {
+          return _homeInfo.lastCheckOutDate + ' ' + _homeInfo.lastCheckOutTime;
         }
       }
     }
@@ -352,50 +369,23 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   Widget buildOtherButtons(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(left: 60, right: 60, top: 40),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: bottomButtons.map((bottomButton) => buildLogOutButton(bottomButton)).toList()/*<Widget>[
           buildLogOutButton(),
           buildTransactionsButton(),
           buildRefreshButton(),
-        ],
+        ],*/
       ),
     );
   }
 
-  Widget buildLogOutButton() {
-    return GestureDetector(
-        child: Column(children: <Widget>[
-          CircleAvatar(
-            radius: 31,
-            backgroundColor: Colors.blue,
-            child: CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.white,
-              child: Icon(
-                Icons.exit_to_app,
-                size: 20.0,
-                color: Colors.blue,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Center(
-            child: Text('Logout'),
-          ),
-        ]),
-        onTap: () => UtilsClass.logOut(context)
+  Widget buildLogOutButton(BottomButtons bottomButton) {
+    return Container(
+      padding: EdgeInsetsDirectional.only(start: 10),
 
-        //  onTap: print('test'),
-        );
-  }
-
-  Widget buildRefreshButton() {
-    return GestureDetector(
-        child: Column(
-          children: <Widget>[
+      child: GestureDetector(
+          child: Column(children: <Widget>[
             CircleAvatar(
               radius: 31,
               backgroundColor: Colors.blue,
@@ -403,7 +393,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 radius: 30,
                 backgroundColor: Colors.white,
                 child: Icon(
-                  Icons.cached,
+                  bottomButton.icon/*Icons.exit_to_app*/,
                   size: 20.0,
                   color: Colors.blue,
                 ),
@@ -413,47 +403,84 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               height: 10,
             ),
             Center(
-              child: Text('Refresh'),
+              child: Text(bottomButton.name),
             ),
-          ],
-        ),
-        onTap: () => callHomeInfoService()
-        //  onTap: print('test'),
-        );
+          ]),
+          onTap: bottomButton.onClick/*UtilsClass.logOut(context)*/
+
+          //  onTap: print('test'),
+          ),
+    );
   }
 
-  Widget buildTransactionsButton() {
-    return GestureDetector(
-        child: Column(
-          children: <Widget>[
-            CircleAvatar(
-              radius: 31,
-              backgroundColor: Colors.blue,
-              child: CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.white,
-                child: Icon(
-                  Icons.calendar_today,
-                  size: 20.0,
-                  color: Colors.blue,
+/*  Widget buildRefreshButton() {
+    return Container(
+      padding: EdgeInsetsDirectional.only(start: 10),
+      child: GestureDetector(
+          child: Column(
+            children: <Widget>[
+              CircleAvatar(
+                radius: 31,
+                backgroundColor: Colors.blue,
+                child: CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.white,
+                  child: Icon(
+                    Icons.cached,
+                    size: 20.0,
+                    color: Colors.blue,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Center(
-              child: Text(
-                'Transactions',
+              SizedBox(
+                height: 10,
               ),
-            )
-          ],
-        ),
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => TransactionsScreen()))
-        //  onTap: print('test'),
-        );
-  }
+              Center(
+                child: Text('Refresh'),
+              ),
+            ],
+          ),
+          onTap: () => callHomeInfoService()
+          //  onTap: print('test'),
+          ),
+    );
+  }*/
+
+/*  Widget buildTransactionsButton() {
+    return Container(
+      padding: EdgeInsetsDirectional.only(start: 10),
+      child: GestureDetector(
+          child: Column(
+            children: <Widget>[
+              CircleAvatar(
+                radius: 31,
+                backgroundColor: Colors.blue,
+                child: CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.white,
+                  child: Icon(
+                    Icons.calendar_today,
+                    size: 20.0,
+                    color: Colors.blue,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Center(
+                child: Text(
+                  'Transactions',
+                ),
+              )
+            ],
+          ),
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(
+              builder: (BuildContext context) => TransactionsScreen()))
+          //  onTap: print('test'),
+          ),
+    );
+  }*/
 
   showProgressDialog() async {
     await Future.delayed(const Duration(milliseconds: 100), () {
@@ -497,10 +524,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   void calDifferenceHours(HomeInfo homeInfo) {
-    if (homeInfo.CheckIn == '') return;
+    if (homeInfo.checkIn == '') return;
     var date = DateTime.now();
     var formate2 = "${date.year}-${date.month}-${date.day}";
-    String timeOfCheckIn = '${formate2} ${homeInfo.CheckIn}';
+    String timeOfCheckIn = '$formate2 ${homeInfo.checkIn}';
     var pos = timeOfCheckIn.lastIndexOf(' ');
     String result =
         (pos != -1) ? timeOfCheckIn.substring(0, pos) : timeOfCheckIn;
@@ -525,6 +552,31 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     // TODO: implement dispose
     super.dispose();
   }
+
+  void _initializeBottomList() {
+    bottomButtons.add(new BottomButtons(Icons.exit_to_app, 'Logout' ,makeLogout));
+    bottomButtons.add(new BottomButtons(Icons.calendar_today, 'Transactions' , goToTransactionScreen));
+    bottomButtons.add(new BottomButtons(Icons.cached, 'Refresh' , callHomeInfoService));
+  }
+
+  goToTransactionScreen() {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => TransactionsScreen()));
+  }
+
+  makeLogout() {
+    UtilsClass.logOut(context);
+  }
 }
 
 enum CheckType { checkIn, checkOut }
+
+
+class BottomButtons {
+
+  IconData icon ;
+  String name;
+  Function onClick;
+
+  BottomButtons(this.icon, this.name , this.onClick);
+}

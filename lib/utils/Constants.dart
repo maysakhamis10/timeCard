@@ -1,5 +1,4 @@
 import 'package:timecarditg/Screens/MainScreen.dart';
-import 'package:timecarditg/models/HomeInformation.dart';
 
 import '../Screens/transactions_screens.dart';
 
@@ -9,7 +8,7 @@ class Constants {
   static String checkIn = "CheckIn";
   static String employeeId = "";
   static String keep = "keepMe";
-  static String IsLoggedOut = "IsLoggedOut";
+  static String isLoggedOut = "IsLoggedOut";
   static String checkOut = "CheckOut";
   static String apiKey = "apiKey";
   static String id = "id";
