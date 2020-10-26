@@ -70,5 +70,22 @@ class SharedPreferencesOperations {
   }
 
 
+  static Future<bool>saveClients (String name)async{
+
+    final SharedPreferences prefs = await  SharedPreferences.getInstance();
+    bool loggedOut ;
+    // if( prefs.getString(Constants.CLIENT_NAME) == null ){
+      loggedOut = await prefs.setString(Constants.CLIENT_NAME, name);
+    // }
+    return loggedOut;
+  }
+
+  static Future<String> getClients ( )async{
+    final SharedPreferences prefs = await  SharedPreferences.getInstance();
+    String loggedOut = prefs.getString(Constants.CLIENT_NAME);
+    return loggedOut;
+  }
+
+
 
 }

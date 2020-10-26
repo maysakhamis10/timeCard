@@ -189,12 +189,14 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                 if (progressLoading != null) {
                   progressLoading.hide();
                 }
-                UtilsClass.showMyDialog(
-                    content: "Invalid username or password or may "
-                        "be your mac Address is not Registered",
-                    context: context,
-                    type: DialogType.warning,
-                    onPressed: dismissLoading);
+                scaffoldKey.currentState.showBottomSheet((widgetBuilder){
+                  return Container(
+                    height: 50,
+                    width: double.infinity,
+                    color: Colors.white,
+                    child:  Center(child: Text("Invalid username or password or may "
+                        "be your mac Address is not Registered")),);
+                });
               }
             },
             child: Container(),

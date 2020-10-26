@@ -17,6 +17,8 @@ class Constants {
   static const String HomePage = MainScreen.routeName;
   static const String TRANSACTIONS = TransactionsScreen.routeName;
 
+  static const String CLIENT_NAME = "Client Name";
+
   static String getLoginUrl(String userName, String pass, String macAddress) {
     String loginurl = baseUrl;
     loginurl += "LogIn?" + "Username=" + userName + "&Password=" + pass +

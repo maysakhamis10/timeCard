@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,6 +73,12 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
     fromWhereList.add("ITG");
     fromWhereList.add("Home");
     fromWhereList.add("Other");
+     SharedPreferencesOperations.getClients().then((client) {
+       clients = jsonDecode(client.toString())?.cast<String>();
+       setState(() {
+
+       });
+     });
     empModel = await getApiKeyAndId();
     if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
       _clientsBloc.add(ClientEvent(apiKey: empModel.apiKey));
@@ -261,7 +269,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
                 )),
             value: dropdownValue,
             title: "Client Name",
-            options: clients.length == 0
+            options: clients == null || clients.length == 0
                 ? [SmartSelectOption(title: "", value: "")]
                 : clients
                     .map((client) =>
@@ -491,7 +499,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
                 type: DialogType.confirmation);
           } else {
             UtilsClass.showMyDialog(
-                content: 'There is something wrong please check in again ',
+                content: 'There is something wrong in server  please check in again ',
                 context: context,
                 onPressed: navigateToMain,
                 type: DialogType.confirmation);
@@ -503,22 +511,13 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   }
 
   Widget clientsListener() {
-    // showProgressDialog();
-
     return BlocBuilder<ClientsBloc, ClientListState>(
       builder: (context, ClientListState realState) {
         if (realState.result == dataResult.Empty) {
-//          if (progressLoading.isShowing()) {
-//            progressLoading.hide();
-//          }
           return buildDropDownList();
         } else if (realState.result == dataResult.Loaded) {
-//          if (progressLoading.isShowing()) {
-//            progressLoading.hide();
-//          }
           clients = realState.list;
-          print('sizeee==> ${clients.length}');
-          print('sizeee==> ${clients.first}');
+          clients.length > 0 ? saveClientsInDB(clients) : doNothing();
           return buildDropDownList();
         }
         return Container();
@@ -598,5 +597,12 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
             setState(() {});
           }),
     );
+  }
+
+  doNothing() {}
+
+  saveClientsInDB(List<String> clients) {
+    // _operations.saveClients(clients);
+    SharedPreferencesOperations.saveClients(jsonEncode(clients));
   }
 }

@@ -9,7 +9,7 @@ Widget appBarMain(BuildContext context) {
 
 InputDecoration customInputDecoration(String hintText) {
   return InputDecoration(
-    prefixIcon: Icon(Icons.lock,color: Colors.blue,),
+    prefixIcon: Icon(Icons.lock,color: Colors.blue[300],),
     labelText: hintText,
     labelStyle: TextStyle(color: Colors.blue,letterSpacing: 1.0),
 //    focusedBorder: UnderlineInputBorder(

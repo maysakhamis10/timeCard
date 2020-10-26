@@ -200,15 +200,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 },
                 child: CircleAvatar(
                   radius: 120,
+                  backgroundColor: Colors.white,
                   backgroundImage: prefs != null
                       ? prefs.getString('user_profile_image') != null
                           ? FileImage(
                               File(prefs.getString('user_profile_image')),
                               scale: 1.0)
-                          : NetworkImage(
-                              'http://kundenarea.at/app-assets/images/user/12.jpg')
-                      : NetworkImage(
-                          'http://kundenarea.at/app-assets/images/user/12.jpg'),
+                          : AssetImage(
+                               'assets/images/logo.png')
+                      : AssetImage(
+                          'assets/images/logo.png'),
                 ),
               ),
             ),
@@ -282,7 +283,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         width: width * 0.6,
         height: 50,
         decoration: BoxDecoration(
-          color: Colors.red,
+          color: Colors.red[300],
           borderRadius: BorderRadius.circular(30.0),
           boxShadow: [
             BoxShadow(
@@ -388,14 +389,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           child: Column(children: <Widget>[
             CircleAvatar(
               radius: 31,
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.blue[300],
               child: CircleAvatar(
                 radius: 30,
                 backgroundColor: Colors.white,
                 child: Icon(
                   bottomButton.icon/*Icons.exit_to_app*/,
                   size: 20.0,
-                  color: Colors.blue,
+                  color: Colors.blue[300],
                 ),
               ),
             ),
@@ -561,7 +562,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   goToTransactionScreen() {
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => TransactionsScreen()));
+        builder: (BuildContext context) => MultiBlocProvider(child: TransactionsScreen() ,
+          providers: [
+            BlocProvider<ClientsBloc>(
+              create: (_) => ClientsBloc(),
+            ),
+            BlocProvider(
+              create: (_) => CheckBloc(),
+            ),
+          ],
+        )));
   }
 
   makeLogout() {
