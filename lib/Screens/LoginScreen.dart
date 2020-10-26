@@ -404,8 +404,9 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   logInFun() async {
     connectStatus checkConnectivity = await UtilsClass.checkConnectivity();
     if (checkConnectivity == connectStatus.connected) {
-      // String macAddress = await macAddressChecker();
-      String macAddress =  "00:00:00:00:00:00";
+      String macAddress = await macAddressChecker();
+      //to test for developers
+      // String macAddress =  "00:00:00:00:00:00";
       if (formKey.currentState.validate()) {
         _bloc.add(LoginEvent(
             user: Logginer(
