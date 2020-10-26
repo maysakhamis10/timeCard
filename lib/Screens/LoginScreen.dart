@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
@@ -151,8 +152,8 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
         ),
         Text(
           '  ITG TimeCard',
-          style: TextStyle(
-              color: mainColor, fontWeight: FontWeight.bold, fontSize: 20),
+          style: GoogleFonts.voces(
+              color: mainColor, fontWeight: FontWeight.bold, fontSize: 18 ,),
         ),
       ],
     );
@@ -195,7 +196,8 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                     width: double.infinity,
                     color: Colors.white,
                     child:  Center(child: Text("Invalid username or password or may "
-                        "be your mac Address is not Registered")),);
+                        "be your mac Address is not Registered" , style: GoogleFonts.voces(color: Colors.blue[300] ,
+                    fontSize: 12.0),)),);
                 });
               }
             },
@@ -239,7 +241,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
             controller: emailTextEditingController,
             textInputAction: TextInputAction.next,
             textAlign: TextAlign.start,
-            style: TextStyle(color: Colors.blue),
+            style: TextStyle(color: Colors.blue , fontSize: 15.0),
             decoration: InputDecoration(
               prefixIcon: Icon(
                 Icons.account_circle,
@@ -265,19 +267,26 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     return Expanded(
       flex: 1,
       child: Container(
-          margin: EdgeInsets.only(left: 10.0, right: 10.0),
+          margin: EdgeInsets.only(left: 10.0, right: 10.0,top: 10.0),
           child: Align(
             child: Row(
               children: <Widget>[
                 Text(
-                  'Mac Address :',
-                  style: TextStyle(
-                      color: Colors.black87, fontWeight: FontWeight.normal),
+                  'Mac Address : ' ,
+                  style: GoogleFonts.voces(
+                      color: Colors.black87, fontWeight: FontWeight.normal , fontSize: 13.0),
                 ),
-                Text(
-                  _platformVersion,
-                  style:
-                  TextStyle(color: mainColor, fontWeight: FontWeight.normal),
+                GestureDetector(
+                  onLongPress: () {
+                    Clipboard.setData(new ClipboardData(text: _platformVersion));
+                    scaffoldKey.currentState.showSnackBar(
+                        new SnackBar(content: new Text("$_platformVersion Copied to Clipboard"),));
+                  },
+                  child: Text(
+                    _platformVersion,
+                    style:
+                    GoogleFonts.voces(color: mainColor, fontWeight: FontWeight.normal, fontSize: 13.0),
+                  ),
                 )
               ],
             ),
@@ -308,7 +317,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
             textInputAction: TextInputAction.done,
             textAlign: TextAlign.start,
             obscureText: true,
-            style: TextStyle(color: Colors.blue),
+            style: TextStyle(color: Colors.blue , fontSize: 15.0),
             decoration: InputDecoration(
               prefixIcon: Icon(
                 Icons.lock,
@@ -334,13 +343,13 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     return Expanded(
       flex: 1,
       child: Container(
-        margin: EdgeInsetsDirectional.only(start : 10.0 , end :10.0),
+        margin: EdgeInsetsDirectional.only(start : 10.0 , end :10.0 , top: 10.0),
         child: Row(
           children: <Widget>[
             Text(
               'Keep me logged in ',
               style:
-              TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
+              GoogleFonts.voces(fontWeight: FontWeight.normal, color: Colors.black ,fontSize: 13.0),
             ),
             Spacer(),
             Flexible(
@@ -370,20 +379,22 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
         onTap: () => logInFun(),
         child: Container(
           alignment: Alignment.center,
-          margin: EdgeInsets.only(left: 10, right: 10, top: 60 ),
+          margin: EdgeInsets.only( top: 60 ),
           decoration: BoxDecoration(
             color: Color(0xff1295df),
             borderRadius: BorderRadius.circular(30.0),
             boxShadow: [
               BoxShadow(
-                color: Colors.white,
-                offset: Offset(0.0, 2.0),
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 3,
+                blurRadius: 7,
+                offset: Offset(0, 3), //
               ),
             ],
           ),
           child: Text(
             'Sign in',
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: GoogleFonts.voces(color: Colors.white, fontSize: 16.0),
           ),
         ),
       ),
@@ -408,7 +419,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
           height: 50,
           width: double.infinity,
           color: Colors.white,
-          child:  Center(child: Text('There is no internet connection')),);
+          child:  Center(child: Text('There is no internet connection' , style: GoogleFonts.voces(fontSize: 12.0),)),);
       });
 /*      UtilsClass.showMyDialog(
           context: context,

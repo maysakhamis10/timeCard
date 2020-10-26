@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -165,7 +166,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             //   flex: 1,
             // ),
             Flexible(
-                flex: 1.5.toInt(),
+                flex: 2,
                 child: buildSignIn(context)),
             // SizedBox(
             //   height: 20,
@@ -219,12 +220,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget buildUserName() {
-    return Text(
-      '${empModel.username}',
-      style: TextStyle(color: Colors.black, fontSize: 25),
-    );
-  }
 
   Widget buildSignIn(BuildContext context) {
     return GestureDetector(
@@ -232,21 +227,23 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       child: Container(
         alignment: Alignment.center,
         margin: EdgeInsets.only(left: 15, right: 15),
-        width: width * 0.6,
+        width: width * 0.65,
         height: 50,
         decoration: BoxDecoration(
           color: Color(0xff1295df),
           borderRadius: BorderRadius.circular(30.0),
           boxShadow: [
             BoxShadow(
-              color: Colors.white,
-              offset: Offset(0.0, 2.0),
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 3,
+              blurRadius: 7,
+              offset: Offset(0, 3), //
             ),
           ],
         ),
         child: Text(
           'Check in',
-          style: TextStyle(color: Colors.white,fontSize: 15),
+          style: GoogleFonts.voces(color: Colors.white,fontSize: 16.0),
         ),
       ),
     );
@@ -280,21 +277,23 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       child: Container(
         alignment: Alignment.center,
         margin: EdgeInsets.only(left: 15, right: 15),
-        width: width * 0.6,
+        width: width * 0.65,
         height: 50,
         decoration: BoxDecoration(
           color: Colors.red[300],
           borderRadius: BorderRadius.circular(30.0),
           boxShadow: [
             BoxShadow(
-              color: Colors.white,
-              offset: Offset(0.0, 2.0),
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 3,
+              blurRadius: 7,
+              offset: Offset(0, 3), //
             ),
           ],
         ),
         child: Text(
           'Check out',
-          style: TextStyle(color: Colors.white,fontSize: 15),
+          style: GoogleFonts.voces(color: Colors.white,fontSize: 16.0),
         ),
       ),
     );
@@ -335,14 +334,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             children: <Widget>[
               Text(
                 title,
-                style: TextStyle(color: Colors.black54),
+                style: GoogleFonts.voces(color: Colors.black54 , fontSize: 14.0),
               ),
               SizedBox(
                 width: 10,
               ),
               Text(
                 fetchTime(checkType) ?? "00.00.00",
-                style: TextStyle(color: Colors.black54),
+                style: GoogleFonts.voces(color: Colors.black54 , fontSize: 14.0),
               ),
             ],
           )
@@ -404,7 +403,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               height: 10,
             ),
             Center(
-              child: Text(bottomButton.name),
+              child: Text(bottomButton.name , style: GoogleFonts.voces(fontSize: 13.0),),
             ),
           ]),
           onTap: bottomButton.onClick/*UtilsClass.logOut(context)*/

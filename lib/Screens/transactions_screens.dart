@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:timecarditg/Blocs/CheckInBloc.dart';
 import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
@@ -60,7 +61,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
           title: Text(
             'Transactions',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white, fontSize: 16),
+            style: GoogleFonts.voces(color: Colors.white, fontSize: 16.0),
           ),
           iconTheme: IconThemeData(color: Colors.white),
           backgroundColor: Colors.blue[300],
@@ -149,7 +150,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             ),
           );
         } else {
-          return Center(child: Text('No Transactions yet'));
+          return Center(child: Text('No Transactions yet' , style: GoogleFonts.voces(color: Colors.black , fontSize:  20.0 ,
+          fontWeight: FontWeight.bold),));
         }
       },
     );
@@ -188,7 +190,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   ),
                   Text(
                     checkModel.date + ' ' + checkModel.time,
-                    style: TextStyle(color: Colors.white),
+                    style: GoogleFonts.voces(color: Colors.white ,fontSize: 13.0),
                   ),
                 ],
               ),
@@ -204,7 +206,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 ),
                 Text(
                   checkModel.sync == 1 ? 'Online synced' : 'Offline synced',
-                  style: TextStyle(color: Colors.white),
+                  style: GoogleFonts.voces(color: Colors.white , fontSize: 13.0),
                 ),
               ],
             ),
@@ -225,7 +227,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   Icon(Icons.info_outline,  color: Colors.white),
                   SizedBox(width: 10,),
                   Text('Additional info',textAlign: TextAlign.left,
-                    style: TextStyle(color: Colors.white),),
+                    style: GoogleFonts.voces(color: Colors.white , fontSize: 13.0),),
 
                 ],
               ),
@@ -239,7 +241,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   SizedBox(width: 10,),
                   Expanded(
                     child: Text(checkModel.client,
-                      style: TextStyle(color: Colors.white),),
+                      style: GoogleFonts.voces(color: Colors.white , fontSize: 13.0),),
                   ),
 
                 ],
@@ -278,7 +280,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   Text(
                     formattedDate,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20),
+                    style: GoogleFonts.voces(fontSize: 18.0),
                   ),
                   SizedBox(
                     width: 10,
@@ -346,6 +348,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
         Text(
           transactionItem.title,
           textAlign: TextAlign.center,
+          style: GoogleFonts.voces(fontSize: 13.0),
         ),
       ],
     );

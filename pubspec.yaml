@@ -41,6 +41,7 @@ dependencies:
   intl: ^0.16.1
   device_preview: any
   smart_select: any
+  google_fonts: any
 
 
 dev_dependencies:
