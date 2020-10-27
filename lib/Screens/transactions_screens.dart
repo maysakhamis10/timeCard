@@ -176,82 +176,85 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   }
 
   Widget buildCenterText(CheckModel checkModel) {
-    return ExpansionTile(
-      title: Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Row(
+    return Theme(
+     data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        title: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Icon(Icons.access_time, color: Colors.white),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      checkModel.date + ' ' + checkModel.time,
+                      style: GoogleFonts.voces(color: Colors.white ,fontSize: 13.0),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top : 8.0),
+              child: Row(
                 children: <Widget>[
-                  Icon(Icons.access_time, color: Colors.white),
+                  Icon(Icons.sync, color: Colors.white),
                   SizedBox(
                     width: 10,
                   ),
                   Text(
-                    checkModel.date + ' ' + checkModel.time,
-                    style: GoogleFonts.voces(color: Colors.white ,fontSize: 13.0),
+                    checkModel.sync == 1 ? 'Online synced' : 'Offline synced',
+                    style: GoogleFonts.voces(color: Colors.white , fontSize: 13.0),
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+          ],
+        ),
+        children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top : 8.0),
-            child: Row(
+            padding: const EdgeInsetsDirectional.only(start: 13),
+            child: Column(
               children: <Widget>[
-                Icon(Icons.sync, color: Colors.white),
-                SizedBox(
-                  width: 10,
+                SizedBox(height: 10,),
+
+                SizedBox(height: 10,),
+                Row(
+
+                  children: <Widget>[
+                    Icon(Icons.info_outline,  color: Colors.white),
+                    SizedBox(width: 10,),
+                    Text('Additional info',textAlign: TextAlign.left,
+                      style: GoogleFonts.voces(color: Colors.white , fontSize: 13.0),),
+
+                  ],
                 ),
-                Text(
-                  checkModel.sync == 1 ? 'Online synced' : 'Offline synced',
-                  style: GoogleFonts.voces(color: Colors.white , fontSize: 13.0),
+                SizedBox(width: 15,),
+                SizedBox(height: 10,),
+                Row(
+                  children: <Widget>[
+                    Icon(Icons.account_circle,
+                        color: Colors.white
+                    ),
+                    SizedBox(width: 10,),
+                    Expanded(
+                      child: Text(checkModel.client,
+                        style: GoogleFonts.voces(color: Colors.white , fontSize: 13.0),),
+                    ),
+
+                  ],
                 ),
+                SizedBox(height: 10,)
               ],
             ),
           ),
+
         ],
       ),
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsetsDirectional.only(start: 13),
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 10,),
-
-              SizedBox(height: 10,),
-              Row(
-
-                children: <Widget>[
-                  Icon(Icons.info_outline,  color: Colors.white),
-                  SizedBox(width: 10,),
-                  Text('Additional info',textAlign: TextAlign.left,
-                    style: GoogleFonts.voces(color: Colors.white , fontSize: 13.0),),
-
-                ],
-              ),
-              SizedBox(width: 15,),
-              SizedBox(height: 10,),
-              Row(
-                children: <Widget>[
-                  Icon(Icons.account_circle,
-                      color: Colors.white
-                  ),
-                  SizedBox(width: 10,),
-                  Expanded(
-                    child: Text(checkModel.client,
-                      style: GoogleFonts.voces(color: Colors.white , fontSize: 13.0),),
-                  ),
-
-                ],
-              ),
-              SizedBox(height: 10,)
-            ],
-          ),
-        ),
-
-      ],
     );
   }
 
