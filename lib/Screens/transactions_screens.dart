@@ -220,7 +220,6 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             padding: const EdgeInsetsDirectional.only(start: 13),
             child: Column(
               children: <Widget>[
-                SizedBox(height: 10,),
 
                 SizedBox(height: 10,),
                 Row(
