@@ -249,8 +249,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     );
   }
 
-  signInOnTap(BuildContext context) {
-    showDialog(
+  signInOnTap(BuildContext context) async{
+    bool returbned = await showDialog(
       context: context,
       builder: (context) => MultiBlocProvider(
         child: Container(
@@ -269,6 +269,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         ],
       ),
     );
+
+    if(returbned) showBottomSheet(context: context, builder: (context) => Text("please try again with choose fromWhere you are login is mandatory"));
   }
 
   Widget buildSignOut(BuildContext context) {
@@ -299,8 +301,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     );
   }
 
-  signOutOnTap(BuildContext context) {
-    showDialog(
+  signOutOnTap(BuildContext context)async{
+    bool returbned = await showDialog(
       context: context,
       builder: (context) => MultiBlocProvider(
         child: Container(
@@ -319,6 +321,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         ],
       ),
     );
+    if(returbned) showBottomSheet(context: context, builder: (context) => Text("please try again with choose fromWhere you are login is mandatory"));
+
   }
 
   Widget buildTextInGridView({String title, CheckType checkType}) {

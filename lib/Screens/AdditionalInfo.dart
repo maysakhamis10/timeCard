@@ -223,18 +223,23 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
     checkObject.checkType = widget.checkType;
     checkObject.employeeId = empModel.employeeId;
     checkObject.time = nowTime.toString();
+    checkObject.fromWhere = fromWhere;
     print('CHECK OBJECT FROM SAVE BTN ${checkObject.toJson()}');
     if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
+      if(checkObject.fromWhere == null || checkObject.fromWhere == "" || checkObject.fromWhere == "From Where"){
+        Navigator.pop(context , true);
+      }else {
       showProgressDialog();
       CheckModel savedOne = await _operations.fetchSaveTransInDb();
-      if (savedOne != null && savedOne.sync != 1) {
-        print('saved one is => ${savedOne.isAdded}');
-        this._checkObject = savedOne;
-        _checkInBloc.add(savedOne);
-      } else {
-        this._checkObject = checkObject;
-        _checkInBloc.add(_checkObject);
-        print('online object => ${_checkObject.toJson()}');
+        if (savedOne != null && savedOne.sync != 1) {
+          print('saved one is => ${savedOne.isAdded}');
+          this._checkObject = savedOne;
+          _checkInBloc.add(savedOne);
+        } else {
+          this._checkObject = checkObject;
+          _checkInBloc.add(_checkObject);
+          print('online object => ${_checkObject.toJson()}');
+        }
       }
     } else {
       await saveChecksToDB(false, checkObject);

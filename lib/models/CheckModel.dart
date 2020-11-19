@@ -2,7 +2,7 @@ import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
 
 class CheckModel  extends BaseEvent{
 
-  String  client , addressInfo ,date , time ,apiKey, logginMachine ,location;
+  String  client , addressInfo ,date , time ,apiKey, logginMachine ,location , fromWhere;
   int checkType , sync ,isOnline , employeeId , isAdded;
 
 
@@ -13,6 +13,7 @@ class CheckModel  extends BaseEvent{
   CheckModel({
     this.employeeId,
     this.client,
+    this.fromWhere ,
     this.addressInfo,
     this.date,
     this.time,
@@ -38,7 +39,8 @@ class CheckModel  extends BaseEvent{
         checkType = json['check_type'] ,
         sync= json['sync'],
         isAdded = json['isAdded'],
-        isOnline = json['isOnline'];
+        isOnline = json['isOnline'] ,
+        fromWhere = json['from_where'] ;
 
   Map<String, dynamic> toJson() => {
     'employee_id': employeeId,
@@ -52,7 +54,8 @@ class CheckModel  extends BaseEvent{
     'check_type' : checkType,
     'sync' : sync,
     'isAdded' :isAdded,
-    'isOnline' : isOnline
+    'isOnline' : isOnline,
+    'from_where' : fromWhere,
   };
 
 }

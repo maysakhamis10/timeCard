@@ -376,8 +376,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     _checkInBloc.add(savedOne);
     } else {
     // this._checkObject = checkObject;
-    _checkInBloc.add(_checkObject);
-    print('online object => ${_checkObject.toJson()}');
+    // _checkInBloc.add(_checkObject);
+    // print('online object => ${_checkObject.toJson()}');
     }
     }
   }

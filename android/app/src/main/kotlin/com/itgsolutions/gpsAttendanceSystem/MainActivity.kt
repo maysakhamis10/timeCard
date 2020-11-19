@@ -1,4 +1,4 @@
-package com.example.timecarditg
+package com.itgsolutions.gpsAttendanceSystem
 
 import android.content.Intent
 import android.provider.Settings
