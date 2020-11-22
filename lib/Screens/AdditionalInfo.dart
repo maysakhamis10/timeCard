@@ -16,6 +16,7 @@ import 'package:timecarditg/models/CheckModel.dart';
 import 'package:timecarditg/models/Employee.dart';
 import 'package:timecarditg/models/checkInResponse.dart';
 import 'package:timecarditg/utils/sharedPreference.dart';
+import 'package:timecarditg/utils/strings.dart';
 import 'dart:io' show Platform;
 import 'package:timecarditg/utils/utils.dart';
 
@@ -70,9 +71,9 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   }
 
   void fetchApiKey() async {
-    fromWhereList.add("ITG");
-    fromWhereList.add("Home");
-    fromWhereList.add("Other");
+    fromWhereList.add(from_itg);
+    fromWhereList.add(from_home);
+    fromWhereList.add(from_others);
      SharedPreferencesOperations.getClients().then((client) {
        clients = jsonDecode(client.toString())?.cast<String>();
        setState(() {

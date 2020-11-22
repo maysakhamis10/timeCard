@@ -270,7 +270,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       ),
     );
 
-    if(returbned) showBottomSheet(context: context, builder: (context) => Text("please try again with choose fromWhere you are login is mandatory"));
+    if(returbned ?? false) showBottomSheet(context: context, builder: (context) => Text("please try again with choose fromWhere you are login is mandatory"));
   }
 
   Widget buildSignOut(BuildContext context) {
@@ -321,7 +321,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         ],
       ),
     );
-    if(returbned) showBottomSheet(context: context, builder: (context) => Text("please try again with choose fromWhere you are login is mandatory"));
+    if(returbned ?? false) showBottomSheet(context: context, builder: (context) => Text("please try again with choose fromWhere you are login is mandatory"));
 
   }
 

@@ -7,6 +7,7 @@ import 'package:timecarditg/models/checkInResponse.dart';
 import 'package:timecarditg/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:timecarditg/utils/sharedPreference.dart';
+import 'package:timecarditg/utils/strings.dart';
 import 'package:timecarditg/utils/utils.dart';
 import '../utils/Constants.dart';
 
@@ -57,6 +58,15 @@ class ApiCalls {
     mParams["Clients"]= checkObject.client == 'Client Name' ? " ' ' " : checkObject.client;
     mParams["AddressesInfo"] = checkObject.addressInfo != "" ? checkObject.addressInfo:" ' ' ";
     mParams["Times"] = checkObject.time;
+/*    if(checkObject.fromWhere == from_itg) {
+      mParams["FromWhere"] = "1";
+    }else if(checkObject.fromWhere == from_home) {
+      mParams["FromWhere"] = "2";
+    }else if(checkObject.fromWhere == from_others){
+      mParams["FromWhere"] = "3";
+    }*/
+    mParams["FromWhere"] = checkObject.fromWhere == from_itg ? "1" : checkObject.fromWhere == from_home ? "2" :  "3" ;
+    print(jsonEncode(mParams).toString());
     if ( (await UtilsClass.checkConnectivity())==connectStatus.connected) {
       try {
         http.Response response = await http.post(url, body: mParams);

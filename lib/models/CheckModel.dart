@@ -40,7 +40,7 @@ class CheckModel  extends BaseEvent{
         sync= json['sync'],
         isAdded = json['isAdded'],
         isOnline = json['isOnline'] ,
-        fromWhere = json['from_where'] ;
+        fromWhere = json['FromWhere'] ;
 
   Map<String, dynamic> toJson() => {
     'employee_id': employeeId,
@@ -55,7 +55,7 @@ class CheckModel  extends BaseEvent{
     'sync' : sync,
     'isAdded' :isAdded,
     'isOnline' : isOnline,
-    'from_where' : fromWhere,
+    'FromWhere' : fromWhere,
   };
 
 }
