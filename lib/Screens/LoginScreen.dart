@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:imei_plugin/imei_plugin.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
@@ -23,7 +24,8 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
-  String _platformVersion = 'Unknown';
+  String _platformImei = 'Unknown';
+  String uniqueId = "Unknown";
   ProgressDialog progressLoading;
   LoginBloc _bloc;
 
@@ -278,12 +280,12 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                 ),
                 GestureDetector(
                   onLongPress: () {
-                    Clipboard.setData(new ClipboardData(text: _platformVersion));
+                    Clipboard.setData(new ClipboardData(text: _platformImei));
                     scaffoldKey.currentState.showSnackBar(
-                        new SnackBar(content: new Text("$_platformVersion Copied to Clipboard"),));
+                        new SnackBar(content: new Text("$_platformImei Copied to Clipboard"),));
                   },
                   child: Text(
-                    _platformVersion,
+                    _platformImei,
                     style:
                     GoogleFonts.voces(color: mainColor, fontWeight: FontWeight.normal, fontSize: 13.0),
                   ),
@@ -404,7 +406,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   logInFun() async {
     connectStatus checkConnectivity = await UtilsClass.checkConnectivity();
     if (checkConnectivity == connectStatus.connected) {
-      String macAddress = await macAddressChecker();
+      // String macAddress = await macAddressChecker();
       //to test for developers
       // String macAddress =  "00:00:00:00:00:00";
       if (formKey.currentState.validate()) {
@@ -412,7 +414,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
             user: Logginer(
                 username: emailTextEditingController.text,
                 password: passwordTextEditingController.text,
-                macAddress: macAddress)));
+                macAddress: _platformImei/*macAddress*/)));
       }
     } else {
       scaffoldKey.currentState.showBottomSheet((widgetBuilder){
@@ -453,7 +455,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     });
   }
 
-  Future<String> macAddressChecker() async {
+/*  Future<String> macAddressChecker() async {
     try {
       await requestPermission();
       String macAddress = await UtilsClass.loadMacAddress();
@@ -467,23 +469,30 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       print(e);
       return 'error';
     }
-  }
+  }*/
 
   Future<void> initPlatformState() async {
-    String platformVersion;
+    String platformImei;
+    String idunique;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = await GetMac.macAddress;
+      platformImei =
+      await ImeiPlugin.getImei(shouldShowRequestPermissionRationale: false);
+      List<String> multiImei = await ImeiPlugin.getImeiMulti();
+      print(multiImei);
+      idunique = await ImeiPlugin.getId();
     } on PlatformException {
-      platformVersion = 'Failed to get Device MAC Address.';
+      platformImei = 'Failed to get platform version.';
     }
+
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
     if (!mounted) return;
 
     setState(() {
-      _platformVersion = platformVersion;
+      _platformImei = platformImei;
+      uniqueId = idunique;
     });
   }
 

@@ -42,6 +42,7 @@ dependencies:
   device_preview: any
   smart_select: any
   google_fonts: any
+  imei_plugin: ^1.2.0
 
 
 dev_dependencies:
