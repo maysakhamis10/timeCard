@@ -31,7 +31,7 @@ dependencies:
   permission_handler: ^5.0.1
   http: ^0.12.1
   geolocator: ^5.1.3
-  sweet_alert_dialogs: "^0.2.0"
+#  sweet_alert_dialogs: "^0.2.0"
   progress_dialog: ^1.2.4
   sqflite: ^1.3.0
   flutter_svg: ^0.13.0
@@ -43,6 +43,7 @@ dependencies:
   smart_select: any
   google_fonts: any
   imei_plugin: ^1.2.0
+  cached_network_image: any
 
 
 dev_dependencies:

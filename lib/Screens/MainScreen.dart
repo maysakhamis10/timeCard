@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,6 +25,7 @@ import 'package:path/path.dart' as Path;
 
 class MainScreen extends StatefulWidget {
   static const String routeName = '/home';
+
   MainScreen();
 
   @override
@@ -42,7 +44,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   SharedPreferences prefs;
   Employee empModel;
   ProgressDialog progressLoading;
-  List<BottomButtons> bottomButtons = new List() ;
+  List<BottomButtons> bottomButtons = new List();
 
   @override
   void initState() {
@@ -104,42 +106,38 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         //   backgroundColor: Color(0xFFEEEEEE),
         // ),
         body: WillPopScope(
-          onWillPop: () async => false,
-          child: SingleChildScrollView(
-            child: BlocBuilder<HomeInfoBloc, BaseResultState>(
-                builder: (context, state) {
-              if (state.result == dataResult.Loading) {
-                if (mounted) {
-                  showProgressDialog();
-                }
-              }
-              else if (state.result == dataResult.Loaded) {
-                _homeInfo = state.model;
-                dismissLoading();
-                calDifferenceHours(_homeInfo);
-                print(('object from api => ${_homeInfo.toJson()}'));
-              }
-              else if (state.result == dataResult.Error) {
-                dismissLoading();
-              }
-              return buildHomeUi(context);
-            }),
-          ),
-        ));
+      onWillPop: () async => false,
+      child: SingleChildScrollView(
+        child: BlocBuilder<HomeInfoBloc, BaseResultState>(
+            builder: (context, state) {
+          if (state.result == dataResult.Loading) {
+            if (mounted) {
+              showProgressDialog();
+            }
+          } else if (state.result == dataResult.Loaded) {
+            _homeInfo = state.model;
+            dismissLoading();
+            calDifferenceHours(_homeInfo);
+            print(('object from api => ${_homeInfo.toJson()}'));
+          } else if (state.result == dataResult.Error) {
+            dismissLoading();
+          }
+          return buildHomeUi(context);
+        }),
+      ),
+    ));
   }
 
   Widget buildHomeUi(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 40),
       height: MediaQuery.of(context).size.height,
-      width:  MediaQuery.of(context).size.width,
+      width: MediaQuery.of(context).size.width,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Flexible(
-                flex: 2,
-                child: buildUserPic()),
+            Flexible(flex: 2, child: buildUserPic()),
             // SizedBox(
             //   height: 20,
             // ),
@@ -154,7 +152,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             Flexible(
               flex: 0.5.toInt(),
               child: buildTextInGridView(
-                  title: 'You Can Check out At ', checkType: CheckType.checkOut),
+                  title: 'You Can Check out At ',
+                  checkType: CheckType.checkOut),
             ),
             // SizedBox(
             //   height: 10,
@@ -166,19 +165,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             // Spacer(
             //   flex: 1,
             // ),
-            Flexible(
-                flex: 2,
-                child: buildSignIn(context)),
+            Flexible(flex: 2, child: buildSignIn(context)),
             // SizedBox(
             //   height: 20,
             // ),
-            Flexible(
-                flex: 1.5.toInt(),
-                child: buildSignOut(context)),
+            Flexible(flex: 1.5.toInt(), child: buildSignOut(context)),
             // Spacer(flex: 1,),
-            Flexible(
-                flex:3,
-                child: buildOtherButtons(context)),
+            Flexible(flex: 3, child: buildOtherButtons(context)),
             // Spacer(flex: 3,),
           ],
         ),
@@ -195,22 +188,26 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           child: Container(
             width: 120,
             height: 120,
-            child: Center(
-              child: GestureDetector(
-                onTap: () {
-                  getImage();
-                },
-                child: CircleAvatar(
-                  radius: 120,
-                  backgroundColor: Colors.white,
-                  backgroundImage: prefs != null
-                      ? prefs.getString(Constants.Img) != null
-                          ? NetworkImage(prefs.getString(Constants.Img))
-                          : AssetImage(
-                               'assets/images/logo.png')
-                      : AssetImage(
-                          'assets/images/logo.png'),
-                ),
+            child: GestureDetector(
+              onTap: () {
+                getImage();
+              },
+              child: ClipOval(
+                child: prefs != null
+                    ? prefs.getString(Constants.Img) != null ||
+                            prefs.getString(Constants.Img) != ""
+                        ? CachedNetworkImage(
+                            fit: BoxFit.fill,
+                            imageUrl: prefs.getString(Constants.Img),
+                            placeholder: (context, text) {
+                              return Image.asset("assets/images/logo.png");
+                            },
+                            errorWidget: (context, url, error) =>
+                                Image.asset('assets/images/logo.png'),
+                            //
+                          )
+                        : Image.asset('assets/images/logo.png')
+                    : Image.asset('assets/images/logo.png'),
               ),
             ),
           ),
@@ -218,7 +215,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       ),
     );
   }
-
 
   Widget buildSignIn(BuildContext context) {
     return GestureDetector(
@@ -242,13 +238,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         ),
         child: Text(
           'Check in',
-          style: GoogleFonts.voces(color: Colors.white,fontSize: 16.0),
+          style: GoogleFonts.voces(color: Colors.white, fontSize: 16.0),
         ),
       ),
     );
   }
 
-  signInOnTap(BuildContext context) async{
+  signInOnTap(BuildContext context) async {
     bool returbned = await showDialog(
       context: context,
       builder: (context) => MultiBlocProvider(
@@ -269,7 +265,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       ),
     );
 
-    if(returbned ?? false) showBottomSheet(context: context, builder: (context) => Text("please try again with choose fromWhere you are login is mandatory"));
+    if (returbned ?? false)
+      showBottomSheet(
+          context: context,
+          builder: (context) => Text(
+              "please try again with choose fromWhere you are login is mandatory"));
   }
 
   Widget buildSignOut(BuildContext context) {
@@ -294,13 +294,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         ),
         child: Text(
           'Check out',
-          style: GoogleFonts.voces(color: Colors.white,fontSize: 16.0),
+          style: GoogleFonts.voces(color: Colors.white, fontSize: 16.0),
         ),
       ),
     );
   }
 
-  signOutOnTap(BuildContext context)async{
+  signOutOnTap(BuildContext context) async {
     bool returbned = await showDialog(
       context: context,
       builder: (context) => MultiBlocProvider(
@@ -320,8 +320,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         ],
       ),
     );
-    if(returbned ?? false) showBottomSheet(context: context, builder: (context) => Text("please try again with choose fromWhere you are login is mandatory"));
-
+    if (returbned ?? false)
+      showBottomSheet(
+          context: context,
+          builder: (context) => Text(
+              "please try again with choose fromWhere you are login is mandatory"));
   }
 
   Widget buildTextInGridView({String title, CheckType checkType}) {
@@ -337,14 +340,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             children: <Widget>[
               Text(
                 title,
-                style: GoogleFonts.voces(color: Colors.black54 , fontSize: 14.0),
+                style: GoogleFonts.voces(color: Colors.black54, fontSize: 14.0),
               ),
               SizedBox(
                 width: 10,
               ),
               Text(
                 fetchTime(checkType) ?? "00.00.00",
-                style: GoogleFonts.voces(color: Colors.black54 , fontSize: 14.0),
+                style: GoogleFonts.voces(color: Colors.black54, fontSize: 14.0),
               ),
             ],
           )
@@ -373,20 +376,21 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     return Container(
       margin: EdgeInsets.only(left: 60, right: 60, top: 40),
       child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: bottomButtons.map((bottomButton) => buildLogOutButton(bottomButton)).toList()/*<Widget>[
+          scrollDirection: Axis.horizontal,
+          children: bottomButtons
+              .map((bottomButton) => buildLogOutButton(bottomButton))
+              .toList() /*<Widget>[
           buildLogOutButton(),
           buildTransactionsButton(),
           buildRefreshButton(),
         ],*/
-      ),
+          ),
     );
   }
 
   Widget buildLogOutButton(BottomButtons bottomButton) {
     return Container(
       padding: EdgeInsetsDirectional.only(start: 10),
-
       child: GestureDetector(
           child: Column(children: <Widget>[
             CircleAvatar(
@@ -396,7 +400,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 radius: 30,
                 backgroundColor: Colors.white,
                 child: Icon(
-                  bottomButton.icon/*Icons.exit_to_app*/,
+                  bottomButton.icon /*Icons.exit_to_app*/,
                   size: 20.0,
                   color: Colors.blue[300],
                 ),
@@ -406,10 +410,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               height: 10,
             ),
             Center(
-              child: Text(bottomButton.name , style: GoogleFonts.voces(fontSize: 13.0),),
+              child: Text(
+                bottomButton.name,
+                style: GoogleFonts.voces(fontSize: 13.0),
+              ),
             ),
           ]),
-          onTap: bottomButton.onClick/*UtilsClass.logOut(context)*/
+          onTap: bottomButton.onClick /*UtilsClass.logOut(context)*/
 
           //  onTap: print('test'),
           ),
@@ -557,23 +564,27 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   void _initializeBottomList() {
-    bottomButtons.add(new BottomButtons(Icons.exit_to_app, 'Logout' ,makeLogout));
-    bottomButtons.add(new BottomButtons(Icons.calendar_today, 'Transactions' , goToTransactionScreen));
-    bottomButtons.add(new BottomButtons(Icons.cached, 'Refresh' , callHomeInfoService));
+    bottomButtons
+        .add(new BottomButtons(Icons.exit_to_app, 'Logout', makeLogout));
+    bottomButtons.add(new BottomButtons(
+        Icons.calendar_today, 'Transactions', goToTransactionScreen));
+    bottomButtons
+        .add(new BottomButtons(Icons.cached, 'Refresh', callHomeInfoService));
   }
 
   goToTransactionScreen() {
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => MultiBlocProvider(child: TransactionsScreen() ,
-          providers: [
-            BlocProvider<ClientsBloc>(
-              create: (_) => ClientsBloc(),
-            ),
-            BlocProvider(
-              create: (_) => CheckBloc(),
-            ),
-          ],
-        )));
+        builder: (BuildContext context) => MultiBlocProvider(
+              child: TransactionsScreen(),
+              providers: [
+                BlocProvider<ClientsBloc>(
+                  create: (_) => ClientsBloc(),
+                ),
+                BlocProvider(
+                  create: (_) => CheckBloc(),
+                ),
+              ],
+            )));
   }
 
   makeLogout() {
@@ -583,12 +594,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
 enum CheckType { checkIn, checkOut }
 
-
 class BottomButtons {
+  IconData icon;
 
-  IconData icon ;
   String name;
   Function onClick;
 
-  BottomButtons(this.icon, this.name , this.onClick);
+  BottomButtons(this.icon, this.name, this.onClick);
 }
