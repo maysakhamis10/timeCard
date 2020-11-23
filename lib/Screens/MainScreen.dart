@@ -15,6 +15,7 @@ import 'package:timecarditg/Blocs/home_bloc.dart';
 import 'package:timecarditg/customWidgets/CircleProgress.dart';
 import 'package:timecarditg/models/Employee.dart';
 import 'package:timecarditg/models/HomeInformation.dart';
+import 'package:timecarditg/utils/Constants.dart';
 import 'package:timecarditg/utils/sharedPreference.dart';
 import 'package:timecarditg/utils/utils.dart';
 import 'AdditionalInfo.dart';
@@ -203,10 +204,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   radius: 120,
                   backgroundColor: Colors.white,
                   backgroundImage: prefs != null
-                      ? prefs.getString('user_profile_image') != null
-                          ? FileImage(
-                              File(prefs.getString('user_profile_image')),
-                              scale: 1.0)
+                      ? prefs.getString(Constants.Img) != null
+                          ? NetworkImage(prefs.getString(Constants.Img))
                           : AssetImage(
                                'assets/images/logo.png')
                       : AssetImage(

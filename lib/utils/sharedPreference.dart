@@ -4,11 +4,12 @@ import 'package:timecarditg/models/Employee.dart';
 
 class SharedPreferencesOperations {
 
-  static Future<bool>saveApiKeyAndId (String apiKey,int id )async{
+  static Future<bool>saveApiKeyAndIdAndImg (String apiKey,int id , String img )async{
     final SharedPreferences prefs = await  SharedPreferences.getInstance();
     bool savedApiKey =await prefs.setString(Constants.apiKey, apiKey);
     bool savedId =await prefs.setInt(Constants.id, id);
-    return savedApiKey && savedId;
+    bool savedImg =await prefs.setString(Constants.Img, img);
+    return savedApiKey && savedId && savedImg;
   }
 
   static Future<String>saveHomeData(String homeInfo)async{

@@ -13,11 +13,14 @@ class Constants {
   static String apiKey = "apiKey";
   static String id = "id";
   static String homeInfoStr = "HomeInfo";
+  static String Img = "img";
+
 
   static const String HomePage = MainScreen.routeName;
   static const String TRANSACTIONS = TransactionsScreen.routeName;
 
   static const String CLIENT_NAME = "Client Name";
+
 
   static String getLoginUrl(String userName, String pass, String macAddress) {
     String loginurl = baseUrl;

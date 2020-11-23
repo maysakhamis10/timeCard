@@ -432,8 +432,8 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   }
 
   saveApiKey(Employee employee) async {
-    await SharedPreferencesOperations.saveApiKeyAndId(
-        employee.apiKey, employee.employeeId)
+    await SharedPreferencesOperations.saveApiKeyAndIdAndImg(
+        employee.apiKey, employee.employeeId , employee.employeeImage)
         .then((onValue) {
       print('api key and saved ');
     });
