@@ -25,6 +25,7 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
+  String _address = "unkown";
   String _platformImei = 'Unknown';
   String uniqueId = "Unknown";
   ProgressDialog progressLoading;
@@ -45,7 +46,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   Animation<double> _logoScaleAnimation;
   Animation<Offset> _formContainerAnimation;
 
-  void _initAnimations(){
+  void _initAnimations() {
     _animationController = AnimationController(
       vsync: this,
       duration: Duration(
@@ -93,8 +94,8 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Container(
-          width: width ,
-            height: height,
+          width: width,
+          height: height,
           child: Column(
             children: <Widget>[
               Expanded(
@@ -114,7 +115,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                       position: _formContainerAnimation,
                       child: Container(
                         margin:
-                        EdgeInsets.only( left: 20, right: 20, bottom: 50),
+                            EdgeInsets.only(left: 20, right: 20, bottom: 50),
                         width: width,
                         height: height * 0.6,
                         decoration: BoxDecoration(
@@ -156,7 +157,10 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
         Text(
           '  ITG TimeCard',
           style: GoogleFonts.voces(
-              color: mainColor, fontWeight: FontWeight.bold, fontSize: 18 ,),
+            color: mainColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
         ),
       ],
     );
@@ -167,8 +171,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       margin: EdgeInsets.all(20.0),
       child: Form(
         key: formKey,
-        child: Column(
-            mainAxisSize: MainAxisSize.min, children: <Widget>[
+        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           BlocListener<LoginBloc, BaseResultState>(
             bloc: _bloc,
             listener: (context, state) async {
@@ -193,14 +196,19 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                 if (progressLoading != null) {
                   progressLoading.hide();
                 }
-                scaffoldKey.currentState.showBottomSheet((widgetBuilder){
+                scaffoldKey.currentState.showBottomSheet((widgetBuilder) {
                   return Container(
                     height: 50,
                     width: double.infinity,
                     color: Colors.white,
-                    child:  Center(child: Text("Invalid username or password or may "
-                        "be your mac Address is not Registered" , style: GoogleFonts.voces(color: Colors.blue[300] ,
-                    fontSize: 12.0),)),);
+                    child: Center(
+                        child: Text(
+                      "Invalid username or password or may "
+                      "be your mac Address is not Registered",
+                      style: GoogleFonts.voces(
+                          color: Colors.blue[300], fontSize: 12.0),
+                    )),
+                  );
                 });
               }
             },
@@ -237,28 +245,28 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
         decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(
-              color:Colors.blue[300],
+              color: Colors.blue[300],
             ),
             borderRadius: BorderRadius.all(Radius.circular(10))),
         child: TextFormField(
-            controller: emailTextEditingController,
-            textInputAction: TextInputAction.next,
-            textAlign: TextAlign.start,
-            style: TextStyle(color: Colors.blue , fontSize: 15.0),
-            decoration: InputDecoration(
-              prefixIcon: Icon(
-                Icons.account_circle,
-                color: Colors.grey[700],
-              ),
-              labelText: 'User Name',
-              labelStyle: TextStyle(color: Colors.grey[700], letterSpacing: 1.0),
-              border: InputBorder.none,
+          controller: emailTextEditingController,
+          textInputAction: TextInputAction.next,
+          textAlign: TextAlign.start,
+          style: TextStyle(color: Colors.blue, fontSize: 15.0),
+          decoration: InputDecoration(
+            prefixIcon: Icon(
+              Icons.account_circle,
+              color: Colors.grey[700],
             ),
-            validator: (val) {
-              return val.length < 4 ? "Enter a Valid username" : null;
-            } ,
+            labelText: 'User Name',
+            labelStyle: TextStyle(color: Colors.grey[700], letterSpacing: 1.0),
+            border: InputBorder.none,
+          ),
+          validator: (val) {
+            return val.length < 4 ? "Enter a Valid username" : null;
+          },
           focusNode: _nameFocus,
-          onFieldSubmitted: (term){
+          onFieldSubmitted: (term) {
             _fieldFocusChange(context, _nameFocus, _passwordFocus);
           },
         ),
@@ -270,25 +278,30 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     return Expanded(
       flex: 1,
       child: Container(
-          margin: EdgeInsets.only(left: 10.0, right: 10.0,top: 10.0),
+          margin: EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
           child: Align(
             child: Row(
               children: <Widget>[
                 Text(
-                  'Mac Address : ' ,
+                  'Mac Address : ',
                   style: GoogleFonts.voces(
-                      color: Colors.black87, fontWeight: FontWeight.normal , fontSize: 13.0),
+                      color: Colors.black87,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 13.0),
                 ),
                 GestureDetector(
                   onLongPress: () {
                     Clipboard.setData(new ClipboardData(text: _platformImei));
-                    scaffoldKey.currentState.showSnackBar(
-                        new SnackBar(content: new Text("$_platformImei Copied to Clipboard"),));
+                    scaffoldKey.currentState.showSnackBar(new SnackBar(
+                      content: new Text("$_platformImei Copied to Clipboard"),
+                    ));
                   },
                   child: Text(
                     _platformImei,
-                    style:
-                    GoogleFonts.voces(color: mainColor, fontWeight: FontWeight.normal, fontSize: 13.0),
+                    style: GoogleFonts.voces(
+                        color: mainColor,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 13.0),
                   ),
                 )
               ],
@@ -316,28 +329,28 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
             ),
             borderRadius: BorderRadius.all(Radius.circular(10))),
         child: TextFormField(
-            controller: passwordTextEditingController,
-            textInputAction: TextInputAction.done,
-            textAlign: TextAlign.start,
-            obscureText: true,
-            style: TextStyle(color: Colors.blue , fontSize: 15.0),
-            decoration: InputDecoration(
-              prefixIcon: Icon(
-                Icons.lock,
-                color: Colors.grey[700],
-              ),
-              labelText: 'Password',
-              labelStyle: TextStyle(color:Colors.grey[700], letterSpacing: 1.0),
-              border: InputBorder.none,
+          controller: passwordTextEditingController,
+          textInputAction: TextInputAction.done,
+          textAlign: TextAlign.start,
+          obscureText: true,
+          style: TextStyle(color: Colors.blue, fontSize: 15.0),
+          decoration: InputDecoration(
+            prefixIcon: Icon(
+              Icons.lock,
+              color: Colors.grey[700],
             ),
-            validator: (val) {
-              return val.length < 4 ? "Enter Password 6+ characters" : null;
-            } ,
+            labelText: 'Password',
+            labelStyle: TextStyle(color: Colors.grey[700], letterSpacing: 1.0),
+            border: InputBorder.none,
+          ),
+          validator: (val) {
+            return val.length < 4 ? "Enter Password 6+ characters" : null;
+          },
           focusNode: _passwordFocus,
           onFieldSubmitted: (term) {
             _passwordFocus.unfocus();
           },
-            ),
+        ),
       ),
     );
   }
@@ -346,13 +359,15 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     return Expanded(
       flex: 1,
       child: Container(
-        margin: EdgeInsetsDirectional.only(start : 10.0 , end :10.0 , top: 10.0),
+        margin: EdgeInsetsDirectional.only(start: 10.0, end: 10.0, top: 10.0),
         child: Row(
           children: <Widget>[
             Text(
               'Keep me logged in ',
-              style:
-              GoogleFonts.voces(fontWeight: FontWeight.normal, color: Colors.black ,fontSize: 13.0),
+              style: GoogleFonts.voces(
+                  fontWeight: FontWeight.normal,
+                  color: Colors.black,
+                  fontSize: 13.0),
             ),
             Spacer(),
             Flexible(
@@ -382,7 +397,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
         onTap: () => logInFun(),
         child: Container(
           alignment: Alignment.center,
-          margin: EdgeInsets.only( top: 60 ),
+          margin: EdgeInsets.only(top: 60),
           decoration: BoxDecoration(
             color: Color(0xff1295df),
             borderRadius: BorderRadius.circular(30.0),
@@ -415,15 +430,20 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
             user: Logginer(
                 username: emailTextEditingController.text,
                 password: passwordTextEditingController.text,
-                macAddress: _platformImei/*macAddress*/)));
+                macAddress: _platformImei /*macAddress*/)));
       }
     } else {
-      scaffoldKey.currentState.showBottomSheet((widgetBuilder){
+      scaffoldKey.currentState.showBottomSheet((widgetBuilder) {
         return Container(
           height: 50,
           width: double.infinity,
           color: Colors.white,
-          child:  Center(child: Text('There is no internet connection' , style: GoogleFonts.voces(fontSize: 12.0),)),);
+          child: Center(
+              child: Text(
+            'There is no internet connection',
+            style: GoogleFonts.voces(fontSize: 12.0),
+          )),
+        );
       });
 /*      UtilsClass.showMyDialog(
           context: context,
@@ -434,7 +454,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 
   saveApiKey(Employee employee) async {
     await SharedPreferencesOperations.saveApiKeyAndIdAndImg(
-        employee.apiKey, employee.employeeId , employee.employeeImage)
+            employee.apiKey, employee.employeeId, employee.employeeImage)
         .then((onValue) {
       print('api key and saved ');
     });
@@ -473,15 +493,15 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   }*/
 
   Future<void> initPlatformState() async {
-    if(Platform.isIOS){
-
-    }else {
+    if (Platform.isIOS) {
+      getAddress();
+    } else {
       String platformImei;
       String idunique;
       // Platform messages may fail, so we use a try/catch PlatformException.
       try {
-        platformImei =
-        await ImeiPlugin.getImei(shouldShowRequestPermissionRationale: false);
+        platformImei = await ImeiPlugin.getImei(
+            shouldShowRequestPermissionRationale: false);
         List<String> multiImei = await ImeiPlugin.getImeiMulti();
         print(multiImei);
         idunique = await ImeiPlugin.getId();
@@ -500,6 +520,23 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       });
     }
   }
+// mac address using channel in ios
+
+  static const AddressChannel = const MethodChannel('macAddress');
+//function
+  Future<void> getAddress() async {
+    String address;
+    try {
+      var result = await AddressChannel.invokeMethod('getMacAddress');
+      address = result;
+    } on PlatformException catch (e) {
+      address = "failed to get address";
+    }
+
+    setState(() {
+      _platformImei = address;
+    });
+  }
 
   requestPermission() async {
     var result = await Permission.storage.request();
@@ -510,7 +547,8 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     }
   }
 
-  _fieldFocusChange(BuildContext context, FocusNode currentFocus,FocusNode nextFocus) {
+  _fieldFocusChange(
+      BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
     currentFocus.unfocus();
     FocusScope.of(context).requestFocus(nextFocus);
   }
