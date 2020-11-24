@@ -26,7 +26,7 @@ class UtilsClass {
   static Future<bool> _checkInternetConnection() async {
     bool iSConnected;
     try {
-      final result = await InternetAddress.lookup('google.com');
+      final result = await InternetAddress.lookup("itgsolutions.com");
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         iSConnected = true;
       }
