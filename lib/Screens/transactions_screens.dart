@@ -28,7 +28,6 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   CheckBloc _checkInBloc;
   ProgressDialog progressLoading;
 
-
   List<TransactionItem> transactionItems = new List();
 
   @override
@@ -70,32 +69,29 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             listener: (context, state) {
               if (state.result == dataResult.Loaded) {
                 if (progressLoading != null) {
-                progressLoading.hide();
+                  progressLoading.hide();
                 }
                 var flag = (state.model as CheckInResponse).flag;
                 var message = (state.model as CheckInResponse).message;
                 if (flag == 1) {
-
                   saveChecksToDB(true, _checkObject);
                   UtilsClass.showMyDialog(
-                      content:"Tansaction offline sent online successfully"/* message.toString()*/,
+                      content:
+                          "Tansaction offline sent online successfully" /* message.toString()*/,
                       context: context,
-                      onPressed: ()=> Navigator.pop(context),
+                      onPressed: () => Navigator.pop(context),
                       type: DialogType.confirmation);
-                  setState(() {
-
-                  });
+                  setState(() {});
                 } else {
-
                   UtilsClass.showMyDialog(
-                      content: 'There is something wrong in server  please check in again ',
+                      content:
+                          'There is something wrong in server  please check in again ',
                       context: context,
-                      onPressed: ()=> Navigator.pop(context),
+                      onPressed: () => Navigator.pop(context),
                       type: DialogType.confirmation);
                 }
               }
             },
-
             child: buildBody()));
   }
 
@@ -150,8 +146,14 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             ),
           );
         } else {
-          return Center(child: Text('No Transactions yet' , style: GoogleFonts.voces(color: Colors.black , fontSize:  20.0 ,
-          fontWeight: FontWeight.bold),));
+          return Center(
+              child: Text(
+            'No Transactions yet',
+            style: GoogleFonts.voces(
+                color: Colors.black,
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold),
+          ));
         }
       },
     );
@@ -177,7 +179,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
   Widget buildCenterText(CheckModel checkModel) {
     return Theme(
-     data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
       child: ExpansionTile(
         title: Column(
           children: <Widget>[
@@ -192,14 +194,15 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                     ),
                     Text(
                       checkModel.date + ' ' + checkModel.time,
-                      style: GoogleFonts.voces(color: Colors.white ,fontSize: 13.0),
+                      style: GoogleFonts.voces(
+                          color: Colors.white, fontSize: 13.0),
                     ),
                   ],
                 ),
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(top : 8.0),
+              padding: const EdgeInsets.only(top: 8.0),
               child: Row(
                 children: <Widget>[
                   Icon(Icons.sync, color: Colors.white),
@@ -208,7 +211,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   ),
                   Text(
                     checkModel.sync == 1 ? 'Online synced' : 'Offline synced',
-                    style: GoogleFonts.voces(color: Colors.white , fontSize: 13.0),
+                    style:
+                        GoogleFonts.voces(color: Colors.white, fontSize: 13.0),
                   ),
                 ],
               ),
@@ -220,38 +224,50 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             padding: const EdgeInsetsDirectional.only(start: 13),
             child: Column(
               children: <Widget>[
-
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 Row(
-
                   children: <Widget>[
-                    Icon(Icons.info_outline,  color: Colors.white),
-                    SizedBox(width: 10,),
-                    Text('Additional info',textAlign: TextAlign.left,
-                      style: GoogleFonts.voces(color: Colors.white , fontSize: 13.0),),
-
+                    Icon(Icons.info_outline, color: Colors.white),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      'Additional info',
+                      textAlign: TextAlign.left,
+                      style: GoogleFonts.voces(
+                          color: Colors.white, fontSize: 13.0),
+                    ),
                   ],
                 ),
-                SizedBox(width: 15,),
-                SizedBox(height: 10,),
+                SizedBox(
+                  width: 15,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
                 Row(
                   children: <Widget>[
-                    Icon(Icons.account_circle,
-                        color: Colors.white
+                    Icon(Icons.account_circle, color: Colors.white),
+                    SizedBox(
+                      width: 10,
                     ),
-                    SizedBox(width: 10,),
                     Expanded(
-                      child: Text(checkModel.client,
-                        style: GoogleFonts.voces(color: Colors.white , fontSize: 13.0),),
+                      child: Text(
+                        checkModel.client,
+                        style: GoogleFonts.voces(
+                            color: Colors.white, fontSize: 13.0),
+                      ),
                     ),
-
                   ],
                 ),
-                SizedBox(height: 10,)
+                SizedBox(
+                  height: 10,
+                )
               ],
             ),
           ),
-
         ],
       ),
     );
@@ -356,29 +372,29 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     );
   }
 
-
-  void _sendOfflineTransactionToApi() async{
+  void _sendOfflineTransactionToApi() async {
     print("Call Send To Api ");
     if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
-    CheckModel savedOne = await _operations.fetchSaveTransInDb();
-    if (savedOne != null && savedOne.sync != 1) {
-      await Future.delayed(const Duration(milliseconds: 100), () {
-        progressLoading = ProgressDialog(
-          context,
-          type: ProgressDialogType.Normal,
-          isDismissible: true,
-          showLogs: false,
-        );
-        progressLoading.show();
-      });
-    print('saved one is => ${savedOne.isAdded}');
-    this._checkObject = savedOne;
-    _checkInBloc.add(savedOne);
-    } else {
-    // this._checkObject = checkObject;
-    // _checkInBloc.add(_checkObject);
-    // print('online object => ${_checkObject.toJson()}');
-    }
+      CheckModel savedOne = await _operations.fetchSaveTransInDb();
+      if (savedOne != null && savedOne.sync != 1) {
+        await Future.delayed(const Duration(milliseconds: 100), () {
+          progressLoading = ProgressDialog(
+            context,
+            type: ProgressDialogType.Normal,
+            isDismissible: true,
+            showLogs: false,
+          );
+          progressLoading.show();
+        });
+        print('saved one is => ${savedOne.isAdded}');
+        this._checkObject = savedOne;
+        _checkInBloc.add(savedOne);
+      } else {
+        print("not founddddd");
+        // this._checkObject = checkObject;
+        // _checkInBloc.add(_checkObject);
+        // print('online object => ${_checkObject.toJson()}');
+      }
     }
   }
 }
