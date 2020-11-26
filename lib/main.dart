@@ -11,9 +11,9 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   return runApp(/*DevicePreview(
 builder: (context) =>*/
-      MyApp()) /*)*/
+      MyApp()) ;/*)*/
 
-};
+}
 
 class MyApp extends StatelessWidget {
   bool keepLoggedIn = false;
