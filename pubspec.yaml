@@ -44,6 +44,7 @@ dependencies:
   google_fonts: any
   unique_identifier: ^0.0.3
   device_info: ^1.0.0
+  imei_plugin: ^1.2.0
   cached_network_image: any
 
 

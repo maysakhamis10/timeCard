@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:imei_plugin/imei_plugin.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
@@ -38,7 +39,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   final formKey = GlobalKey<FormState>();
   final FocusNode _nameFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
-  bool switchState = true;
+  bool switchState ;
   var mainColor = Color(0xFF1589d2);
   var height, width;
 
@@ -73,6 +74,8 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _initAnimations();
+    getKeep().then((onValue) {
+    });
     _bloc = BlocProvider.of<LoginBloc>(context);
   }
 
@@ -178,7 +181,6 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
               if (state.result == dataResult.Loading) {
                 showProgressDialog();
               } else if (state.result == dataResult.Loaded) {
-                saveKeepMeLoggedIn();
                 var employee = (state.model as Employee);
                 saveApiKey(employee);
                 Timer(Duration(seconds: 3), () {
@@ -238,7 +240,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 
   Widget buildUserName() {
     return Expanded(
-      flex: 2,
+      flex: 3,
       child: Container(
         margin: EdgeInsets.only(top: 10, bottom: 10),
         padding: EdgeInsets.only(left: 10.0, right: 10.0),
@@ -289,21 +291,23 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                       fontWeight: FontWeight.normal,
                       fontSize: 13.0),
                 ),
-                GestureDetector(
-                  onLongPress: () {
-                    Clipboard.setData(new ClipboardData(text: _platformImei));
-                    scaffoldKey.currentState.showSnackBar(new SnackBar(
-                      content: new Text("$_platformImei Copied to Clipboard"),
-                    ));
-                  },
-                  child: FutureBuilder(
-                    future: initPlatformState(),
-                    builder: (context , AsyncSnapshot snapshot) => Text(
-                      snapshot.data ?? _platformImei/*_platformImei*/,
-                      style: GoogleFonts.voces(
-                          color: mainColor,
-                          fontWeight: FontWeight.normal,
-                          fontSize: 13.0),
+                Expanded(
+                  child: GestureDetector(
+                    onLongPress: () {
+                      Clipboard.setData(new ClipboardData(text: _platformImei));
+                      scaffoldKey.currentState.showSnackBar(new SnackBar(
+                        content: new Text("$_platformImei Copied to Clipboard"),
+                      ));
+                    },
+                    child: FutureBuilder(
+                      future: initPlatformState(),
+                      builder: (context , AsyncSnapshot snapshot) => Text(
+                        snapshot.data ?? _platformImei/*_platformImei*/,
+                        style: GoogleFonts.voces(
+                            color: mainColor,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 13.0),
+                      ),
                     ),
                   ),
                 )
@@ -321,7 +325,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 
   Widget buildPassword() {
     return Expanded(
-      flex: 2,
+      flex: 3,
       child: Container(
         margin: EdgeInsets.only(top: 10, bottom: 10),
         padding: EdgeInsets.only(left: 10.0, right: 10.0),
@@ -360,7 +364,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 
   Widget buildKeepMeLogIn() {
     return Expanded(
-      flex: 1,
+      flex: 2,
       child: Container(
         margin: EdgeInsetsDirectional.only(start: 10.0, end: 10.0, top: 10.0),
         child: Row(
@@ -377,11 +381,12 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
               child: Container(
                 alignment: Alignment.centerRight,
                 child: Switch(
-                  value: switchState,
+                  value: switchState ?? false,
                   activeColor: mainColor,
                   onChanged: (bool s) {
                     setState(() {
                       switchState = s;
+                      saveKeepMeLoggedIn();
                     });
                   },
                 ),
@@ -433,7 +438,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
             user: Logginer(
                 username: emailTextEditingController.text,
                 password: passwordTextEditingController.text,
-                macAddress: _platformImei /*macAddress*/)));
+                macAddress: "c8a53438-ab5d-471d-bdac-09e1a8825444"/*_platformImei*/ /*macAddress*/)));
       }
     } else {
       scaffoldKey.currentState.showBottomSheet((widgetBuilder) {
@@ -500,7 +505,17 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       getIosUniqueId();
       // getAddress();
     } else {
-      String  identifier = await UniqueIdentifier.serial;
+      var androidInfo = await DeviceInfoPlugin().androidInfo;
+      String  identifier;
+      if(androidInfo.version.sdkInt > 28){
+        identifier = await UniqueIdentifier.serial;
+      }else {
+        identifier =
+        await ImeiPlugin.getImei(shouldShowRequestPermissionRationale: false);
+        List<String> multiImei = await ImeiPlugin.getImeiMulti();
+        print(multiImei);
+        // idunique = await ImeiPlugin.getId();
+      }
       setState(() {
         _platformImei = identifier;
         // uniqueId = idunique;
@@ -546,6 +561,15 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     setState(() {
       _platformImei = data.identifierForVendor;
     });
+  }
+
+   getKeep() async{
+    if(await SharedPreferencesOperations.getKeepMeLoggedIn() == null){
+      switchState = false;
+    }else {
+      switchState = await SharedPreferencesOperations.getKeepMeLoggedIn();
+    }
+    return switchState;
   }
 
 //  Widget buildLoginUiWithOldDesign(){

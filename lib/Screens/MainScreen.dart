@@ -77,7 +77,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   void callHomeInfoService() async {
     if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
-      homeInfoBloc.add(HomeInfoEvent());
+      String savedHomeInfo =  await SharedPreferencesOperations.fetchHomeData();
+      print(savedHomeInfo);
+      if(savedHomeInfo != null  && savedHomeInfo != ""){
+        homeInfoBloc.add(HomeInfoEvent( homeInfo : HomeInfo.fromJson(jsonDecode(savedHomeInfo))));
+      }else {
+        homeInfoBloc.add(HomeInfoEvent());
+      }
     } else {
       String fetchHomeStr = await SharedPreferencesOperations.fetchHomeData();
       var homeJson = jsonDecode(fetchHomeStr);
@@ -374,9 +380,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   Widget buildOtherButtons(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 60, right: 60, top: 40),
-      child: ListView(
-          scrollDirection: Axis.horizontal,
+      margin: EdgeInsets.only(top: 20),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          // scrollDirection: Axis.horizontal,
           children: bottomButtons
               .map((bottomButton) => buildLogOutButton(bottomButton))
               .toList() /*<Widget>[

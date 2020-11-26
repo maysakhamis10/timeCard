@@ -7,7 +7,7 @@ import 'package:timecarditg/Screens/LoginScreen.dart';
 import 'package:timecarditg/Screens/MainScreen.dart';
 import 'package:timecarditg/utils/sharedPreference.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   return runApp(/*DevicePreview(
 builder: (context) =>*/
@@ -20,10 +20,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    getKeep().then((onValue) {
-      print(onValue);
-      keepLoggedIn = onValue ?? false;
-    });
+    // getKeep().then((onValue) {
+    //   print(onValue);
+    //   keepLoggedIn = onValue ?? false;
+    //   print(keepLoggedIn.toString());
+    // });
 
     return MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -32,18 +33,25 @@ class MyApp extends StatelessWidget {
           accentColor: Colors.white,
           primaryColor: Color(0xff0099FF),
         ),
-        home: keepLoggedIn
-            ? BlocProvider<HomeInfoBloc>(
-                create: (_) => HomeInfoBloc(),
-                child: MainScreen(),
-              )
-            : BlocProvider<LoginBloc>(
-                create: (_) => LoginBloc(),
-                child: SignIn(),
-              ));
+        home:  FutureBuilder(
+          future: getKeep(),
+          builder: (context, AsyncSnapshot snap) =>
+          snap.data ?? false ? BlocProvider<HomeInfoBloc>(
+            create: (_) => HomeInfoBloc(),
+            child: MainScreen(),
+          ) : BlocProvider<LoginBloc>(
+            create: (_) => LoginBloc(),
+            child: SignIn(),
+          ),
+        )
+    );
   }
 
   Future<bool> getKeep() async {
-    return await SharedPreferencesOperations.getKeepMeLoggedIn();
+    if (await SharedPreferencesOperations.getKeepMeLoggedIn() == null) {
+      return false;
+    } else {
+      return await SharedPreferencesOperations.getKeepMeLoggedIn();
+    }
   }
 }

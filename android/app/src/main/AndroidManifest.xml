@@ -15,7 +15,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="timecarditg"
+        android:label="ITG Timecard"
         android:icon="@mipmap/ic_launcher"
        >
 
