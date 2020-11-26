@@ -502,8 +502,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 
   Future<void> initPlatformState() async {
     if (Platform.isIOS) {
-      getIosUniqueId();
-      // getAddress();
+      getAddress();
     } else {
       var androidInfo = await DeviceInfoPlugin().androidInfo;
       String  identifier;
@@ -555,13 +554,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-  void getIosUniqueId() async {
-    final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
-    var data = await deviceInfoPlugin.iosInfo;
-    setState(() {
-      _platformImei = data.identifierForVendor;
-    });
-  }
+
 
    getKeep() async{
     if(await SharedPreferencesOperations.getKeepMeLoggedIn() == null){
