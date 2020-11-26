@@ -49,7 +49,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-
+    showProgressDialog();
     _initValue();
     fetchUserData();
     callHomeInfoService();
