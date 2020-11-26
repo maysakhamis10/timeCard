@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:imei_plugin/imei_plugin.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
@@ -12,10 +11,12 @@ import 'package:timecarditg/Blocs/LoginBloc.dart';
 import 'package:timecarditg/Blocs/home_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:get_mac/get_mac.dart';
+import 'package:device_info/device_info.dart';
 import 'package:timecarditg/models/Employee.dart';
 import 'package:timecarditg/models/user.dart';
 import 'package:timecarditg/utils/sharedPreference.dart';
 import 'package:timecarditg/utils/utils.dart';
+import 'package:unique_identifier/unique_identifier.dart';
 
 import 'MainScreen.dart';
 
@@ -72,7 +73,6 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _initAnimations();
-    initPlatformState();
     _bloc = BlocProvider.of<LoginBloc>(context);
   }
 
@@ -296,12 +296,15 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                       content: new Text("$_platformImei Copied to Clipboard"),
                     ));
                   },
-                  child: Text(
-                    _platformImei,
-                    style: GoogleFonts.voces(
-                        color: mainColor,
-                        fontWeight: FontWeight.normal,
-                        fontSize: 13.0),
+                  child: FutureBuilder(
+                    future: initPlatformState(),
+                    builder: (context , AsyncSnapshot snapshot) => Text(
+                      snapshot.data ?? _platformImei/*_platformImei*/,
+                      style: GoogleFonts.voces(
+                          color: mainColor,
+                          fontWeight: FontWeight.normal,
+                          fontSize: 13.0),
+                    ),
                   ),
                 )
               ],
@@ -494,29 +497,13 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 
   Future<void> initPlatformState() async {
     if (Platform.isIOS) {
-      getAddress();
+      getIosUniqueId();
+      // getAddress();
     } else {
-      String platformImei;
-      String idunique;
-      // Platform messages may fail, so we use a try/catch PlatformException.
-      try {
-        platformImei = await ImeiPlugin.getImei(
-            shouldShowRequestPermissionRationale: false);
-        List<String> multiImei = await ImeiPlugin.getImeiMulti();
-        print(multiImei);
-        idunique = await ImeiPlugin.getId();
-      } on PlatformException {
-        platformImei = 'Failed to get platform version.';
-      }
-
-      // If the widget was removed from the tree while the asynchronous platform
-      // message was in flight, we want to discard the reply rather than calling
-      // setState to update our non-existent appearance.
-      if (!mounted) return;
-
+      String  identifier = await UniqueIdentifier.serial;
       setState(() {
-        _platformImei = platformImei;
-        uniqueId = idunique;
+        _platformImei = identifier;
+        // uniqueId = idunique;
       });
     }
   }
@@ -551,6 +538,14 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
     currentFocus.unfocus();
     FocusScope.of(context).requestFocus(nextFocus);
+  }
+
+  void getIosUniqueId() async {
+    final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
+    var data = await deviceInfoPlugin.iosInfo;
+    setState(() {
+      _platformImei = data.identifierForVendor;
+    });
   }
 
 //  Widget buildLoginUiWithOldDesign(){
