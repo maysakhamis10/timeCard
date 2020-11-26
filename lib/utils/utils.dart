@@ -73,9 +73,7 @@ class UtilsClass {
   }
 
   static Future<Position> getCurrentLocation() async {
-    final Geolocator userLocation = Geolocator()
-      ..forceAndroidLocationManager;
-    return await userLocation
+    return await Geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
   }
 
