@@ -38,22 +38,22 @@ import CoreLocation
     // get mac address function
     private func getMacAddress(result:FlutterResult){
            
-           var modifiedMacAddress = ""
-                 if let vendorIdentifier = UIDevice.current.identifierForVendor {
-//                     var uuid = vendorIdentifier.uuid
-//                    let data = withUnsafePointer(to:uuid) {
-//                        Data(bytes: $0, count: MemoryLayout.size(ofValue: uuid))
-//                     }
-
-                     let macAddress = String(vendorIdentifier.uuidString.replacingOccurrences(of: "-", with: "").suffix(3*4))
-                     for (index, char) in macAddress.enumerated() {
-                         if index%2==0 && index != 0{
-                             modifiedMacAddress = modifiedMacAddress + ":"
-                         }
-                         modifiedMacAddress = modifiedMacAddress + String(char)
-                     
-                     }
-                 }
+       var modifiedMacAddress = ""
+               if let vendorIdentifier = UIDevice.current.identifierForVendor {
+                   var uuid = vendorIdentifier.uuid
+                   let data = withUnsafePointer(to:uuid) {
+                       Data(bytes: $0, count: MemoryLayout.size(ofValue: uuid))
+                   }
+                   
+                   let macAddress = String(vendorIdentifier.uuidString.replacingOccurrences(of: "-", with: "").suffix(3*4))
+                   for (index, char) in macAddress.enumerated() {
+                       if index%2==0 && index != 0{
+                           modifiedMacAddress = modifiedMacAddress + ":"
+                       }
+                       modifiedMacAddress = modifiedMacAddress + String(char)
+                   }
+               }
+             
              result(String(modifiedMacAddress))
     
        }

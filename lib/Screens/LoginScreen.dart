@@ -298,8 +298,8 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                   },
                   child: FutureBuilder(
                     future: initPlatformState(),
-                    builder: (context , AsyncSnapshot snapshot) => Text(
-                      snapshot.data ?? _platformImei/*_platformImei*/,
+                    builder: (context, AsyncSnapshot snapshot) => Text(
+                      snapshot.data ?? _platformImei /*_platformImei*/,
                       style: GoogleFonts.voces(
                           color: mainColor,
                           fontWeight: FontWeight.normal,
@@ -497,10 +497,10 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 
   Future<void> initPlatformState() async {
     if (Platform.isIOS) {
-      getIosUniqueId();
-      // getAddress();
+      // getIosUniqueId();
+      getAddress();
     } else {
-      String  identifier = await UniqueIdentifier.serial;
+      String identifier = await UniqueIdentifier.serial;
       setState(() {
         _platformImei = identifier;
         // uniqueId = idunique;
