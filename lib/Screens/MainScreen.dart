@@ -275,7 +275,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       showBottomSheet(
           context: context,
           builder: (context) => Text(
-              "please try again with choose fromWhere you are login is mandatory"));
+              "please try again with choose fromWhere you are login is mandatory" ,
+            style: GoogleFonts.voces(color: Colors.white, fontSize: 16.0),) , backgroundColor: Colors.blue);
   }
 
   Widget buildSignOut(BuildContext context) {
@@ -330,7 +331,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       showBottomSheet(
           context: context,
           builder: (context) => Text(
-              "please try again with choose fromWhere you are login is mandatory"));
+              "please try again with choose fromWhere you are login is mandatory",
+            style: GoogleFonts.voces(color: Colors.white, fontSize: 16.0),) , backgroundColor: Colors.blue);
   }
 
   Widget buildTextInGridView({String title, CheckType checkType}) {

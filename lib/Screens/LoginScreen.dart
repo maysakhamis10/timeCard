@@ -214,7 +214,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                           color: Colors.blue[300], fontSize: 12.0),
                     )),
                   );
-                });
+                } , backgroundColor: Colors.blue);
               }
             },
             child: Container(),
@@ -441,7 +441,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
             user: Logginer(
                 username: emailTextEditingController.text,
                 password: passwordTextEditingController.text,
-                macAddress: _platformImei /*macAddress*/)));
+                macAddress: "caad5ee0f39ecb63"/*_platformImei*/ /*macAddress*/)));
       }
     } else {
       scaffoldKey.currentState.showBottomSheet((widgetBuilder) {
@@ -455,7 +455,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
             style: GoogleFonts.voces(fontSize: 12.0),
           )),
         );
-      });
+      }, backgroundColor: Colors.blue);
 /*      UtilsClass.showMyDialog(
           context: context,
           content: ,
