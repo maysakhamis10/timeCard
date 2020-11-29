@@ -39,7 +39,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   final formKey = GlobalKey<FormState>();
   final FocusNode _nameFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
-  bool switchState;
+  bool switchState ;
   var mainColor = Color(0xFF1589d2);
   var height, width;
 
@@ -74,7 +74,11 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _initAnimations();
-    getKeep().then((onValue) {});
+    getKeep().then((onValue) {
+      if(!onValue) {
+        initPlatformState();
+      }
+    });
     _bloc = BlocProvider.of<LoginBloc>(context);
   }
 
@@ -298,15 +302,13 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                         content: new Text("$_platformImei Copied to Clipboard"),
                       ));
                     },
-                    child: FutureBuilder(
-                      future: initPlatformState(),
-                      builder: (context, AsyncSnapshot snapshot) => Text(
-                        snapshot.data ?? _platformImei /*_platformImei*/,
+                    child:  Text(
+                        _platformImei,
                         style: GoogleFonts.voces(
                             color: mainColor,
                             fontWeight: FontWeight.normal,
                             fontSize: 13.0),
-                      ),
+
                     ),
                   ),
                 )
@@ -383,10 +385,12 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                   value: switchState ?? false,
                   activeColor: mainColor,
                   onChanged: (bool s) {
-                    setState(() {
-                      switchState = s;
-                      saveKeepMeLoggedIn();
-                    });
+                    if(mounted) {
+                      setState(() {
+                        switchState = s;
+                        saveKeepMeLoggedIn();
+                      });
+                    }
                   },
                 ),
               ),
@@ -404,7 +408,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
         onTap: () => logInFun(),
         child: Container(
           alignment: Alignment.center,
-          margin: EdgeInsets.only(top: 60),
+          margin: EdgeInsets.only(top: height/15),
           decoration: BoxDecoration(
             color: Color(0xff1295df),
             borderRadius: BorderRadius.circular(30.0),
@@ -504,20 +508,21 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       getAddress();
     } else {
       var androidInfo = await DeviceInfoPlugin().androidInfo;
-      String identifier;
-      if (androidInfo.version.sdkInt > 28) {
+      String  identifier;
+      if(androidInfo.version.sdkInt > 28){
         identifier = await UniqueIdentifier.serial;
-      } else {
-        identifier = await ImeiPlugin.getImei(
-            shouldShowRequestPermissionRationale: false);
-        List<String> multiImei = await ImeiPlugin.getImeiMulti();
-        print(multiImei);
+      }else {
+        identifier = await ImeiPlugin.getImei(shouldShowRequestPermissionRationale: false);
+        // List<String> multiImei = await ImeiPlugin.getImeiMulti();
+        // print(multiImei);
         // idunique = await ImeiPlugin.getId();
       }
-      setState(() {
-        _platformImei = identifier;
-        // uniqueId = idunique;
-      });
+      if(mounted) {
+        setState(() {
+          _platformImei = identifier;
+          // uniqueId = idunique;
+        });
+      }
     }
   }
 // mac address using channel in ios
@@ -533,9 +538,11 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       address = "failed to get address";
     }
 
+    if(mounted) {
     setState(() {
       _platformImei = address;
     });
+    }
   }
 
   requestPermission() async {
@@ -553,10 +560,12 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-  getKeep() async {
-    if (await SharedPreferencesOperations.getKeepMeLoggedIn() == null) {
+
+
+   getKeep() async{
+    if(await SharedPreferencesOperations.getKeepMeLoggedIn() == null){
       switchState = false;
-    } else {
+    }else {
       switchState = await SharedPreferencesOperations.getKeepMeLoggedIn();
     }
     return switchState;

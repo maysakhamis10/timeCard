@@ -49,7 +49,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    //showProgressDialog();
+    // showProgressDialog();
     _initValue();
     fetchUserData();
     callHomeInfoService();
@@ -77,12 +77,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   void callHomeInfoService() async {
     if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
-      String savedHomeInfo = await SharedPreferencesOperations.fetchHomeData();
+      String savedHomeInfo =  await SharedPreferencesOperations.fetchHomeData();
       print(savedHomeInfo);
-      if (savedHomeInfo != null && savedHomeInfo != "") {
-        homeInfoBloc.add(HomeInfoEvent(
-            homeInfo: HomeInfo.fromJson(jsonDecode(savedHomeInfo))));
-      } else {
+      if(savedHomeInfo != null  && savedHomeInfo != ""){
+        homeInfoBloc.add(HomeInfoEvent( homeInfo : HomeInfo.fromJson(jsonDecode(savedHomeInfo))));
+      }else {
         homeInfoBloc.add(HomeInfoEvent());
       }
     } else {
@@ -123,9 +122,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             }
           } else if (state.result == dataResult.Loaded) {
             _homeInfo = state.model;
-            dismissLoading();
             calDifferenceHours(_homeInfo);
             print(('object from api => ${_homeInfo.toJson()}'));
+            dismissLoading();
           } else if (state.result == dataResult.Error) {
             dismissLoading();
           }
@@ -383,7 +382,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     return Container(
       margin: EdgeInsets.only(top: 20),
       child: Row(
-          mainAxisSize: MainAxisSize.max,
+        mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           // scrollDirection: Axis.horizontal,
@@ -522,11 +521,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   Future getImage() async {
     prefs.remove('user_profile_image');
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      }
-    });
+    if(mounted) {
+      setState(() {
+        if (pickedFile != null) {
+          _image = File(pickedFile.path);
+        }
+      });
+    }
     final String path = await findLocalPath();
     String fileNameOfSelectedImage = Path.basename(_image.path);
     final File newImage = await _image.copy('$path/$fileNameOfSelectedImage');
