@@ -20,7 +20,7 @@ import 'package:timecarditg/utils/strings.dart';
 import 'dart:io' show Platform;
 import 'package:timecarditg/utils/utils.dart';
 
-class  AdditionalInfo extends StatefulWidget {
+class AdditionalInfo extends StatefulWidget {
   int checkType;
 
   AdditionalInfo({this.checkType});
@@ -46,7 +46,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   ProgressDialog progressLoading;
   DbOperations _operations = DbOperations();
   bool _isExpand = false;
-  List<String>  fromWhereList = new List();
+  List<String> fromWhereList = new List();
 
   @override
   void initState() {
@@ -74,12 +74,10 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
     fromWhereList.add(from_itg);
     fromWhereList.add(from_home);
     fromWhereList.add(from_others);
-     SharedPreferencesOperations.getClients().then((client) {
-       clients = jsonDecode(client.toString())?.cast<String>();
-       setState(() {
-
-       });
-     });
+    SharedPreferencesOperations.getClients().then((client) {
+      clients = jsonDecode(client.toString())?.cast<String>();
+      setState(() {});
+    });
     empModel = await getApiKeyAndId();
     if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
       _clientsBloc.add(ClientEvent(apiKey: empModel.apiKey));
@@ -158,7 +156,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   Widget buildContainerTxt() {
     return Container(
       padding: EdgeInsets.all(10.0),
-      margin: EdgeInsets.only(top : 10.0 , bottom: 10.0),
+      margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
       decoration: BoxDecoration(
           color: Colors.white30,
           border: Border.all(
@@ -227,11 +225,13 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
     checkObject.fromWhere = fromWhere;
     print('CHECK OBJECT FROM SAVE BTN ${checkObject.toJson()}');
     if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
-      if(checkObject.fromWhere == null || checkObject.fromWhere == "" || checkObject.fromWhere == "From Where"){
-        Navigator.pop(context , true);
-      }else {
-      showProgressDialog();
-      CheckModel savedOne = await _operations.fetchSaveTransInDb();
+      if (checkObject.fromWhere == null ||
+          checkObject.fromWhere == "" ||
+          checkObject.fromWhere == "From Where") {
+        Navigator.pop(context, true);
+      } else {
+        showProgressDialog();
+        CheckModel savedOne = await _operations.fetchSaveTransInDb();
         if (savedOne != null && savedOne.sync != 1) {
           print('saved one is => ${savedOne.isAdded}');
           this._checkObject = savedOne;
@@ -252,7 +252,6 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
           onPressed: navigateToMain);
     }
   }
-
 
   Widget buildDropDownList() {
     return Expanded(
@@ -284,9 +283,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
             onChange: (newValue) {
               print("tot $newValue");
               dropdownValue = newValue;
-              setState(() {
-
-              });
+              setState(() {});
             }),
       ),
     );
@@ -505,7 +502,8 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
                 type: DialogType.confirmation);
           } else {
             UtilsClass.showMyDialog(
-                content: 'There is something wrong in server  please check in again ',
+                content:
+                    'There is something wrong in server  please check in again ',
                 context: context,
                 onPressed: navigateToMain,
                 type: DialogType.confirmation);

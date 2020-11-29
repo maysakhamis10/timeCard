@@ -39,7 +39,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   final formKey = GlobalKey<FormState>();
   final FocusNode _nameFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
-  bool switchState ;
+  bool switchState;
   var mainColor = Color(0xFF1589d2);
   var height, width;
 
@@ -74,8 +74,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _initAnimations();
-    getKeep().then((onValue) {
-    });
+    getKeep().then((onValue) {});
     _bloc = BlocProvider.of<LoginBloc>(context);
   }
 
@@ -301,8 +300,8 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                     },
                     child: FutureBuilder(
                       future: initPlatformState(),
-                      builder: (context , AsyncSnapshot snapshot) => Text(
-                        snapshot.data ?? _platformImei/*_platformImei*/,
+                      builder: (context, AsyncSnapshot snapshot) => Text(
+                        snapshot.data ?? _platformImei /*_platformImei*/,
                         style: GoogleFonts.voces(
                             color: mainColor,
                             fontWeight: FontWeight.normal,
@@ -505,12 +504,12 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       getAddress();
     } else {
       var androidInfo = await DeviceInfoPlugin().androidInfo;
-      String  identifier;
-      if(androidInfo.version.sdkInt > 28){
+      String identifier;
+      if (androidInfo.version.sdkInt > 28) {
         identifier = await UniqueIdentifier.serial;
-      }else {
-        identifier =
-        await ImeiPlugin.getImei(shouldShowRequestPermissionRationale: false);
+      } else {
+        identifier = await ImeiPlugin.getImei(
+            shouldShowRequestPermissionRationale: false);
         List<String> multiImei = await ImeiPlugin.getImeiMulti();
         print(multiImei);
         // idunique = await ImeiPlugin.getId();
@@ -554,12 +553,10 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-
-
-   getKeep() async{
-    if(await SharedPreferencesOperations.getKeepMeLoggedIn() == null){
+  getKeep() async {
+    if (await SharedPreferencesOperations.getKeepMeLoggedIn() == null) {
       switchState = false;
-    }else {
+    } else {
       switchState = await SharedPreferencesOperations.getKeepMeLoggedIn();
     }
     return switchState;

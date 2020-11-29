@@ -49,7 +49,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    showProgressDialog();
+    //showProgressDialog();
     _initValue();
     fetchUserData();
     callHomeInfoService();
@@ -77,11 +77,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   void callHomeInfoService() async {
     if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
-      String savedHomeInfo =  await SharedPreferencesOperations.fetchHomeData();
+      String savedHomeInfo = await SharedPreferencesOperations.fetchHomeData();
       print(savedHomeInfo);
-      if(savedHomeInfo != null  && savedHomeInfo != ""){
-        homeInfoBloc.add(HomeInfoEvent( homeInfo : HomeInfo.fromJson(jsonDecode(savedHomeInfo))));
-      }else {
+      if (savedHomeInfo != null && savedHomeInfo != "") {
+        homeInfoBloc.add(HomeInfoEvent(
+            homeInfo: HomeInfo.fromJson(jsonDecode(savedHomeInfo))));
+      } else {
         homeInfoBloc.add(HomeInfoEvent());
       }
     } else {
@@ -382,7 +383,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     return Container(
       margin: EdgeInsets.only(top: 20),
       child: Row(
-        mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           // scrollDirection: Axis.horizontal,
