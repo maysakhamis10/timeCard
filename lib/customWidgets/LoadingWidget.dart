@@ -23,7 +23,9 @@ class LoadingWidgetState extends State<LoadingWidget>
     controller = AnimationController(
         duration: const Duration(seconds: 1), vsync: this);
     controller.addListener(() {
-      setState(() {});
+      if(mounted) {
+        setState(() {});
+      }
       if (controller.isCompleted) controller.repeat();
     });
     controller.forward();

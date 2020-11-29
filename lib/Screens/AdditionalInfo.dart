@@ -76,9 +76,11 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
     fromWhereList.add(from_others);
      SharedPreferencesOperations.getClients().then((client) {
        clients = jsonDecode(client.toString())?.cast<String>();
-       setState(() {
+       if(mounted) {
+         setState(() {
 
-       });
+         });
+       }
      });
     empModel = await getApiKeyAndId();
     if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
@@ -284,9 +286,11 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
             onChange: (newValue) {
               print("tot $newValue");
               dropdownValue = newValue;
-              setState(() {
+              if(mounted) {
+                setState(() {
 
-              });
+                });
+              }
             }),
       ),
     );
@@ -372,10 +376,12 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
 
   void onItemSelected(String selectedOne) {
     print('selected one is => $selectedOne');
-    setState(() {
-      dropdownValue = selectedOne;
-      _toggle();
-    });
+    if(mounted) {
+      setState(() {
+        dropdownValue = selectedOne;
+        _toggle();
+      });
+    }
   }
 
 //  Widget dropDownList( ) {
@@ -537,7 +543,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
 
   navigateToMain() {
     Navigator.of(context).pop();
-    Navigator.pushReplacement(
+    Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => BlocProvider(
@@ -564,10 +570,12 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   }
 
   void _toggle() {
-    setState(() {
-      _isExpand = !_isExpand;
-      print('testtttt');
-    });
+    if(mounted) {
+      setState(() {
+        _isExpand = !_isExpand;
+        print('testtttt');
+      });
+    }
   }
 
   buildFromWhereDropDown() {
@@ -600,7 +608,9 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
           onChange: (newValue) {
             print("tot $newValue");
             fromWhere = newValue;
-            setState(() {});
+            if(mounted) {
+              setState(() {});
+            }
           }),
     );
   }

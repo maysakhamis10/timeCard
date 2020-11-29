@@ -75,6 +75,9 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     super.initState();
     _initAnimations();
     getKeep().then((onValue) {
+      if(!onValue) {
+        initPlatformState();
+      }
     });
     _bloc = BlocProvider.of<LoginBloc>(context);
   }
@@ -299,15 +302,13 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                         content: new Text("$_platformImei Copied to Clipboard"),
                       ));
                     },
-                    child: FutureBuilder(
-                      future: initPlatformState(),
-                      builder: (context , AsyncSnapshot snapshot) => Text(
-                        snapshot.data ?? _platformImei/*_platformImei*/,
+                    child:  Text(
+                        _platformImei,
                         style: GoogleFonts.voces(
                             color: mainColor,
                             fontWeight: FontWeight.normal,
                             fontSize: 13.0),
-                      ),
+
                     ),
                   ),
                 )
@@ -384,10 +385,12 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                   value: switchState ?? false,
                   activeColor: mainColor,
                   onChanged: (bool s) {
-                    setState(() {
-                      switchState = s;
-                      saveKeepMeLoggedIn();
-                    });
+                    if(mounted) {
+                      setState(() {
+                        switchState = s;
+                        saveKeepMeLoggedIn();
+                      });
+                    }
                   },
                 ),
               ),
@@ -405,7 +408,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
         onTap: () => logInFun(),
         child: Container(
           alignment: Alignment.center,
-          margin: EdgeInsets.only(top: 60),
+          margin: EdgeInsets.only(top: height/15),
           decoration: BoxDecoration(
             color: Color(0xff1295df),
             borderRadius: BorderRadius.circular(30.0),
@@ -509,16 +512,17 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       if(androidInfo.version.sdkInt > 28){
         identifier = await UniqueIdentifier.serial;
       }else {
-        identifier =
-        await ImeiPlugin.getImei(shouldShowRequestPermissionRationale: false);
-        List<String> multiImei = await ImeiPlugin.getImeiMulti();
-        print(multiImei);
+        identifier = await ImeiPlugin.getImei(shouldShowRequestPermissionRationale: false);
+        // List<String> multiImei = await ImeiPlugin.getImeiMulti();
+        // print(multiImei);
         // idunique = await ImeiPlugin.getId();
       }
-      setState(() {
-        _platformImei = identifier;
-        // uniqueId = idunique;
-      });
+      if(mounted) {
+        setState(() {
+          _platformImei = identifier;
+          // uniqueId = idunique;
+        });
+      }
     }
   }
 // mac address using channel in ios
@@ -534,9 +538,11 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       address = "failed to get address";
     }
 
+    if(mounted) {
     setState(() {
       _platformImei = address;
     });
+    }
   }
 
   requestPermission() async {

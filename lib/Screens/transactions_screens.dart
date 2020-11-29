@@ -81,7 +81,9 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       context: context,
                       onPressed: () => Navigator.pop(context),
                       type: DialogType.confirmation);
-                  setState(() {});
+                  if(mounted) {
+                    setState(() {});
+                  }
                 } else {
                   UtilsClass.showMyDialog(
                       content:
@@ -335,13 +337,14 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       if (pickedDate == null) {
         return;
       }
-
+      if(mounted) {
       setState(() {
         formattedDate =
-            '${pickedDate.year.toString()}/${pickedDate.month.toString()}'
+        '${pickedDate.year.toString()}/${pickedDate.month.toString()}'
             '/${pickedDate.day.toString()}';
         _fetchAllSyncTransactions(formattedDate);
       });
+    }
     });
   }
 
