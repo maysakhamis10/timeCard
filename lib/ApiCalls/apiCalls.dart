@@ -20,7 +20,7 @@ class ApiCalls {
     print(user.username);
     print(user.password);
     print(user.macAddress);
-    http.Response response = await http.post(Constants.getLoginUrl(user.username, user.password, "caad5ee0f39ecb63"/*user.macAddress*/));
+    http.Response response = await http.post(Constants.getLoginUrl(user.username, user.password, user.macAddress));
     print(response.body.toString() + '${response.statusCode}');
     var jsonDecsode = await jsonDecode(response.body);
     var flag = jsonDecsode['Flag'];
