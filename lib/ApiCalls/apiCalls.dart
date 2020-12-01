@@ -4,6 +4,7 @@ import 'package:timecarditg/models/Client.dart';
 import 'package:timecarditg/models/Employee.dart';
 import 'package:timecarditg/models/HomeInformation.dart';
 import 'package:timecarditg/models/checkInResponse.dart';
+import 'package:timecarditg/models/login_error.dart';
 import 'package:timecarditg/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:timecarditg/utils/sharedPreference.dart';
@@ -14,8 +15,11 @@ import '../utils/Constants.dart';
 
 class ApiCalls {
 
-  static Future<Employee> loginCall (Logginer user) async{
+  static Future<Object> loginCall (Logginer user) async{
     Employee emp ;
+    print(user.username);
+    print(user.password);
+    print(user.macAddress);
     http.Response response = await http.post(Constants.getLoginUrl(user.username, user.password, user.macAddress));
     print(response.body.toString() + '${response.statusCode}');
     var jsonDecsode = await jsonDecode(response.body);
@@ -27,7 +31,7 @@ class ApiCalls {
       fetchClient(emp.apiKey);
       return emp;
     }
-    else return null;
+    else return LoginError.fromJson(jsonDecsode);
   }
 
   static Future<HomeInfo> fetchHomeInfo () async {

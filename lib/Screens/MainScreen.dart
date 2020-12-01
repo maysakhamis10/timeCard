@@ -37,6 +37,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   var height, width;
   HomeInfoBloc homeInfoBloc;
   AnimationController progressController;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  PersistentBottomSheetController controller;
   Animation animation;
   double percentage = 0;
   File _image;
@@ -77,6 +79,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   void callHomeInfoService() async {
     if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
+      if(controller != null){
+        Navigator.pop(context);
+      }
       String savedHomeInfo =  await SharedPreferencesOperations.fetchHomeData();
       print(savedHomeInfo);
       if(savedHomeInfo != null  && savedHomeInfo != ""){
@@ -86,12 +91,31 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       }
     } else {
       String fetchHomeStr = await SharedPreferencesOperations.fetchHomeData();
-      var homeJson = jsonDecode(fetchHomeStr);
-      if (mounted) {
-        setState(() {
-          _homeInfo = HomeInfo.fromJson(homeJson);
-          calDifferenceHours(_homeInfo);
-        });
+      if(fetchHomeStr == null || fetchHomeStr == "") {
+        controller = _scaffoldKey.currentState.showBottomSheet((widgetBuilder) {
+          return Container(
+            height: 50,
+            width: double.infinity,
+            color: Colors.blue,
+            child: Center(
+            child: Padding(
+              padding: const EdgeInsetsDirectional.only(start: 10 , end: 10 ),
+              child: Text(
+                'There is no internet connection please make sure from internet and press Refresh',
+                style: GoogleFonts.voces(
+                    color: Colors.white, fontSize: 12.0),
+              ),
+            )),
+          );
+        } , backgroundColor: Colors.blue ,);
+      }else {
+        var homeJson = jsonDecode(fetchHomeStr);
+        if (mounted) {
+          setState(() {
+            _homeInfo = HomeInfo.fromJson(homeJson);
+            calDifferenceHours(_homeInfo);
+          });
+        }
       }
     }
   }
@@ -101,6 +125,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
     return Scaffold(
+      key: _scaffoldKey,
         // appBar: AppBar(
         //   automaticallyImplyLeading: false,
         //   centerTitle: true,
@@ -275,7 +300,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       showBottomSheet(
           context: context,
           builder: (context) => Text(
-              "please try again with choose fromWhere you are login is mandatory"));
+              "please try again with choose fromWhere you are login is mandatory" ,
+            style: GoogleFonts.voces(color: Colors.white, fontSize: 16.0),) , backgroundColor: Colors.blue);
   }
 
   Widget buildSignOut(BuildContext context) {
@@ -330,7 +356,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       showBottomSheet(
           context: context,
           builder: (context) => Text(
-              "please try again with choose fromWhere you are login is mandatory"));
+              "please try again with choose fromWhere you are login is mandatory",
+            style: GoogleFonts.voces(color: Colors.white, fontSize: 16.0),) , backgroundColor: Colors.blue);
   }
 
   Widget buildTextInGridView({String title, CheckType checkType}) {

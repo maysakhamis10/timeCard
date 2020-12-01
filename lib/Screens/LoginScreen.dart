@@ -13,7 +13,9 @@ import 'package:timecarditg/Blocs/home_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:get_mac/get_mac.dart';
 import 'package:device_info/device_info.dart';
+import 'package:timecarditg/main.dart';
 import 'package:timecarditg/models/Employee.dart';
+import 'package:timecarditg/models/login_error.dart';
 import 'package:timecarditg/models/user.dart';
 import 'package:timecarditg/utils/sharedPreference.dart';
 import 'package:timecarditg/utils/utils.dart';
@@ -74,8 +76,9 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _initAnimations();
-    getKeep().then((onValue) {
-      if(!onValue) {
+    getKeep();
+    getHomeData().then((onValue) {
+      if( onValue == null || onValue.isEmpty) {
         initPlatformState();
       }
     });
@@ -84,10 +87,10 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    super.dispose();
     _animationController.dispose();
     emailTextEditingController.dispose();
     passwordTextEditingController.dispose();
+    super.dispose();
   }
 
   @override
@@ -201,20 +204,20 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                 if (progressLoading != null) {
                   progressLoading.hide();
                 }
+                var error  =  (state.model as LoginError);
                 scaffoldKey.currentState.showBottomSheet((widgetBuilder) {
                   return Container(
                     height: 50,
                     width: double.infinity,
-                    color: Colors.white,
+                    color: Colors.blue,
                     child: Center(
                         child: Text(
-                      "Invalid username or password or may "
-                      "be your mac Address is not Registered",
+                          error.message,
                       style: GoogleFonts.voces(
-                          color: Colors.blue[300], fontSize: 12.0),
+                          color: Colors.white, fontSize: 12.0),
                     )),
                   );
-                });
+                } , backgroundColor: Colors.blue);
               }
             },
             child: Container(),
@@ -448,14 +451,14 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
         return Container(
           height: 50,
           width: double.infinity,
-          color: Colors.white,
+          color: Colors.blue,
           child: Center(
               child: Text(
             'There is no internet connection',
-            style: GoogleFonts.voces(fontSize: 12.0),
+            style: GoogleFonts.voces(fontSize: 12.0 , color:  Colors.white),
           )),
         );
-      });
+      }, backgroundColor: Colors.blue);
 /*      UtilsClass.showMyDialog(
           context: context,
           content: ,
