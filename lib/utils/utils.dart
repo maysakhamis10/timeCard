@@ -9,8 +9,8 @@ import 'package:timecarditg/Screens/LoginScreen.dart';
 import 'package:timecarditg/utils/sharedPreference.dart';
 
 class UtilsClass {
-  static logOut(BuildContext context) {
-    SharedPreferencesOperations.saveKeepMeLoggedIn(false);
+  static logOut(BuildContext context) async{
+    await SharedPreferencesOperations.removeAllShared();
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(

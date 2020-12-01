@@ -11,7 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   return runApp(/*DevicePreview(
 builder: (context) =>*/
-      MyApp()) ;/*)*/
+      MyApp()); /*)*/
 
 }
 
@@ -33,12 +33,20 @@ class MyApp extends StatelessWidget {
           accentColor: Colors.white,
           primaryColor: Color(0xff0099FF),
         ),
-        home:  FutureBuilder(
+        home: FutureBuilder(
           future: getKeep(),
           builder: (context, AsyncSnapshot snap) =>
-          snap.data ?? false ? BlocProvider<HomeInfoBloc>(
-            create: (_) => HomeInfoBloc(),
-            child: MainScreen(),
+          snap.data ?? false ? FutureBuilder(
+            future:getHomeData(),
+            builder: (context, AsyncSnapshot snap) =>
+            snap.hasData ?? false ? BlocProvider<HomeInfoBloc>(
+              create: (_) => HomeInfoBloc(),
+              child: MainScreen(),
+            ) :
+            BlocProvider<LoginBloc>(
+              create: (_) => LoginBloc(),
+              child: SignIn(),
+            ),
           ) : BlocProvider<LoginBloc>(
             create: (_) => LoginBloc(),
             child: SignIn(),
@@ -54,4 +62,10 @@ class MyApp extends StatelessWidget {
       return await SharedPreferencesOperations.getKeepMeLoggedIn();
     }
   }
+
+
+}
+  Future<String> getHomeData() async{
+  String savedHomeInfo =  await SharedPreferencesOperations.fetchHomeData() ?? null;
+  return savedHomeInfo;
 }

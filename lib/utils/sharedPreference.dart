@@ -71,6 +71,13 @@ class SharedPreferencesOperations {
   }
 
 
+  static Future<bool> removeAllShared() async {
+    final SharedPreferences prefs = await  SharedPreferences.getInstance();
+    bool logedOut = await prefs.clear();
+    return logedOut;
+
+  }
+
   static Future<bool>saveClients (String name)async{
 
     final SharedPreferences prefs = await  SharedPreferences.getInstance();
