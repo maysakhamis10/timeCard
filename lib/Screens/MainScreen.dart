@@ -79,36 +79,39 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   void callHomeInfoService() async {
     if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
-      if(controller != null){
+      if (controller != null) {
         Navigator.pop(context);
       }
-      String savedHomeInfo =  await SharedPreferencesOperations.fetchHomeData();
+      String savedHomeInfo = await SharedPreferencesOperations.fetchHomeData();
       print(savedHomeInfo);
-      if(savedHomeInfo != null  && savedHomeInfo != ""){
-        homeInfoBloc.add(HomeInfoEvent( homeInfo : HomeInfo.fromJson(jsonDecode(savedHomeInfo))));
-      }else {
+      if (savedHomeInfo != null && savedHomeInfo != "") {
+        homeInfoBloc.add(HomeInfoEvent(
+            homeInfo: HomeInfo.fromJson(jsonDecode(savedHomeInfo))));
+      } else {
         homeInfoBloc.add(HomeInfoEvent());
       }
     } else {
       String fetchHomeStr = await SharedPreferencesOperations.fetchHomeData();
-      if(fetchHomeStr == null || fetchHomeStr == "") {
-        controller = _scaffoldKey.currentState.showBottomSheet((widgetBuilder) {
-          return Container(
-            height: 50,
-            width: double.infinity,
-            color: Colors.blue,
-            child: Center(
-            child: Padding(
-              padding: const EdgeInsetsDirectional.only(start: 10 , end: 10 ),
-              child: Text(
-                'There is no internet connection please make sure from internet and press Refresh',
-                style: GoogleFonts.voces(
-                    color: Colors.white, fontSize: 12.0),
-              ),
-            )),
-          );
-        } , backgroundColor: Colors.blue ,);
-      }else {
+      if (fetchHomeStr == null || fetchHomeStr == "") {
+        controller = _scaffoldKey.currentState.showBottomSheet(
+          (widgetBuilder) {
+            return Container(
+              height: 50,
+              width: double.infinity,
+              color: Colors.blue,
+              child: Center(
+                  child: Padding(
+                padding: const EdgeInsetsDirectional.only(start: 10, end: 10),
+                child: Text(
+                  'There is no internet connection please make sure from internet and press Refresh',
+                  style: GoogleFonts.voces(color: Colors.white, fontSize: 12.0),
+                ),
+              )),
+            );
+          },
+          backgroundColor: Colors.blue,
+        );
+      } else {
         var homeJson = jsonDecode(fetchHomeStr);
         if (mounted) {
           setState(() {
@@ -125,7 +128,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     height = MediaQuery.of(context).size.height;
     width = MediaQuery.of(context).size.width;
     return Scaffold(
-      key: _scaffoldKey,
+        key: _scaffoldKey,
         // appBar: AppBar(
         //   automaticallyImplyLeading: false,
         //   centerTitle: true,
@@ -137,26 +140,44 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         //   backgroundColor: Color(0xFFEEEEEE),
         // ),
         body: WillPopScope(
-      onWillPop: () async => false,
-      child: SingleChildScrollView(
-        child: BlocBuilder<HomeInfoBloc, BaseResultState>(
-            builder: (context, state) {
-          if (state.result == dataResult.Loading) {
-            if (mounted) {
-              showProgressDialog();
-            }
-          } else if (state.result == dataResult.Loaded) {
-            _homeInfo = state.model;
-            calDifferenceHours(_homeInfo);
-            print(('object from api => ${_homeInfo.toJson()}'));
-            dismissLoading();
-          } else if (state.result == dataResult.Error) {
-            dismissLoading();
-          }
-          return buildHomeUi(context);
-        }),
-      ),
-    ));
+          onWillPop: () async => false,
+          child: SingleChildScrollView(
+            child: BlocBuilder<HomeInfoBloc, BaseResultState>(
+                builder: (context, state) {
+              if (state.result == dataResult.Loading) {
+                if (mounted) {
+                  showProgressDialog();
+                }
+              } else if (state.result == dataResult.Loaded) {
+                _homeInfo = state.model;
+                calDifferenceHours(_homeInfo);
+                print(('object from api => ${_homeInfo.toJson()}'));
+                dismissLoading();
+              } else if (state.result == dataResult.Error) {
+                dismissLoading();
+                Future.delayed(Duration(seconds: 2)).then((val) {
+                  showBottomSheet(
+                      context: context,
+                      builder: (context) => Container(
+                        height: 50,
+                        width: double.infinity,
+                        color: Colors.blue,
+                        child: Center(
+                            child: Text(
+                              "there is error in server please try later",
+                              style: GoogleFonts.voces(
+                                  color: Colors.white, fontSize: 12.0),
+                            )),
+                      ),
+                      backgroundColor: Colors.blue);
+                });
+
+
+              }
+              return buildHomeUi(context);
+            }),
+          ),
+        ));
   }
 
   Widget buildHomeUi(BuildContext context) {
@@ -300,8 +321,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       showBottomSheet(
           context: context,
           builder: (context) => Text(
-              "please try again with choose fromWhere you are login is mandatory" ,
-            style: GoogleFonts.voces(color: Colors.white, fontSize: 16.0),) , backgroundColor: Colors.blue);
+                "please try again with choose fromWhere you are login is mandatory",
+                style: GoogleFonts.voces(color: Colors.white, fontSize: 16.0),
+              ),
+          backgroundColor: Colors.blue);
   }
 
   Widget buildSignOut(BuildContext context) {
@@ -356,8 +379,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       showBottomSheet(
           context: context,
           builder: (context) => Text(
-              "please try again with choose fromWhere you are login is mandatory",
-            style: GoogleFonts.voces(color: Colors.white, fontSize: 16.0),) , backgroundColor: Colors.blue);
+                "please try again with choose fromWhere you are login is mandatory",
+                style: GoogleFonts.voces(color: Colors.white, fontSize: 16.0),
+              ),
+          backgroundColor: Colors.blue);
   }
 
   Widget buildTextInGridView({String title, CheckType checkType}) {
@@ -409,7 +434,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     return Container(
       margin: EdgeInsets.only(top: 20),
       child: Row(
-        mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           // scrollDirection: Axis.horizontal,
@@ -548,7 +573,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   Future getImage() async {
     prefs.remove('user_profile_image');
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    if(mounted) {
+    if (mounted) {
       setState(() {
         if (pickedFile != null) {
           _image = File(pickedFile.path);
@@ -589,8 +614,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   void dismissLoading() async {
-    await Future.delayed(const Duration(milliseconds: 100), () {
-      progressLoading.hide();
+    await Future.delayed(const Duration(seconds: 2), () {
+      if(progressLoading != null) {
+        progressLoading.hide();
+      }
     });
   }
 

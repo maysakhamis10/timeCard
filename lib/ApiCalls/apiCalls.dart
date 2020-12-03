@@ -20,7 +20,7 @@ class ApiCalls {
     print(user.username);
     print(user.password);
     print(user.macAddress);
-    http.Response response = await http.post(Constants.getLoginUrl(user.username, user.password, user.macAddress));
+    http.Response response = await http.post(Constants.getLoginUrl(user.username, user.password,user.macAddress));
     print(response.body.toString() + '${response.statusCode}');
     var jsonDecsode = await jsonDecode(response.body);
     var flag = jsonDecsode['Flag'];
@@ -36,12 +36,16 @@ class ApiCalls {
 
   static Future<HomeInfo> fetchHomeInfo () async {
     Employee employee = await SharedPreferencesOperations.getApiKeyAndId();
-    http.Response response = await http.get(Constants.getHomeInformationUrl(
-        employee.employeeId.toString(), employee.apiKey));
-    var jsonDecoded = jsonDecode(response.body);
-    print('RESPONSE ===>>>> ${response.body}');
-    SharedPreferencesOperations.saveHomeData(response.body);
-    return HomeInfo.fromJson(jsonDecoded);
+    try {
+      http.Response response = await http.get(Constants.getHomeInformationUrl(
+          employee.employeeId.toString(), employee.apiKey));
+      var jsonDecoded = jsonDecode(response.body);
+      print('RESPONSE ===>>>> ${response.body}');
+      SharedPreferencesOperations.saveHomeData(response.body);
+      return HomeInfo.fromJson(jsonDecoded);
+    }catch(ex){
+      return null;
+    }
   }
 
   static Future<CheckInResponse> checkService(CheckModel checkObject)async {

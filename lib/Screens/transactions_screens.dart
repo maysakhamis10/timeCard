@@ -87,7 +87,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 } else {
                   UtilsClass.showMyDialog(
                       content:
-                          'There is something wrong in server  please check in again ',
+                      "there is error in server please try later",
                       context: context,
                       onPressed: () => Navigator.pop(context),
                       type: DialogType.confirmation);

@@ -201,23 +201,43 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                   );
                 });
               } else if (state.result == dataResult.Error) {
-                if (progressLoading != null) {
-                  progressLoading.hide();
+                await Future.delayed(const Duration(seconds: 1),() {
+                  if (progressLoading != null) {
+                    progressLoading.hide();
+                  }
+                });
+                if(state.model == null ){
+                  scaffoldKey.currentState.showBottomSheet((widgetBuilder) {
+                    return Container(
+                      height: 50,
+                      width: double.infinity,
+                      color: Colors.blue,
+                      child: Center(
+                          child: Text(
+                            "there is error in server please try later",
+                            style: GoogleFonts.voces(
+                                color: Colors.white, fontSize: 12.0),
+                          )),
+                    );
+                  }, backgroundColor: Colors.blue);
+                }else {
+                  var error = (state.model as LoginError);
+                  if (error != null) {
+                    scaffoldKey.currentState.showBottomSheet((widgetBuilder) {
+                      return Container(
+                        height: 50,
+                        width: double.infinity,
+                        color: Colors.blue,
+                        child: Center(
+                            child: Text(
+                              error.message,
+                              style: GoogleFonts.voces(
+                                  color: Colors.white, fontSize: 12.0),
+                            )),
+                      );
+                    }, backgroundColor: Colors.blue);
+                  }
                 }
-                var error  =  (state.model as LoginError);
-                scaffoldKey.currentState.showBottomSheet((widgetBuilder) {
-                  return Container(
-                    height: 50,
-                    width: double.infinity,
-                    color: Colors.blue,
-                    child: Center(
-                        child: Text(
-                          error.message,
-                      style: GoogleFonts.voces(
-                          color: Colors.white, fontSize: 12.0),
-                    )),
-                  );
-                } , backgroundColor: Colors.blue);
               }
             },
             child: Container(),
@@ -479,7 +499,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   }
 
   showProgressDialog() async {
-    await Future.delayed(const Duration(milliseconds: 100), () {
+    // await Future.delayed(const Duration(milliseconds: 100), () {
       progressLoading = ProgressDialog(
         context,
         type: ProgressDialogType.Normal,
@@ -487,7 +507,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
         showLogs: false,
       );
       progressLoading.show();
-    });
+    // });
   }
 
 /*  Future<String> macAddressChecker() async {
