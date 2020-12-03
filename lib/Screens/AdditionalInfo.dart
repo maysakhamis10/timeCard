@@ -511,7 +511,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
                 type: DialogType.confirmation);
           } else {
             UtilsClass.showMyDialog(
-                content: 'There is something wrong in server  please check in again ',
+                content: "there is error in server please try later",
                 context: context,
                 onPressed: navigateToMain,
                 type: DialogType.confirmation);
