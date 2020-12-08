@@ -35,6 +35,9 @@ end
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
+    
+# native pod 
+pod 'JNKeychain'
   
   # Flutter Pod
 
