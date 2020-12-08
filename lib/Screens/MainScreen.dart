@@ -123,6 +123,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     }
   }
 
+  var counter  = 0 ;
   @override
   Widget build(BuildContext context) {
     height = MediaQuery.of(context).size.height;
@@ -164,7 +165,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         color: Colors.blue,
                         child: Center(
                             child: Text(
-                              "there is error in server please try later",
+                              "There is error in server please try later",
                               style: GoogleFonts.voces(
                                   color: Colors.white, fontSize: 12.0),
                             )),
@@ -172,7 +173,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       backgroundColor: Colors.blue);
                 });
 
-
+                if(counter <= 3 ) {
+                  counter++;
+                  callHomeInfoService();
+                }else {
+                  Future.delayed(Duration(seconds: 15)).then((value) => makeLogout());
+                  // makeLogout();
+                }
               }
               return buildHomeUi(context);
             }),
