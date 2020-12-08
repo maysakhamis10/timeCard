@@ -77,11 +77,11 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     super.initState();
     _initAnimations();
     getKeep();
-    getHomeData().then((onValue) {
-      if( onValue == null || onValue.isEmpty) {
+    // getHomeData().then((onValue) {
+      // if( onValue == null || onValue.isEmpty) {
         initPlatformState();
-      }
-    });
+      // }
+    // });
     _bloc = BlocProvider.of<LoginBloc>(context);
   }
 
@@ -214,7 +214,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                       color: Colors.blue,
                       child: Center(
                           child: Text(
-                            "there is error in server please try later",
+                            "There is error in server please try later",
                             style: GoogleFonts.voces(
                                 color: Colors.white, fontSize: 12.0),
                           )),
