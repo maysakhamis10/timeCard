@@ -8,6 +8,8 @@ class Constants {
   static String checkIn = "CheckIn";
   static String employeeId = "";
   static String keep = "keepMe";
+  static String username = "username";
+  static String password = "password";
   static String isLoggedOut = "IsLoggedOut";
   static String checkOut = "CheckOut";
   static String apiKey = "apiKey";
@@ -20,12 +22,13 @@ class Constants {
   static const String TRANSACTIONS = TransactionsScreen.routeName;
 
   static const String CLIENT_NAME = "Client Name";
+  static const String MACADRESS = "63:14:57:47:83:78";
 
 
   static String getLoginUrl(String userName, String pass, String macAddress) {
     String loginurl = baseUrl;
     loginurl += "LogIn?" + "Username=" + userName + "&Password=" + pass +
-        "&MacAddress=" + macAddress;//macAddress;
+        "&MacAddress=" + MACADRESS;//macAddress;
     return loginurl;
   }
 

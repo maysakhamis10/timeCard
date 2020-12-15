@@ -189,13 +189,21 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
               } else if (state.result == dataResult.Loaded) {
                 var employee = (state.model as Employee);
                 saveApiKey(employee);
+                saveUsernameAndPassword();
                 Timer(Duration(seconds: 3), () {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) {
-                      return BlocProvider(
+                      return MultiBlocProvider(
+                        providers:[
+                          BlocProvider(
+                            child: MainScreen(),
+                            create: (_) => HomeInfoBloc(),
+                          ),BlocProvider(
+                            create: (_) => LoginBloc(),
+                          ),
+                        ],
                         child: MainScreen(),
-                        create: (_) => HomeInfoBloc(),
                       );
                     }),
                   );
@@ -592,6 +600,15 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       switchState = await SharedPreferencesOperations.getKeepMeLoggedIn();
     }
     return switchState;
+  }
+
+  void saveUsernameAndPassword() async{
+    await SharedPreferencesOperations.saveUserNameAndPassword(emailTextEditingController.text, passwordTextEditingController.text).
+    then((value){
+      print("username and password saved ");
+    }).catchError((onError){
+      print(onError.toString());
+    });
   }
 
 //  Widget buildLoginUiWithOldDesign(){

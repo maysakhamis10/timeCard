@@ -12,10 +12,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timecarditg/Blocs/CheckInBloc.dart';
 import 'package:timecarditg/Blocs/ClientsBloc.dart';
 import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
+import 'package:timecarditg/Blocs/LoginBloc.dart';
 import 'package:timecarditg/Blocs/home_bloc.dart';
+import 'package:timecarditg/Screens/LoginScreen.dart';
 import 'package:timecarditg/customWidgets/CircleProgress.dart';
 import 'package:timecarditg/models/Employee.dart';
 import 'package:timecarditg/models/HomeInformation.dart';
+import 'package:timecarditg/models/user.dart';
 import 'package:timecarditg/utils/Constants.dart';
 import 'package:timecarditg/utils/sharedPreference.dart';
 import 'package:timecarditg/utils/utils.dart';
@@ -36,6 +39,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   HomeInfo _homeInfo;
   var height, width;
   HomeInfoBloc homeInfoBloc;
+  LoginBloc _loginBloc;
   AnimationController progressController;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   PersistentBottomSheetController controller;
@@ -70,6 +74,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     prefs = await SharedPreferences.getInstance();
     _homeInfo = new HomeInfo();
     homeInfoBloc = BlocProvider.of<HomeInfoBloc>(context);
+    _loginBloc = BlocProvider.of<LoginBloc>(context);
     progressController = AnimationController(
         vsync: this, duration: Duration(milliseconds: 2000));
     animation = Tween<double>(begin: 0, end: percentage)
@@ -85,8 +90,15 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       String savedHomeInfo = await SharedPreferencesOperations.fetchHomeData();
       print(savedHomeInfo);
       if (savedHomeInfo != null && savedHomeInfo != "") {
-        homeInfoBloc.add(HomeInfoEvent(
-            homeInfo: HomeInfo.fromJson(jsonDecode(savedHomeInfo))));
+        if(jsonDecode(savedHomeInfo)['Attendance_Information'] == null){
+          print("Api key Expired");
+           //TODO navigate to login or refresh token
+          handleInvalidApikey();
+        }
+        else {
+          homeInfoBloc.add(HomeInfoEvent(
+              homeInfo: HomeInfo.fromJson(jsonDecode(savedHomeInfo))));
+        }
       } else {
         homeInfoBloc.add(HomeInfoEvent());
       }
@@ -143,46 +155,73 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         body: WillPopScope(
           onWillPop: () async => false,
           child: SingleChildScrollView(
-            child: BlocBuilder<HomeInfoBloc, BaseResultState>(
-                builder: (context, state) {
-              if (state.result == dataResult.Loading) {
-                if (mounted) {
-                  showProgressDialog();
-                }
-              } else if (state.result == dataResult.Loaded) {
-                _homeInfo = state.model;
-                calDifferenceHours(_homeInfo);
-                print(('object from api => ${_homeInfo.toJson()}'));
-                dismissLoading();
-              } else if (state.result == dataResult.Error) {
-                dismissLoading();
-                Future.delayed(Duration(seconds: 2)).then((val) {
-                  showBottomSheet(
-                      context: context,
-                      builder: (context) => Container(
-                        height: 50,
-                        width: double.infinity,
-                        color: Colors.blue,
-                        child: Center(
-                            child: Text(
-                              "There is error in server please try later",
-                              style: GoogleFonts.voces(
-                                  color: Colors.white, fontSize: 12.0),
-                            )),
-                      ),
-                      backgroundColor: Colors.blue);
-                });
+            child: Column(
+              children: <Widget>[
+                BlocBuilder<HomeInfoBloc, BaseResultState>(
+                    builder: (context, state) {
+                      if (state.result == dataResult.Loading) {
+                        if (mounted) {
+                          showProgressDialog();
+                        }
+                      } else if (state.result == dataResult.Loaded) {
+                        _homeInfo = state.model;
+                        calDifferenceHours(_homeInfo);
+                        print(('object from api => ${_homeInfo.toJson()}'));
+                        dismissLoading();
+                      } else if (state.result == dataResult.Error) {
+                        dismissLoading();
+                        Future.delayed(Duration(seconds: 2)).then((val) {
+                          showBottomSheet(
+                              context: context,
+                              builder: (context) => Container(
+                                height: 50,
+                                width: double.infinity,
+                                color: Colors.blue,
+                                child: Center(
+                                    child: Text(
+                                      "There is error in server please try later",
+                                      style: GoogleFonts.voces(
+                                          color: Colors.white, fontSize: 12.0),
+                                    )),
+                              ),
+                              backgroundColor: Colors.blue);
+                        });
 
-                if(counter <= 3 ) {
-                  counter++;
-                  callHomeInfoService();
-                }else {
-                  Future.delayed(Duration(seconds: 15)).then((value) => makeLogout());
-                  // makeLogout();
-                }
-              }
-              return buildHomeUi(context);
-            }),
+                        if(counter <= 3 ) {
+                          counter++;
+                          callHomeInfoService();
+                        }else {
+                          Future.delayed(Duration(seconds: 15)).then((value) => makeLogout());
+                          // makeLogout();
+                        }
+                      }
+                      return buildHomeUi(context);
+                    }),
+               // =========== imbaby and yasmin code
+                BlocBuilder<LoginBloc, BaseResultState>(
+                    builder: (context, state) {
+                      if (state.result == dataResult.Loading) {
+                        progressLoading.style(
+                            child: Text("Your session has been expired ... ")
+                        );
+                        progressLoading.show();
+                      } else if (state.result == dataResult.Loaded) {
+                       saveNewApiKey(state);
+                      } else if (state.result == dataResult.Error) {
+                      Navigator.pushReplacement(context, MaterialPageRoute(
+                        builder: (context){
+                        return  BlocProvider<LoginBloc>(
+                          create: (_) => LoginBloc(),
+                          child: SignIn(),
+                        );
+                        }
+                      ));
+                      }
+                      return Container(width: 0,height: 0,);
+                    })
+              // ================================================
+              ],
+            ),
           ),
         ));
   }
@@ -662,6 +701,22 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   makeLogout() {
     UtilsClass.logOut(context);
   }
+// ======== imbaby and yasmin code ===========
+  void handleInvalidApikey() async{
+    var info = await SharedPreferencesOperations.getUsernameAndPassword();
+    _loginBloc.add(LoginEvent(
+        user: Logginer(
+            username:           info[0] ,
+            password:           info[1] ,
+            macAddress: Constants.MACADRESS /*macAddress*/)
+    ));
+  }
+
+  void saveNewApiKey(BaseResultState state)async {
+    Employee emp = state.model;
+    await SharedPreferencesOperations.saveApiKeyAndIdAndImg(emp.apiKey, emp.employeeId, emp.employeeImage);
+  }
+   // ===============================================
 }
 
 enum CheckType { checkIn, checkOut }

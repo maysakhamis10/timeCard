@@ -18,8 +18,6 @@ class LoginBloc extends Bloc<BaseEvent , BaseResultState> {
     // TODO: implement mapEventToState
     if(event is LoginEvent){
       yield BaseResultState(result: dataResult.Loading);
-
-
       var status ;
       try {
         status = await ApiCalls.loginCall(event.user);
@@ -28,12 +26,10 @@ class LoginBloc extends Bloc<BaseEvent , BaseResultState> {
       }
       if(status is LoginError){
         yield BaseResultState(result: dataResult.Error,model: status);
-
       }else
       if(status is Employee){
         yield BaseResultState(result: dataResult.Loaded,model: status);
       }
-
       else {
         yield BaseResultState(result: dataResult.Error);
         print('errror => ${dataResult.Error}');

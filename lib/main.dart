@@ -39,9 +39,17 @@ class MyApp extends StatelessWidget {
           snap.data ?? false ? FutureBuilder(
             future:getHomeData(),
             builder: (context, AsyncSnapshot snap) =>
-            snap.hasData ?? false ? BlocProvider<HomeInfoBloc>(
-              create: (_) => HomeInfoBloc(),
+            snap.hasData ?? false ? MultiBlocProvider(
+              providers:[
+                BlocProvider<HomeInfoBloc>(
+                  create: (_) => HomeInfoBloc(),
+                ),
+                BlocProvider<LoginBloc>(
+                  create: (_) => LoginBloc(),
+                ),
+              ] ,
               child: MainScreen(),
+
             ) :
             BlocProvider<LoginBloc>(
               create: (_) => LoginBloc(),

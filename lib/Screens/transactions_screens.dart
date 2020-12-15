@@ -5,6 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:timecarditg/Blocs/CheckInBloc.dart';
 import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
+import 'package:timecarditg/Blocs/LoginBloc.dart';
+import 'package:timecarditg/Blocs/home_bloc.dart';
+import 'package:timecarditg/Screens/MainScreen.dart';
 import 'package:timecarditg/database/database.dart';
 import 'package:timecarditg/models/CheckModel.dart';
 import 'package:timecarditg/models/checkInResponse.dart';
@@ -27,6 +30,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   var formattedDate;
   CheckBloc _checkInBloc;
   ProgressDialog progressLoading;
+  bool isNeededToLoading= false;
 
   List<TransactionItem> transactionItems = new List();
 
@@ -56,14 +60,27 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     return new Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+             isNeededToLoading ?    Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return MultiBlocProvider(
+                      providers: [
+                        BlocProvider<HomeInfoBloc>(
+                          create: (_) => HomeInfoBloc(),
+                        ),
+                        BlocProvider<LoginBloc>(
+                          create: (_) => LoginBloc(),
+                        ),
+                      ],
+                      child: MainScreen(),
+                    ) ;
+                  }
+                )): Navigator.pop(context);
+            }),
+          title: Text("Transactions"),
           centerTitle: false,
-          title: Text(
-            'Transactions',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.voces(color: Colors.white, fontSize: 16.0),
-          ),
-          iconTheme: IconThemeData(color: Colors.white),
-          backgroundColor: Colors.blue[300],
         ),
         body: BlocListener<CheckBloc, BaseResultState>(
             listener: (context, state) {
@@ -96,10 +113,15 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             },
             child: buildBody()));
   }
-
+  Future<Null> _handleRefresh() async {
+    print("on Refreshing ..");
+    _sendOfflineTransactionToApi();
+    return null;
+  }
   Widget buildBody() {
     return Container(
-      child: buildListView(),
+        child:buildListView(),
+
     );
   }
 
@@ -128,17 +150,21 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 child: SafeArea(
                   bottom: true,
                   top: true,
-                  child: ListView.builder(
-                    itemCount: snapshot.data.length,
-                    scrollDirection: Axis.vertical,
-                    physics: ScrollPhysics(),
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return buildTransactionItem(_allTranactions[index]);
-                    },
+                  child:
+                  RefreshIndicator(
+                    onRefresh: _handleRefresh,
+                       child: ListView.builder(
+                        itemCount: snapshot.data.length,
+                        scrollDirection: Axis.vertical,
+                        physics: ScrollPhysics(),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return buildTransactionItem(_allTranactions[index]);
+                        },
+                    ),
+                     ),
                   ),
                 ),
-              ),
             ],
           );
         } else if (snapshot.hasError) {
@@ -329,6 +355,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
   void _pickDateDialog() {
     showDatePicker(
+      initialDatePickerMode:DatePickerMode.day ,
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(1990),
@@ -392,6 +419,11 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
         print('saved one is => ${savedOne.isAdded}');
         this._checkObject = savedOne;
         _checkInBloc.add(savedOne);
+        progressLoading.hide();
+        //=======
+        setState(() {
+          isNeededToLoading = true;
+        });
       } else {
         print("not founddddd");
         // this._checkObject = checkObject;

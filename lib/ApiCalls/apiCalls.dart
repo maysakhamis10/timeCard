@@ -27,7 +27,6 @@ class ApiCalls {
     if(flag==1){
       emp = Employee.fromJson(jsonDecsode);
       print(emp.apiKey);
-
       fetchClient(emp.apiKey);
       return emp;
     }

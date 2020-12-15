@@ -9,6 +9,7 @@ import 'package:smart_select/smart_select.dart';
 import 'package:timecarditg/Blocs/CheckInBloc.dart';
 import 'package:timecarditg/Blocs/ClientsBloc.dart';
 import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
+import 'package:timecarditg/Blocs/LoginBloc.dart';
 import 'package:timecarditg/Blocs/home_bloc.dart';
 import 'package:timecarditg/Screens/MainScreen.dart';
 import 'package:timecarditg/database/database.dart';
@@ -546,10 +547,17 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => BlocProvider(
-                  child: MainScreen(),
-                  create: (_) => HomeInfoBloc(),
-                )));
+            builder: (context) => MultiBlocProvider(
+              providers:[ BlocProvider(
+                    create: (_) => HomeInfoBloc(),
+                  ),
+                BlocProvider(
+                    create: (_) => LoginBloc(),
+                  ),
+              ],
+                child: MainScreen(),
+
+        )));
   }
 
   saveChecksToDB(bool synced, CheckModel checkObject) {
