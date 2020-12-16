@@ -42,6 +42,18 @@ class SharedPreferencesOperations {
     print('save keep me logged in $isKeep');
     return savedKeepMe;
   }
+  static Future<bool> saveMac(String macAddress) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool savedMacAddress = await prefs.setString(Constants.macAddress, macAddress);
+    print('save mac address   $savedMacAddress');
+    return savedMacAddress;
+  }
+  static Future<String> getMac() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String savedMacAddress = prefs.getString(Constants.macAddress);
+    print('get mac address  $savedMacAddress');
+    return savedMacAddress;
+  }
   static Future<bool> saveUserNameAndPassword(String username , String password) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     bool savedUsername = await prefs.setString(Constants.username, username);

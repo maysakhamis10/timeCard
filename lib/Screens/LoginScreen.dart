@@ -190,6 +190,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                 var employee = (state.model as Employee);
                 saveApiKey(employee);
                 saveUsernameAndPassword();
+                saveMac();
                 Timer(Duration(seconds: 3), () {
                   Navigator.pushReplacement(
                     context,
@@ -609,6 +610,10 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     }).catchError((onError){
       print(onError.toString());
     });
+  }
+
+  void saveMac()async {
+    await SharedPreferencesOperations.saveMac(_platformImei);
   }
 
 //  Widget buildLoginUiWithOldDesign(){

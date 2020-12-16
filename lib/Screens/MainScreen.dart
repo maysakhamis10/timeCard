@@ -704,11 +704,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 // ======== imbaby and yasmin code ===========
   void handleInvalidApikey() async{
     var info = await SharedPreferencesOperations.getUsernameAndPassword();
+    String macAddress = await SharedPreferencesOperations.getMac();
     _loginBloc.add(LoginEvent(
         user: Logginer(
             username:           info[0] ,
             password:           info[1] ,
-            macAddress: Constants.MACADRESS /*macAddress*/)
+            macAddress: macAddress /*macAddress*/)
     ));
   }
 
