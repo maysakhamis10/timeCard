@@ -190,14 +190,31 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         if(counter <= 3 ) {
                           counter++;
                           callHomeInfoService();
-                        }else {
-                          Future.delayed(Duration(seconds: 15)).then((value) => makeLogout());
+                        } else {
+                          Future.delayed(Duration(seconds: 5)).then((value) {
+                            showDialog(context: context, builder: (context) {
+                              return AlertDialog(
+                                title: Text("Warning", style: TextStyle(),),
+                                content: Text("There is a server error please login again ..", style: TextStyle(),),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text("Ok"),
+                                    onPressed: () {
+                                      makeLogout();
+                                    },
+                                  )
+                                ],
+                              );
+                            },
+                                barrierDismissible: false
+                            );
+                          });
                           // makeLogout();
                         }
                       }
                       return buildHomeUi(context);
                     }),
-               // =========== imbaby and yasmin code
+                // =========== imbaby and yasmin code
                 BlocBuilder<LoginBloc, BaseResultState>(
                     builder: (context, state) {
                       if (state.result == dataResult.Loading) {
