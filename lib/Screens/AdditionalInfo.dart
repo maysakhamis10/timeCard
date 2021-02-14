@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io' show Platform;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,10 +19,9 @@ import 'package:timecarditg/models/Employee.dart';
 import 'package:timecarditg/models/checkInResponse.dart';
 import 'package:timecarditg/utils/sharedPreference.dart';
 import 'package:timecarditg/utils/strings.dart';
-import 'dart:io' show Platform;
 import 'package:timecarditg/utils/utils.dart';
 
-class  AdditionalInfo extends StatefulWidget {
+class AdditionalInfo extends StatefulWidget {
   int checkType;
 
   AdditionalInfo({this.checkType});
@@ -47,7 +47,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   ProgressDialog progressLoading;
   DbOperations _operations = DbOperations();
   bool _isExpand = false;
-  List<String>  fromWhereList = new List();
+  List<String> fromWhereList = new List();
 
   @override
   void initState() {
@@ -75,14 +75,12 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
     fromWhereList.add(from_itg);
     fromWhereList.add(from_home);
     fromWhereList.add(from_others);
-     SharedPreferencesOperations.getClients().then((client) {
-       clients = jsonDecode(client.toString())?.cast<String>();
-       if(mounted) {
-         setState(() {
-
-         });
-       }
-     });
+    SharedPreferencesOperations.getClients().then((client) {
+      clients = jsonDecode(client.toString())?.cast<String>();
+      if (mounted) {
+        setState(() {});
+      }
+    });
     empModel = await getApiKeyAndId();
     if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
       _clientsBloc.add(ClientEvent(apiKey: empModel.apiKey));
@@ -161,7 +159,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   Widget buildContainerTxt() {
     return Container(
       padding: EdgeInsets.all(10.0),
-      margin: EdgeInsets.only(top : 10.0 , bottom: 10.0),
+      margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
       decoration: BoxDecoration(
           color: Colors.white30,
           border: Border.all(
@@ -230,11 +228,13 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
     checkObject.fromWhere = fromWhere;
     print('CHECK OBJECT FROM SAVE BTN ${checkObject.toJson()}');
     if (await UtilsClass.checkConnectivity() == connectStatus.connected) {
-      if(checkObject.fromWhere == null || checkObject.fromWhere == "" || checkObject.fromWhere == "From Where"){
-        Navigator.pop(context , true);
-      }else {
-      showProgressDialog();
-      CheckModel savedOne = await _operations.fetchSaveTransInDb();
+      if (checkObject.fromWhere == null ||
+          checkObject.fromWhere == "" ||
+          checkObject.fromWhere == "From Where") {
+        Navigator.pop(context, true);
+      } else {
+        showProgressDialog();
+        CheckModel savedOne = await _operations.fetchSaveTransInDb();
         if (savedOne != null && savedOne.sync != 1) {
           print('saved one is => ${savedOne.isAdded}');
           this._checkObject = savedOne;
@@ -256,7 +256,6 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
     }
   }
 
-
   Widget buildDropDownList() {
     return Expanded(
       child: Container(
@@ -267,30 +266,27 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
             ),
             borderRadius: BorderRadius.all(Radius.circular(15))),
         child: SmartSelect.single(
-            choiceType: SmartSelectChoiceType.radios,
-            modalType: SmartSelectModalType.popupDialog,
-            modalConfig: SmartSelectModalConfig(
+            choiceType: S2ChoiceType.radios,
+            modalType: S2ModalType.popupDialog,
+            modalConfig: S2ModalConfig(
                 useHeader: false,
-                style: SmartSelectModalStyle(
+                style: S2ModalStyle(
                   elevation: 3,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20.0))),
                 )),
             value: dropdownValue,
             title: "Client Name",
-            options: clients == null || clients.length == 0
-                ? [SmartSelectOption(title: "", value: "")]
+            choiceItems: clients == null || clients.length == 0
+                ? [S2Choice(title: "", value: "")]
                 : clients
-                    .map((client) =>
-                        SmartSelectOption(value: client, title: client))
+                    .map((client) => S2Choice(value: client, title: client))
                     .toList(),
             onChange: (newValue) {
               print("tot $newValue");
-              dropdownValue = newValue;
-              if(mounted) {
-                setState(() {
-
-                });
+              dropdownValue = newValue.value;
+              if (mounted) {
+                setState(() {});
               }
             }),
       ),
@@ -377,7 +373,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
 
   void onItemSelected(String selectedOne) {
     print('selected one is => $selectedOne');
-    if(mounted) {
+    if (mounted) {
       setState(() {
         dropdownValue = selectedOne;
         _toggle();
@@ -548,16 +544,16 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
         context,
         MaterialPageRoute(
             builder: (context) => MultiBlocProvider(
-              providers:[ BlocProvider(
-                    create: (_) => HomeInfoBloc(),
-                  ),
-                BlocProvider(
-                    create: (_) => LoginBloc(),
-                  ),
-              ],
-                child: MainScreen(),
-
-        )));
+                  providers: [
+                    BlocProvider(
+                      create: (_) => HomeInfoBloc(),
+                    ),
+                    BlocProvider(
+                      create: (_) => LoginBloc(),
+                    ),
+                  ],
+                  child: MainScreen(),
+                )));
   }
 
   saveChecksToDB(bool synced, CheckModel checkObject) {
@@ -578,7 +574,7 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
   }
 
   void _toggle() {
-    if(mounted) {
+    if (mounted) {
       setState(() {
         _isExpand = !_isExpand;
         print('testtttt');
@@ -596,27 +592,27 @@ class _AdditionalInfoState extends State<AdditionalInfo> {
           ),
           borderRadius: BorderRadius.all(Radius.circular(15))),
       child: SmartSelect.single(
-          choiceType: SmartSelectChoiceType.radios,
-          modalType: SmartSelectModalType.popupDialog,
-          modalConfig: SmartSelectModalConfig(
+          choiceType: S2ChoiceType.radios,
+          modalType: S2ModalType.popupDialog,
+          modalConfig: S2ModalConfig(
               useHeader: false,
-              style: SmartSelectModalStyle(
+              style: S2ModalStyle(
                 elevation: 3,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(20.0))),
               )),
           value: fromWhere,
           title: "fromWhere",
-          options: fromWhereList.length == 0
-              ? [SmartSelectOption(title: "", value: "")]
+          choiceItems: fromWhereList.length == 0
+              ? [S2Choice(title: "", value: "")]
               : fromWhereList
                   .map((fromWhere) =>
-                      SmartSelectOption(value: fromWhere, title: fromWhere))
+                      S2Choice(value: fromWhere, title: fromWhere))
                   .toList(),
           onChange: (newValue) {
             print("tot $newValue");
-            fromWhere = newValue;
-            if(mounted) {
+            fromWhere = newValue.value;
+            if (mounted) {
               setState(() {});
             }
           }),
