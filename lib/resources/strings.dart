@@ -1,0 +1,25 @@
+const String from_home = "HOME";
+const String from_itg = "ITG";
+const String from_others = "Other";
+const String vacation_title = "Vacations";
+const String leaves_title = "Leaves";
+const String all_state = "All";
+const String accept_state = "Accepted";
+const String reject_state = "Rejected";
+const String pending_state = "Pending";
+const String date_title = "Date";
+const String type_title = "Type";
+const String time_title = "Time";
+const String date_of_request_title = "Date of the request";
+const String request_vacation = "Request vacation";
+const String request_leave = "Request Leaves";
+const String submit = "Submit";
+const String reason_text = "Reason";
+const String astrix_text = "*";
+const String from_time_text = "From Time";
+const String to_time_text = "To Time";
+const String from_date_text = "From Date*";
+const String to_date_text = "To Date";
+
+const String select_reasons_text = "-Select Reasons-";
+const bool english = true;

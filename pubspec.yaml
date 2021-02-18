@@ -47,6 +47,7 @@ dependencies:
   device_info: ^1.0.0
   imei_plugin: ^1.2.0
   cached_network_image: any
+  rxdart: any
 
 
 dev_dependencies:
@@ -68,7 +69,12 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
    - assets/images/
-   - assets/images/icon.png
+   - assets/images/refine.png
+   - assets/images/date.png
+   - assets/images/date_of_request.png
+   - assets/images/type.png
+   - assets/images/timer.png
+#   - assets/images/icon.png
 
 
   #  - images/a_dot_ham.jpeg

@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
+
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:imei_plugin/imei_plugin.dart';
@@ -10,10 +13,6 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
 import 'package:timecarditg/Blocs/LoginBloc.dart';
 import 'package:timecarditg/Blocs/home_bloc.dart';
-import 'package:flutter/services.dart';
-import 'package:get_mac/get_mac.dart';
-import 'package:device_info/device_info.dart';
-import 'package:timecarditg/main.dart';
 import 'package:timecarditg/models/Employee.dart';
 import 'package:timecarditg/models/login_error.dart';
 import 'package:timecarditg/models/user.dart';
@@ -29,7 +28,6 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
-  String _address = "unkown";
   String _platformImei = 'Unknown';
   String uniqueId = "Unknown";
   ProgressDialog progressLoading;
@@ -41,53 +39,53 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
   final formKey = GlobalKey<FormState>();
   final FocusNode _nameFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
-  bool switchState ;
+  bool switchState;
   var mainColor = Color(0xFF1589d2);
   var height, width;
 
-  AnimationController _animationController;
-  Animation<Offset> _logoSlideAnimation;
-  Animation<double> _logoScaleAnimation;
-  Animation<Offset> _formContainerAnimation;
+  // AnimationController _animationController;
+  // Animation<Offset> _logoSlideAnimation;
+  // Animation<double> _logoScaleAnimation;
+  // Animation<Offset> _formContainerAnimation;
 
-  void _initAnimations() {
-    _animationController = AnimationController(
-      vsync: this,
-      duration: Duration(
-        milliseconds: 1000,
-      ),
-    );
-    _logoSlideAnimation = Tween<Offset>(
-      begin: Offset(0, 1),
-      end: Offset(0, 0),
-    ).animate(_animationController);
-    _logoScaleAnimation = Tween<double>(
-      begin: 2,
-      end: 1,
-    ).animate(_animationController);
-    _formContainerAnimation = Tween<Offset>(
-      begin: Offset(0, 1),
-      end: Offset(0, 0),
-    ).animate(_animationController);
-    _animationController.forward();
-  }
+  // void _initAnimations() {
+  //   _animationController = AnimationController(
+  //     vsync: this,
+  //     duration: Duration(
+  //       milliseconds: 1000,
+  //     ),
+  //   );
+  //   _logoSlideAnimation = Tween<Offset>(
+  //     begin: Offset(0, 1),
+  //     end: Offset(0, 0),
+  //   ).animate(_animationController);
+  //   _logoScaleAnimation = Tween<double>(
+  //     begin: 2,
+  //     end: 1,
+  //   ).animate(_animationController);
+  //   _formContainerAnimation = Tween<Offset>(
+  //     begin: Offset(0, 1),
+  //     end: Offset(0, 0),
+  //   ).animate(_animationController);
+  //   _animationController.forward();
+  // }
 
   @override
   void initState() {
     super.initState();
-    _initAnimations();
+    // _initAnimations();
     getKeep();
     // getHomeData().then((onValue) {
-      // if( onValue == null || onValue.isEmpty) {
-        initPlatformState();
-      // }
+    // if( onValue == null || onValue.isEmpty) {
+    initPlatformState();
+    // }
     // });
     _bloc = BlocProvider.of<LoginBloc>(context);
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    // _animationController.dispose();
     emailTextEditingController.dispose();
     passwordTextEditingController.dispose();
     super.dispose();
@@ -109,18 +107,37 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
             children: <Widget>[
               Expanded(
                 flex: 2,
-                child: SlideTransition(
+                child:
+                    buildLogo() /*SlideTransition(
                   position: _logoSlideAnimation,
                   child: ScaleTransition(
                     scale: _logoScaleAnimation,
                     child: buildLogo(),
                   ),
-                ),
+                )*/
+                ,
               ),
               Row(
                 children: <Widget>[
                   Expanded(
-                    child: SlideTransition(
+                    child: Container(
+                      margin: EdgeInsets.only(left: 20, right: 20, bottom: 50),
+                      width: width,
+                      height: height * 0.6,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 10,
+                            offset: Offset(1.0, 4.0),
+                          ),
+                        ],
+                      ),
+                      child: buildLoginForm(),
+                    )
+                    /*SlideTransition(
                       position: _formContainerAnimation,
                       child: Container(
                         margin:
@@ -140,7 +157,8 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                         ),
                         child: buildLoginForm(),
                       ),
-                    ),
+                    )*/
+                    ,
                   ),
                 ],
               ),
@@ -196,11 +214,12 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                     context,
                     MaterialPageRoute(builder: (context) {
                       return MultiBlocProvider(
-                        providers:[
+                        providers: [
                           BlocProvider(
                             child: MainScreen(),
                             create: (_) => HomeInfoBloc(),
-                          ),BlocProvider(
+                          ),
+                          BlocProvider(
                             create: (_) => LoginBloc(),
                           ),
                         ],
@@ -210,12 +229,12 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                   );
                 });
               } else if (state.result == dataResult.Error) {
-                await Future.delayed(const Duration(seconds: 1),() {
+                await Future.delayed(const Duration(seconds: 1), () {
                   if (progressLoading != null) {
                     progressLoading.hide();
                   }
                 });
-                if(state.model == null ){
+                if (state.model == null) {
                   scaffoldKey.currentState.showBottomSheet((widgetBuilder) {
                     return Container(
                       height: 50,
@@ -223,13 +242,13 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                       color: Colors.blue,
                       child: Center(
                           child: Text(
-                            "There is error in server please try later",
-                            style: GoogleFonts.voces(
-                                color: Colors.white, fontSize: 12.0),
-                          )),
+                        "There is error in server please try later",
+                        style: GoogleFonts.voces(
+                            color: Colors.white, fontSize: 12.0),
+                      )),
                     );
                   }, backgroundColor: Colors.blue);
-                }else {
+                } else {
                   var error = (state.model as LoginError);
                   if (error != null) {
                     scaffoldKey.currentState.showBottomSheet((widgetBuilder) {
@@ -239,10 +258,10 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                         color: Colors.blue,
                         child: Center(
                             child: Text(
-                              error.message,
-                              style: GoogleFonts.voces(
-                                  color: Colors.white, fontSize: 12.0),
-                            )),
+                          error.message,
+                          style: GoogleFonts.voces(
+                              color: Colors.white, fontSize: 12.0),
+                        )),
                       );
                     }, backgroundColor: Colors.blue);
                   }
@@ -334,13 +353,12 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                         content: new Text("$_platformImei Copied to Clipboard"),
                       ));
                     },
-                    child:  Text(
-                        _platformImei,
-                        style: GoogleFonts.voces(
-                            color: mainColor,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 13.0),
-
+                    child: Text(
+                      _platformImei,
+                      style: GoogleFonts.voces(
+                          color: mainColor,
+                          fontWeight: FontWeight.normal,
+                          fontSize: 13.0),
                     ),
                   ),
                 )
@@ -417,7 +435,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
                   value: switchState ?? false,
                   activeColor: mainColor,
                   onChanged: (bool s) {
-                    if(mounted) {
+                    if (mounted) {
                       setState(() {
                         switchState = s;
                         saveKeepMeLoggedIn();
@@ -440,7 +458,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
         onTap: () => logInFun(),
         child: Container(
           alignment: Alignment.center,
-          margin: EdgeInsets.only(top: height/15),
+          margin: EdgeInsets.only(top: height / 15),
           decoration: BoxDecoration(
             color: Color(0xff1295df),
             borderRadius: BorderRadius.circular(30.0),
@@ -484,7 +502,7 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
           child: Center(
               child: Text(
             'There is no internet connection',
-            style: GoogleFonts.voces(fontSize: 12.0 , color:  Colors.white),
+            style: GoogleFonts.voces(fontSize: 12.0, color: Colors.white),
           )),
         );
       }, backgroundColor: Colors.blue);
@@ -509,13 +527,13 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
 
   showProgressDialog() async {
     // await Future.delayed(const Duration(milliseconds: 100), () {
-      progressLoading = ProgressDialog(
-        context,
-        type: ProgressDialogType.Normal,
-        isDismissible: true,
-        showLogs: false,
-      );
-      progressLoading.show();
+    progressLoading = ProgressDialog(
+      context,
+      type: ProgressDialogType.Normal,
+      isDismissible: true,
+      showLogs: false,
+    );
+    progressLoading.show();
     // });
   }
 
@@ -540,16 +558,17 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       getAddress();
     } else {
       var androidInfo = await DeviceInfoPlugin().androidInfo;
-      String  identifier;
-      if(androidInfo.version.sdkInt > 28){
+      String identifier;
+      if (androidInfo.version.sdkInt > 28) {
         identifier = await UniqueIdentifier.serial;
-      }else {
-        identifier = await ImeiPlugin.getImei(shouldShowRequestPermissionRationale: false);
+      } else {
+        identifier = await ImeiPlugin.getImei(
+            shouldShowRequestPermissionRationale: false);
         // List<String> multiImei = await ImeiPlugin.getImeiMulti();
         // print(multiImei);
         // idunique = await ImeiPlugin.getId();
       }
-      if(mounted) {
+      if (mounted) {
         setState(() {
           _platformImei = identifier;
           // uniqueId = idunique;
@@ -557,9 +576,11 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       }
     }
   }
+
 // mac address using channel in ios
 
   static const AddressChannel = const MethodChannel('macAddress');
+
 //function
   Future<void> getAddress() async {
     String address;
@@ -567,13 +588,13 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
       var result = await AddressChannel.invokeMethod('getMacAddress');
       address = result;
     } on PlatformException catch (e) {
-      address = "failed to get address";
+      address = "failed to get address " + e.toString();
     }
 
-    if(mounted) {
-    setState(() {
-      _platformImei = address;
-    });
+    if (mounted) {
+      setState(() {
+        _platformImei = address;
+      });
     }
   }
 
@@ -592,27 +613,26 @@ class _SignInState extends State<SignIn> with SingleTickerProviderStateMixin {
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-
-
-   getKeep() async{
-    if(await SharedPreferencesOperations.getKeepMeLoggedIn() == null){
+  getKeep() async {
+    if (await SharedPreferencesOperations.getKeepMeLoggedIn() == null) {
       switchState = false;
-    }else {
+    } else {
       switchState = await SharedPreferencesOperations.getKeepMeLoggedIn();
     }
     return switchState;
   }
 
-  void saveUsernameAndPassword() async{
-    await SharedPreferencesOperations.saveUserNameAndPassword(emailTextEditingController.text, passwordTextEditingController.text).
-    then((value){
+  void saveUsernameAndPassword() async {
+    await SharedPreferencesOperations.saveUserNameAndPassword(
+            emailTextEditingController.text, passwordTextEditingController.text)
+        .then((value) {
       print("username and password saved ");
-    }).catchError((onError){
+    }).catchError((onError) {
       print(onError.toString());
     });
   }
 
-  void saveMac()async {
+  void saveMac() async {
     await SharedPreferencesOperations.saveMac(_platformImei);
   }
 

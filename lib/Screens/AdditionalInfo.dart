@@ -18,11 +18,12 @@ import 'package:timecarditg/models/CheckModel.dart';
 import 'package:timecarditg/models/Employee.dart';
 import 'package:timecarditg/models/checkInResponse.dart';
 import 'package:timecarditg/utils/sharedPreference.dart';
-import 'package:timecarditg/utils/strings.dart';
 import 'package:timecarditg/utils/utils.dart';
 
+import 'file:///D:/Hadeer_Mohamed/Flutter_Projects/timeCard/lib/resources/strings.dart';
+
 class AdditionalInfo extends StatefulWidget {
-  int checkType;
+  final int checkType;
 
   AdditionalInfo({this.checkType});
 

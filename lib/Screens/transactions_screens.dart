@@ -11,7 +11,6 @@ import 'package:timecarditg/Screens/MainScreen.dart';
 import 'package:timecarditg/database/database.dart';
 import 'package:timecarditg/models/CheckModel.dart';
 import 'package:timecarditg/models/checkInResponse.dart';
-
 import 'package:timecarditg/utils/utils.dart';
 
 class TransactionsScreen extends StatefulWidget {
@@ -30,7 +29,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   var formattedDate;
   CheckBloc _checkInBloc;
   ProgressDialog progressLoading;
-  bool isNeededToLoading= false;
+  bool isNeededToLoading = false;
 
   List<TransactionItem> transactionItems = new List();
 
@@ -61,24 +60,25 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-             isNeededToLoading ?    Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return MultiBlocProvider(
-                      providers: [
-                        BlocProvider<HomeInfoBloc>(
-                          create: (_) => HomeInfoBloc(),
-                        ),
-                        BlocProvider<LoginBloc>(
-                          create: (_) => LoginBloc(),
-                        ),
-                      ],
-                      child: MainScreen(),
-                    ) ;
-                  }
-                )): Navigator.pop(context);
-            }),
+              icon: Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () {
+                isNeededToLoading
+                    ? Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                        return MultiBlocProvider(
+                          providers: [
+                            BlocProvider<HomeInfoBloc>(
+                              create: (_) => HomeInfoBloc(),
+                            ),
+                            BlocProvider<LoginBloc>(
+                              create: (_) => LoginBloc(),
+                            ),
+                          ],
+                          child: MainScreen(),
+                        );
+                      }))
+                    : Navigator.pop(context);
+              }),
           title: Text("Transactions"),
           centerTitle: false,
         ),
@@ -89,7 +89,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   progressLoading.hide();
                 }
                 var flag = (state.model as CheckInResponse).flag;
-                var message = (state.model as CheckInResponse).message;
+                // var message = (state.model as CheckInResponse).message;
                 if (flag == 1) {
                   saveChecksToDB(true, _checkObject);
                   UtilsClass.showMyDialog(
@@ -98,13 +98,12 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       context: context,
                       onPressed: () => Navigator.pop(context),
                       type: DialogType.confirmation);
-                  if(mounted) {
+                  if (mounted) {
                     setState(() {});
                   }
                 } else {
                   UtilsClass.showMyDialog(
-                      content:
-                      "There is error in server please try later",
+                      content: "There is error in server please try later",
                       context: context,
                       onPressed: () => Navigator.pop(context),
                       type: DialogType.confirmation);
@@ -113,15 +112,16 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
             },
             child: buildBody()));
   }
+
   Future<Null> _handleRefresh() async {
     print("on Refreshing ..");
     _sendOfflineTransactionToApi();
     return null;
   }
+
   Widget buildBody() {
     return Container(
-        child:buildListView(),
-
+      child: buildListView(),
     );
   }
 
@@ -150,21 +150,20 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 child: SafeArea(
                   bottom: true,
                   top: true,
-                  child:
-                  RefreshIndicator(
+                  child: RefreshIndicator(
                     onRefresh: _handleRefresh,
-                       child: ListView.builder(
-                        itemCount: snapshot.data.length,
-                        scrollDirection: Axis.vertical,
-                        physics: ScrollPhysics(),
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return buildTransactionItem(_allTranactions[index]);
-                        },
+                    child: ListView.builder(
+                      itemCount: snapshot.data.length,
+                      scrollDirection: Axis.vertical,
+                      physics: ScrollPhysics(),
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return buildTransactionItem(_allTranactions[index]);
+                      },
                     ),
-                     ),
                   ),
                 ),
+              ),
             ],
           );
         } else if (snapshot.hasError) {
@@ -193,7 +192,9 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       margin: EdgeInsets.all(10.0),
       color: checkModel.sync == 0
           ? Colors.red[300]
-          : checkModel.checkType == 1 ? Colors.blue[300] : Colors.green[300],
+          : checkModel.checkType == 1
+              ? Colors.blue[300]
+              : Colors.green[300],
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30.0),
       ),
@@ -355,7 +356,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
   void _pickDateDialog() {
     showDatePicker(
-      initialDatePickerMode:DatePickerMode.day ,
+      initialDatePickerMode: DatePickerMode.day,
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(1990),
@@ -364,14 +365,14 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       if (pickedDate == null) {
         return;
       }
-      if(mounted) {
-      setState(() {
-        formattedDate =
-        '${pickedDate.year.toString()}/${pickedDate.month.toString()}'
-            '/${pickedDate.day.toString()}';
-        _fetchAllSyncTransactions(formattedDate);
-      });
-    }
+      if (mounted) {
+        setState(() {
+          formattedDate =
+              '${pickedDate.year.toString()}/${pickedDate.month.toString()}'
+              '/${pickedDate.day.toString()}';
+          _fetchAllSyncTransactions(formattedDate);
+        });
+      }
     });
   }
 

@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timecarditg/utils/Constants.dart';
 import 'package:timecarditg/models/Employee.dart';
+import 'package:timecarditg/utils/Constants.dart';
 
 class SharedPreferencesOperations {
   static Future<bool> saveApiKeyAndIdAndImg(
@@ -8,7 +8,7 @@ class SharedPreferencesOperations {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     bool savedApiKey = await prefs.setString(Constants.apiKey, apiKey);
     bool savedId = await prefs.setInt(Constants.id, id);
-    bool savedImg = await prefs.setString(Constants.Img, img);
+    bool savedImg = await prefs.setString(Constants.img, img);
     return savedApiKey && savedId && savedImg;
   }
 
@@ -42,22 +42,27 @@ class SharedPreferencesOperations {
     print('save keep me logged in $isKeep');
     return savedKeepMe;
   }
+
   static Future<bool> saveMac(String macAddress) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool savedMacAddress = await prefs.setString(Constants.macAddress, macAddress);
+    bool savedMacAddress =
+        await prefs.setString(Constants.macAddress, macAddress);
     print('save mac address   $savedMacAddress');
     return savedMacAddress;
   }
+
   static Future<String> getMac() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String savedMacAddress = prefs.getString(Constants.macAddress);
     print('get mac address  $savedMacAddress');
     return savedMacAddress;
   }
-  static Future<bool> saveUserNameAndPassword(String username , String password) async {
+
+  static Future<bool> saveUserNameAndPassword(
+      String username, String password) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     bool savedUsername = await prefs.setString(Constants.username, username);
-    bool  savedPassword= await prefs.setString(Constants.password, password);
+    bool savedPassword = await prefs.setString(Constants.password, password);
     print('save username  $savedUsername');
     print('save password $savedPassword');
     return savedUsername;
@@ -68,10 +73,11 @@ class SharedPreferencesOperations {
     List<String> info = List();
     String savedUsername = prefs.getString(Constants.username);
     String savedPassword = prefs.getString(Constants.username);
-    info.add(savedUsername) ;
-    info.add(savedPassword) ;
+    info.add(savedUsername);
+    info.add(savedPassword);
     return info;
   }
+
   static Future<bool> getKeepMeLoggedIn() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     bool savedKeepMe = prefs.getBool(Constants.keep);

@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as Path;
 import 'package:path_provider/path_provider.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,6 +17,7 @@ import 'package:timecarditg/Blocs/InternetConnectionBloc.dart';
 import 'package:timecarditg/Blocs/LoginBloc.dart';
 import 'package:timecarditg/Blocs/home_bloc.dart';
 import 'package:timecarditg/Screens/LoginScreen.dart';
+import 'package:timecarditg/Screens/vacation_screen.dart';
 import 'package:timecarditg/customWidgets/CircleProgress.dart';
 import 'package:timecarditg/models/Employee.dart';
 import 'package:timecarditg/models/HomeInformation.dart';
@@ -22,9 +25,9 @@ import 'package:timecarditg/models/user.dart';
 import 'package:timecarditg/utils/Constants.dart';
 import 'package:timecarditg/utils/sharedPreference.dart';
 import 'package:timecarditg/utils/utils.dart';
+
 import 'AdditionalInfo.dart';
 import 'transactions_screens.dart';
-import 'package:path/path.dart' as Path;
 
 class MainScreen extends StatefulWidget {
   static const String routeName = '/home';
@@ -90,12 +93,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       String savedHomeInfo = await SharedPreferencesOperations.fetchHomeData();
       print(savedHomeInfo);
       if (savedHomeInfo != null && savedHomeInfo != "") {
-        if(jsonDecode(savedHomeInfo)['Attendance_Information'] == null){
+        if (jsonDecode(savedHomeInfo)['Attendance_Information'] == null) {
           print("Api key Expired");
-           //TODO navigate to login or refresh token
+          //TODO navigate to login or refresh token
           handleInvalidApikey();
-        }
-        else {
+        } else {
           homeInfoBloc.add(HomeInfoEvent(
               homeInfo: HomeInfo.fromJson(jsonDecode(savedHomeInfo))));
         }
@@ -135,7 +137,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     }
   }
 
-  var counter  = 0 ;
+  var counter = 0;
   @override
   Widget build(BuildContext context) {
     height = MediaQuery.of(context).size.height;
@@ -159,43 +161,51 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               children: <Widget>[
                 BlocBuilder<HomeInfoBloc, BaseResultState>(
                     builder: (context, state) {
-                      if (state.result == dataResult.Loading) {
-                        if (mounted) {
-                          showProgressDialog();
-                        }
-                      } else if (state.result == dataResult.Loaded) {
-                        _homeInfo = state.model;
-                        calDifferenceHours(_homeInfo);
-                        print(('object from api => ${_homeInfo.toJson()}'));
-                        dismissLoading();
-                      } else if (state.result == dataResult.Error) {
-                        dismissLoading();
-                        Future.delayed(Duration(seconds: 2)).then((val) {
-                          showBottomSheet(
-                              context: context,
-                              builder: (context) => Container(
+                  if (state.result == dataResult.Loading) {
+                    if (mounted) {
+                      showProgressDialog();
+                    }
+                  } else if (state.result == dataResult.Loaded) {
+                    _homeInfo = state.model;
+                    calDifferenceHours(_homeInfo);
+                    print(('object from api => ${_homeInfo.toJson()}'));
+                    dismissLoading();
+                  } else if (state.result == dataResult.Error) {
+                    dismissLoading();
+                    Future.delayed(Duration(seconds: 2)).then((val) {
+                      showBottomSheet(
+                          context: context,
+                          builder: (context) => Container(
                                 height: 50,
                                 width: double.infinity,
                                 color: Colors.blue,
                                 child: Center(
                                     child: Text(
-                                      "There is error in server please try later",
-                                      style: GoogleFonts.voces(
-                                          color: Colors.white, fontSize: 12.0),
-                                    )),
+                                  "There is error in server please try later",
+                                  style: GoogleFonts.voces(
+                                      color: Colors.white, fontSize: 12.0),
+                                )),
                               ),
-                              backgroundColor: Colors.blue);
-                        });
+                          backgroundColor: Colors.blue);
+                    });
 
-                        if(counter <= 3 ) {
-                          counter++;
-                          callHomeInfoService();
-                        } else {
-                          Future.delayed(Duration(seconds: 5)).then((value) {
-                            showDialog(context: context, builder: (context) {
+                    if (counter <= 3) {
+                      counter++;
+                      callHomeInfoService();
+                    } else {
+                      Future.delayed(Duration(seconds: 5)).then((value) {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
                               return AlertDialog(
-                                title: Text("Warning", style: TextStyle(),),
-                                content: Text("There is a server error please login again ..", style: TextStyle(),),
+                                title: Text(
+                                  "Warning",
+                                  style: TextStyle(),
+                                ),
+                                content: Text(
+                                  "There is a server error please login again ..",
+                                  style: TextStyle(),
+                                ),
                                 actions: <Widget>[
                                   FlatButton(
                                     child: Text("Ok"),
@@ -206,37 +216,37 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                 ],
                               );
                             },
-                                barrierDismissible: false
-                            );
-                          });
-                          // makeLogout();
-                        }
-                      }
-                      return buildHomeUi(context);
-                    }),
+                            barrierDismissible: false);
+                      });
+                      // makeLogout();
+                    }
+                  }
+                  return buildHomeUi(context);
+                }),
                 // =========== imbaby and yasmin code
                 BlocBuilder<LoginBloc, BaseResultState>(
                     builder: (context, state) {
-                      if (state.result == dataResult.Loading) {
-                        progressLoading.style(
-                            child: Text("Your session has been expired ... ")
-                        );
-                        progressLoading.show();
-                      } else if (state.result == dataResult.Loaded) {
-                       saveNewApiKey(state);
-                      } else if (state.result == dataResult.Error) {
-                      Navigator.pushReplacement(context, MaterialPageRoute(
-                        builder: (context){
-                        return  BlocProvider<LoginBloc>(
-                          create: (_) => LoginBloc(),
-                          child: SignIn(),
-                        );
-                        }
-                      ));
-                      }
-                      return Container(width: 0,height: 0,);
-                    })
-              // ================================================
+                  if (state.result == dataResult.Loading) {
+                    progressLoading.style(
+                        child: Text("Your session has been expired ... "));
+                    progressLoading.show();
+                  } else if (state.result == dataResult.Loaded) {
+                    saveNewApiKey(state);
+                  } else if (state.result == dataResult.Error) {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) {
+                      return BlocProvider<LoginBloc>(
+                        create: (_) => LoginBloc(),
+                        child: SignIn(),
+                      );
+                    }));
+                  }
+                  return Container(
+                    width: 0,
+                    height: 0,
+                  );
+                })
+                // ================================================
               ],
             ),
           ),
@@ -309,11 +319,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               },
               child: ClipOval(
                 child: prefs != null
-                    ? prefs.getString(Constants.Img) != null ||
-                            prefs.getString(Constants.Img) != ""
+                    ? prefs.getString(Constants.img) != null ||
+                            prefs.getString(Constants.img) != ""
                         ? CachedNetworkImage(
                             fit: BoxFit.fill,
-                            imageUrl: prefs.getString(Constants.Img),
+                            imageUrl: prefs.getString(Constants.img),
                             placeholder: (context, text) {
                               return Image.asset("assets/images/logo.png");
                             },
@@ -678,7 +688,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   void dismissLoading() async {
     await Future.delayed(const Duration(seconds: 2), () {
-      if(progressLoading != null) {
+      if (progressLoading != null) {
         progressLoading.hide();
       }
     });
@@ -696,8 +706,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         .add(new BottomButtons(Icons.exit_to_app, 'Logout', makeLogout));
     bottomButtons.add(new BottomButtons(
         Icons.calendar_today, 'Transactions', goToTransactionScreen));
-    bottomButtons
-        .add(new BottomButtons(Icons.cached, 'Refresh', callHomeInfoService));
+    bottomButtons.add(new BottomButtons(
+        Icons.cached, 'Refresh', navigateToVacations /*callHomeInfoService*/));
   }
 
   goToTransactionScreen() {
@@ -718,23 +728,32 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   makeLogout() {
     UtilsClass.logOut(context);
   }
+
 // ======== imbaby and yasmin code ===========
-  void handleInvalidApikey() async{
+  void handleInvalidApikey() async {
     var info = await SharedPreferencesOperations.getUsernameAndPassword();
     String macAddress = await SharedPreferencesOperations.getMac();
     _loginBloc.add(LoginEvent(
         user: Logginer(
-            username:           info[0] ,
-            password:           info[1] ,
-            macAddress: macAddress /*macAddress*/)
-    ));
+            username: info[0],
+            password: info[1],
+            macAddress: macAddress /*macAddress*/)));
   }
 
-  void saveNewApiKey(BaseResultState state)async {
+  void saveNewApiKey(BaseResultState state) async {
     Employee emp = state.model;
-    await SharedPreferencesOperations.saveApiKeyAndIdAndImg(emp.apiKey, emp.employeeId, emp.employeeImage);
+    await SharedPreferencesOperations.saveApiKeyAndIdAndImg(
+        emp.apiKey, emp.employeeId, emp.employeeImage);
   }
-   // ===============================================
+  // ===============================================
+
+  navigateToVacations() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                VacationScreen(true) /*LeavesScreen(false)*/));
+  }
 }
 
 enum CheckType { checkIn, checkOut }

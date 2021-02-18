@@ -1,4 +1,3 @@
-import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:timecarditg/Blocs/LoginBloc.dart';
@@ -12,12 +11,9 @@ void main() async {
   return runApp(/*DevicePreview(
 builder: (context) =>*/
       MyApp()); /*)*/
-
 }
 
 class MyApp extends StatelessWidget {
-  bool keepLoggedIn = false;
-
   @override
   Widget build(BuildContext context) {
     // getKeep().then((onValue) {
@@ -35,32 +31,32 @@ class MyApp extends StatelessWidget {
         ),
         home: FutureBuilder(
           future: getKeep(),
-          builder: (context, AsyncSnapshot snap) =>
-          snap.data ?? false ? FutureBuilder(
-            future:getHomeData(),
-            builder: (context, AsyncSnapshot snap) =>
-            snap.hasData ?? false ? MultiBlocProvider(
-              providers:[
-                BlocProvider<HomeInfoBloc>(
-                  create: (_) => HomeInfoBloc(),
-                ),
-                BlocProvider<LoginBloc>(
+          builder: (context, AsyncSnapshot snap) => snap.data ?? false
+              ? FutureBuilder(
+                  future: getHomeData(),
+                  builder: (context, AsyncSnapshot snap) =>
+                      snap.hasData ?? false
+                          ? MultiBlocProvider(
+                              providers: [
+                                BlocProvider<HomeInfoBloc>(
+                                  create: (_) => HomeInfoBloc(),
+                                ),
+                                BlocProvider<LoginBloc>(
+                                  create: (_) => LoginBloc(),
+                                ),
+                              ],
+                              child: MainScreen(),
+                            )
+                          : BlocProvider<LoginBloc>(
+                              create: (_) => LoginBloc(),
+                              child: SignIn(),
+                            ),
+                )
+              : BlocProvider<LoginBloc>(
                   create: (_) => LoginBloc(),
+                  child: SignIn(),
                 ),
-              ] ,
-              child: MainScreen(),
-
-            ) :
-            BlocProvider<LoginBloc>(
-              create: (_) => LoginBloc(),
-              child: SignIn(),
-            ),
-          ) : BlocProvider<LoginBloc>(
-            create: (_) => LoginBloc(),
-            child: SignIn(),
-          ),
-        )
-    );
+        ));
   }
 
   Future<bool> getKeep() async {
@@ -70,10 +66,10 @@ class MyApp extends StatelessWidget {
       return await SharedPreferencesOperations.getKeepMeLoggedIn();
     }
   }
-
-
 }
-  Future<String> getHomeData() async{
-  String savedHomeInfo =  await SharedPreferencesOperations.fetchHomeData() ?? null;
+
+Future<String> getHomeData() async {
+  String savedHomeInfo =
+      await SharedPreferencesOperations.fetchHomeData() ?? null;
   return savedHomeInfo;
 }
